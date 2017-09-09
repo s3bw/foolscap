@@ -1,7 +1,6 @@
 import pickle
 
 
-
 def save_data(data):
     """:param data: (dict) containing all notes."""
     with open('data/note_data.pkl', 'wb') as output:
@@ -13,9 +12,6 @@ def note_data():
     try:
         with open('data/note_data.pkl', 'rb') as _input:
             return pickle.load(_input)
+            
     except EOFError and IOError:
         return {}
-        
-        
-        
-        

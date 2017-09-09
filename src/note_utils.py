@@ -1,15 +1,21 @@
+import os
+from subprocess import call
 
 from data_utils import (
     save_data,
-
 )
 
 from parse_utils import (
     load_text,
     note_component,
+    update_component,
 )
 
-        
+
+NOTE_DIR = 'notes/{note_name}.txt'
+EDITOR = os.environ.get('EDITOR', 'vim')
+
+
 def save_note(new_note, saved_notes):
     """ Convert note.txt to dict components and save.
     
@@ -23,16 +29,15 @@ def save_note(new_note, saved_notes):
     save_data(saved_notes)
     
     
-def view_note(stored_data, note):
+def view_note(note, stored_data):
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
-        text_file = 'notes/{file_name}.txt'
-        note_text = load_text(text_file.format(file_name=note))
+        note_text = load_text(NOTE_DIR.format(note_name=note))
         
         for line in note_text:
             print line
-        
+        # iterate the views
     else:
         #Fuzzy here
         print 'Not found'
@@ -42,7 +47,7 @@ def list_notes(all_notes):
     # change template if more info is wanted
     # add config for changing list style
     basic_template = "+---> {title}\n"
-    description_template = "+---> {title}: \n  ->{description}\n"
+    description_template = "+---> {title}: \n  \\->{description}\n"
     
     # print descriptions
     print '\n'
@@ -51,41 +56,43 @@ def list_notes(all_notes):
             print description_template.format(title=key, description=values['description'])
         else:
             print basic_template.format(title=key)
+
             
-            
-def overwrite_oldnote(edited_note, old_data):
-    print 'overwritten'
-    old_data.update(edited_note)
-    save_data(old_data)
-
-
-
-
-
-def edit_note(note, key):
-    EDITOR = os.environ.get('EDITOR', 'vim')
-    text_string =  '\n# {heading}\n'.format(heading=key)
+def delete_note(note, stored_data, recycle=True):
+    stored_notes = stored_data.keys()
     
-    try:
-        for line in note[key]['content']:
-            text_string += '{}\n'.format(line)
-            
-        with open("editing.txt", 'w') as tf:
-            tf.write(text_string)
-            tf.flush()
-            call([EDITOR, tf.name])
+    if note in stored_notes:
+        delete_file = NOTE_DIR.format(note_name=note)
+        recycle_bin = 'deleted/{note_name}.txt'.format(note_name=note)
+        
+        os.rename(delete_file, recycle_bin)
 
-            with open(tf.name) as edited_file:                
-                edited_message = edited_file.read()
-    
-        print edited_message
-        return edited_message.split('\n')
-        
-        
-    except KeyError:
+        stored_data.pop(note, None)
+        save_data(stored_data)
+
+    else:
         #Fuzzy here
-        print 'No such note saved'
+        print 'Not found'
+            
+
+def edit_note(note, stored_data):
+    stored_notes = stored_data.keys()
+    
+    if note in stored_notes:
+        edited_note = NOTE_DIR.format(note_name=note)
         
+        with open(edited_note, 'r') as editing_text:
+            editing_text.flush()
+            call([EDITOR, editing_text.name])
+
+
+        stored_data = update_component(note, stored_data)
+        save_data(stored_data)
         
-        
+        print 'Note updated'
+
+    else:
+        #Fuzzy here
+        print 'Not found'
+
         
