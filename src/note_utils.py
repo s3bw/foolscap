@@ -46,6 +46,7 @@ def view_note(note, stored_data):
 def list_notes(all_notes):
     # change template if more info is wanted
     # add config for changing list style
+    
     basic_template = "+---> {title}\n"
     description_template = "+---> {title}: \n  \\->{description}\n"
     
@@ -84,7 +85,6 @@ def edit_note(note, stored_data):
         with open(edited_note, 'r') as editing_text:
             editing_text.flush()
             call([EDITOR, editing_text.name])
-
 
         stored_data = update_component(note, stored_data)
         save_data(stored_data)

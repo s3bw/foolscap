@@ -152,12 +152,12 @@ def update_component(note, stored_data):
     
     # stored_data[new_name]['times_viewed'] += 1
     
-    description = note_description(content)
+    description = note_description(new_content)
     if description:
-        stored_data[heading]['description'] = description
+        stored_data[new_name]['description'] = description
         
-    tags = note_tags(content)
+    tags = note_tags(new_content)
     if tags:
-        stored_data[heading]['tags'] = tags
+        stored_data[new_name]['tags'] = tags
         
     return stored_data
