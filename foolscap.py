@@ -3,35 +3,39 @@
 
 import sys
 import os
-from itertools import izip
+
 from subprocess import call
 
 
 from src.data_utils import save_data, note_data
-from src.parse_utils import get_sections
+
+from src.note_utils import (
+    save_note,
+    view_note,
+    list_notes,
+)
 
 
-def main(action, string_arg):
-    whole_foolscap = note_data()
+
+def main(action, note):
+    whole_foolscap = note_data() # Have this run an update on data
+    
     
     if action == 'save':
-        # loads notes into memory
-        notepad = load_from_text(string_arg)
-
-        # creates the notes into dict
-        notepad = create_note_element(notepad)
-        
-        # combine to the larger notepad (saves)
-        add_new_notes(notepad, old_data=whole_foolscap)
+        notepad = save_note(note, whole_foolscap)
 
         
-    if action == 'view':        
-        # look for note
-        view_note(whole_foolscap, string_arg)
+    if action == 'view':
+        view_note(whole_foolscap, note)
         
         
     if action == 'list':
-        list_all_notes(whole_foolscap)
+        list_notes(whole_foolscap)
+        
+        
+    if action == 'delete':
+        whole_foolscap.pop(string_arg, None)
+        save_note_data(whole_foolscap)
         
         
     if action == 'edit':
@@ -42,10 +46,6 @@ def main(action, string_arg):
         overwrite_oldnote(edited_note, whole_foolscap)
         
         
-    if action == 'delete':
-        whole_foolscap.pop(string_arg, None)
-        
-        save_note_data(whole_foolscap)
     
     
 if __name__ == '__main__':

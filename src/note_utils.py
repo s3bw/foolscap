@@ -1,25 +1,48 @@
 
+from data_utils import (
+    save_data,
 
-def overwrite_oldnote(edited_note, old_data):
-    print 'overwritten'
-    old_data.update(edited_note)
-    save_note_data(old_data)
+)
 
-def view_note(note, key):
-    print '\n# {heading}'.format(heading=key)
+from parse_utils import (
+    load_text,
+    note_component,
+)
+
+        
+def save_note(new_note, saved_notes):
+    """ Convert note.txt to dict components and save.
     
-    try:
-        for line in note[key]['content']:
+    :param new_note: (string) name of .txt file.
+    :param saved_notes: (dict) of notes in data.
+    """
+    new_note = load_text(new_note)
+    new_component = note_component(new_note)
+        
+    saved_notes.update(new_component)
+    save_data(saved_notes)
+    
+    
+def view_note(stored_data, note):
+    stored_notes = stored_data.keys()
+    
+    if note in stored_notes:
+        text_file = 'notes/{file_name}.txt'
+        note_text = load_text(text_file.format(file_name=note))
+        
+        for line in note_text:
             print line
-    except KeyError:
+        
+    else:
         #Fuzzy here
-        print 'No such note saved'
+        print 'Not found'
+       
 
-
-def list_all_notes(all_notes):
+def list_notes(all_notes):
     # change template if more info is wanted
-    basic_template = "--{title}\n"
-    description_template = "--{title}: \n    {description}\n"
+    # add config for changing list style
+    basic_template = "+---> {title}\n"
+    description_template = "+---> {title}: \n  ->{description}\n"
     
     # print descriptions
     print '\n'
@@ -30,6 +53,15 @@ def list_all_notes(all_notes):
             print basic_template.format(title=key)
             
             
+def overwrite_oldnote(edited_note, old_data):
+    print 'overwritten'
+    old_data.update(edited_note)
+    save_data(old_data)
+
+
+
+
+
 def edit_note(note, key):
     EDITOR = os.environ.get('EDITOR', 'vim')
     text_string =  '\n# {heading}\n'.format(heading=key)
@@ -53,22 +85,6 @@ def edit_note(note, key):
     except KeyError:
         #Fuzzy here
         print 'No such note saved'
-        
-def add_new_notes(new_notes, old_data):
-    new_sections = new_notes.keys()
-    old_sections = old_data.keys()
-    
-    for section in new_sections:
-        suffix = 0
-        if section in old_sections:
-            while '{}_{}'.format(section, str(suffix)) in old_sections:
-                suffix += 1
-            new_name = '{}_{}'.format(section, str(suffix))
-            new_notes[new_name] = new_notes[section]
-            new_notes.pop(section, None)
-    
-    old_data.update(new_notes)
-    save_note_data(old_data)
         
         
         

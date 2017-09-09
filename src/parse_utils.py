@@ -1,13 +1,48 @@
+import os
+from itertools import izip
 
 
+NOTES_DIRECTORY = "notes/"
 
 
-def load_from_text(text):
+def load_text(text):
     with open(text) as notes:
         notes = notes.read()
         return notes.split('\n')
         
-def sections(note):
+        
+def unique_note(heading):
+    saved_notes = [x[:-4] for x in os.listdir(NOTES_DIRECTORY)]
+
+    suffix = 0
+    if heading in saved_notes:
+        while '{}_{}'.format(heading, str(suffix)) in saved_notes:
+            suffix += 1
+        new_name = '{}_{}'.format(heading, str(suffix))
+        heading = new_name
+        
+    return heading
+        
+        
+def save_text(heading, content):
+    heading = unique_note(heading)
+    
+    text_string =  '\n# {heading}\n'.format(heading=heading)
+    for line in content:
+        text_string += '{}\n'.format(line)
+        
+    name_note = '{note_dir}{heading}.txt'.format(
+        note_dir=NOTES_DIRECTORY,
+        heading=heading
+    )
+    
+    with open(name_note, 'w') as save_txt:
+        save_txt.write(text_string)
+        
+    return heading
+    
+
+def get_sections(note):
     _sections = [line[2:] for line in note if line[:2] == '# ']
     return _sections
     
@@ -17,7 +52,23 @@ def pairwise(iterable):
     return izip(a, a)
     
     
-def contents(note):
+def note_description(content):
+    """"        """
+    description = content[1]
+    if description and description[0] == ':':
+        return description
+    return None
+
+    
+def note_tags(contents):
+    """         """
+    tag_line = contents[-1]
+    if tag_line and '{' in tag_line:
+        return tag_line.split(' ')
+    return None
+    
+    
+def get_contents(note):
     content_index = [index for index, line in enumerate(note) if line[:2] == '==']
     
     number_of_notes = len(content_index) / 2
@@ -31,32 +82,35 @@ def contents(note):
         
     return content_list
 
-def create_note_element(note):
+    
+def note_component(note):
     """ Creates the new note data structure.
         Here is where one would add more note information.
         
     :param note: (list) of string containing a single note.
     :return: the dict note element.
     """
-    sections = sections(note)
-    contents = contents(note)
+    sections = get_sections(note)
+    contents = get_contents(note)
     
-    #print sections, contents
     
-    note_element = {}
-    for section, content in zip(sections, contents):
+    note_component = {}
+    for heading, content in zip(sections, contents):
+        heading = save_text(heading, content)
     
-        note_element[section] = {
-            'content':None, 
+        note_component[heading] = {
             'timestamp':None,
         }
         
-        note_element[section]['content'] = content
-        note_element[section]['timestamp'] ='now'
+        note_component[heading]['timestamp'] ='now'
         
-        description = content[1]
-        if description and description[0] == ':':
-            note_element[section]['description'] = description
-        
+        description = note_description(content)
+        if description:
+            note_component[heading]['description'] = description
             
-    return note_element
+        tags = note_tags(content)
+        if tags:
+            note_component[heading]['tags'] = tags
+            
+        
+    return note_component
