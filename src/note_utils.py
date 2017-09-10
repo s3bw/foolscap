@@ -30,6 +30,11 @@ def save_note(new_note, saved_notes):
     
     
 def view_note(note, stored_data):
+    """ Print the note to console if found.
+
+    :param new_note: (string) name of .txt file.
+    :param saved_notes: (dict) of notes in data.
+    """
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
@@ -37,22 +42,30 @@ def view_note(note, stored_data):
         
         for line in note_text:
             print line
-        # iterate the views
+
     else:
         #Fuzzy here
         print 'Not found'
        
 
-def list_notes(all_notes):
+def list_notes(tags, all_notes):
     # change template if more info is wanted
     # add config for changing list style
+
+    if tags is not None:
+        all_notes = { 
+            key: values 
+            for key, values in all_notes.items() 
+            if 'tags' in values and tags in values['tags']
+        }
+
+    if len(all_notes) == 0:
+        print "No note tagged with '{tag}'".format(tag=tags)
     
     basic_template = "+---> {title}\n"
     description_template = "   \\->  {description}\n"
     tags_template = " --  {tags}\n"
     
-    # print descriptions
-    print '\n'
     for key, values in all_notes.items():
         if 'description' in values:
             print basic_template.format(title=key),
@@ -65,7 +78,12 @@ def list_notes(all_notes):
             print basic_template.format(title=key)
 
             
-def delete_note(note, stored_data, recycle=True):
+def delete_note(note, stored_data):
+    """ Delete a note stored in foolscap
+    
+    :param new_note: (string) name of .txt file.
+    :param saved_notes: (dict) of notes in data.
+    """
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
@@ -83,6 +101,11 @@ def delete_note(note, stored_data, recycle=True):
             
 
 def edit_note(note, stored_data):
+    """ Edit the note from data in vim.
+    
+    :param new_note: (string) name of .txt file.
+    :param saved_notes: (dict) of notes in data.
+    """
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
