@@ -48,13 +48,19 @@ def list_notes(all_notes):
     # add config for changing list style
     
     basic_template = "+---> {title}\n"
-    description_template = "+---> {title}: \n  \\->{description}\n"
+    description_template = "   \\->  {description}\n"
+    tags_template = " --  {tags}\n"
     
     # print descriptions
     print '\n'
     for key, values in all_notes.items():
         if 'description' in values:
-            print description_template.format(title=key, description=values['description'])
+            print basic_template.format(title=key),
+            print description_template.format(description=values['description'])
+            
+            # if 'tags' in values:
+                # print tags_template.format(tags=(' '.join(values['tags'])))
+            
         else:
             print basic_template.format(title=key)
 
