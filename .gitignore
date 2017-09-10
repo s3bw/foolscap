@@ -1,6 +1,7 @@
 *.txt
 *.pkl
 *.pyc
+*.swp
 
 test.py
 
