@@ -43,9 +43,19 @@ def view_note(note, stored_data):
         print 'Not found'
        
 
-def list_notes(all_notes):
+def list_notes(note, all_notes):
     # change template if more info is wanted
     # add config for changing list style
+
+    if note is not None:
+        all_notes = { 
+            key: values 
+            for key, values in all_notes.items() 
+            if 'tags' in values and note in values['tags']
+        }
+
+    if len(all_notes) == 0:
+        print "No note tagged with '{tag}'".format(tag=note)
     
     basic_template = "+---> {title}\n"
     description_template = "   \\->  {description}\n"
