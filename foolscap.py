@@ -47,8 +47,9 @@ if __name__ == '__main__':
     # We could probably do this better by picking and removing flags
     # from the list
 
+    filter_tags = None
+
     if action == 'list' or action == 'ls':
-        filter_tags = None
         if len(sys.argv) > 2:
             if '-' ==  sys.argv[2][0]:
                 flag = sys.argv[2]
