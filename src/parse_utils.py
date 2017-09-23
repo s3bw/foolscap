@@ -6,6 +6,9 @@ from data_utils import save_data
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
 
+NOTE_DIR = '\\notes\\'
+REAL_DIR = SCRIPT_DIR + NOTE_DIR
+
 NOTE_STORAGE = '\\notes\\{note_name}.txt'
 REAL_NOTE = SCRIPT_DIR + NOTE_STORAGE
 
@@ -16,7 +19,7 @@ def load_text(text):
         
         
 def unique_note(heading):
-    saved_notes = [filename for filename in os.listdir(REAL_NOTE_DIR)]
+    saved_notes = [filename for filename in os.listdir(REAL_DIR)]
 
     suffix = 0
     if '{heading}.txt'.format(heading=heading) in saved_notes:

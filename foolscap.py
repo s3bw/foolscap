@@ -29,9 +29,11 @@ def main(action, note, filter_tags):
     if action == 'delete' or action == '-d':
         delete_note(note, whole_foolscap)
 
+
     if action == 'edit' or action == '-e':
         edited_note = edit_note(note, whole_foolscap)
-        
+
+
     print 'Action called {}'.format(action)
         
     
