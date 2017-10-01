@@ -34,7 +34,7 @@ def main(action, note, filter_tags):
         edited_note = edit_note(note, whole_foolscap)
 
 
-    print 'Action called {}'.format(action)
+    print('Action called {}'.format(action))
         
     
     

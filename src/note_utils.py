@@ -1,11 +1,11 @@
 import os
 from subprocess import call
 
-from data_utils import (
+from .data_utils import (
     save_data,
 )
 
-from parse_utils import (
+from .parse_utils import (
     load_text,
     note_component,
     update_component,
@@ -48,11 +48,11 @@ def view_note(note, stored_data):
         note_text = load_text(REAL_NOTE.format(note_name=note))
         
         for line in note_text:
-            print line
+            print(line)
 
     else:
         #Fuzzy here
-        print 'Not found'
+        print('Not found')
        
 
 def list_notes(tags, all_notes):
@@ -67,7 +67,7 @@ def list_notes(tags, all_notes):
         }
 
     if len(all_notes) == 0:
-        print "No note tagged with '{tag}'".format(tag=tags)
+        print("No note tagged with '{tag}'".format(tag=tags))
     
     basic_template = "+---> {title}\n"
     description_template = "   \\->  {description}\n"
@@ -75,14 +75,14 @@ def list_notes(tags, all_notes):
     
     for key, values in all_notes.items():
         if 'description' in values:
-            print basic_template.format(title=key),
-            print description_template.format(description=values['description'])
+            print(basic_template.format(title=key), end=' ')
+            print(description_template.format(description=values['description']))
             
             # if 'tags' in values:
                 # print tags_template.format(tags=(' '.join(values['tags'])))
             
         else:
-            print basic_template.format(title=key)
+            print(basic_template.format(title=key))
 
             
 def delete_note(note, stored_data):
@@ -104,7 +104,7 @@ def delete_note(note, stored_data):
 
     else:
         #Fuzzy here
-        print 'Not found'
+        print('Not found')
             
 
 def edit_note(note, stored_data):
@@ -125,10 +125,10 @@ def edit_note(note, stored_data):
         stored_data = update_component(note, stored_data)
         save_data(stored_data)
         
-        print 'Note updated'
+        print('Note updated')
 
     else:
         #Fuzzy here
-        print 'Not found'
+        print('Not found')
 
         

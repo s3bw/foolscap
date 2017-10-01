@@ -1,7 +1,6 @@
 import os
-from itertools import izip
 
-from data_utils import save_data
+from .data_utils import save_data
 
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
@@ -62,7 +61,7 @@ def get_sections(note):
     
 def pairwise(iterable):
     a = iter(iterable)
-    return izip(a, a)
+    return zip(a, a)
     
     
 def note_description(content):
@@ -142,7 +141,7 @@ def update_component(note, stored_data):
     new_content = get_contents(note_edited)[0]
     
     if new_name != note and new_name in stored_notes:
-        print 'Warning!: Edited note title already exists!'
+        print('Warning!: Edited note title already exists!')
         new_name = unique_note(new_name)
     
     if new_name != note and new_name not in stored_notes:
