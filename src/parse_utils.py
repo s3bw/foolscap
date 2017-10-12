@@ -11,6 +11,7 @@ REAL_DIR = SCRIPT_DIR + NOTE_DIR
 NOTE_STORAGE = '\\notes\\{note_name}.txt'
 REAL_NOTE = SCRIPT_DIR + NOTE_STORAGE
 
+
 def load_text(text):
     with open(text) as notes:
         notes = notes.read()

@@ -8,6 +8,7 @@ from src.note_utils import (
     list_notes,
     delete_note,
     edit_note,
+    new_note,
 )
 
 
@@ -31,7 +32,11 @@ def main(action, note, filter_tags):
 
 
     if action == 'edit' or action == '-e':
-        edited_note = edit_note(note, whole_foolscap)
+        edit_note(note, whole_foolscap)
+
+
+    if action == 'new' or action == 'n':
+        new_note(whole_foolscap)
 
 
     print('Action called {}'.format(action))
@@ -51,7 +56,7 @@ if __name__ == '__main__':
 
     filter_tags = None
 
-    if action == 'list' or action == 'ls':
+    if action == 'list' or action == 'ls' or action == 'new':
         if len(sys.argv) > 2:
             if '-' ==  sys.argv[2][0]:
                 flag = sys.argv[2]

@@ -1,4 +1,5 @@
 import os
+import tempfile
 from subprocess import call
 
 from .data_utils import (
@@ -21,6 +22,8 @@ RECYCLE_BIN = '\\deleted\\{note_name}.txt'
 REAL_BIN = SCRIPT_DIR + RECYCLE_BIN
 
 EDITOR = os.environ.get('EDITOR', 'vim')
+
+NEW_NOTE_TEMPLATE = "# title\n==========\n: description\nMake sure you change the title!\n\n\n{tag}\n=========="
 
 
 def save_note(new_note, saved_notes):
@@ -110,8 +113,8 @@ def delete_note(note, stored_data):
 def edit_note(note, stored_data):
     """ Edit the note from data in vim.
     
-    :param new_note: (string) name of .txt file.
-    :param saved_notes: (dict) of notes in data.
+    :param note: (string) name of .txt file.
+    :param stored_data: (dict) of notes in data.
     """
     stored_notes = stored_data.keys()
     
@@ -131,4 +134,25 @@ def edit_note(note, stored_data):
         #Fuzzy here
         print('Not found')
 
+
+def new_note(stored_notes):
+    """ Create a new note in vim from template.
+
+    :param stored_notes: (dict) of notes in data.
+    """
+    with tempfile.NamedTemporaryFile(mode='r+', suffix=".tmp") as new_text:
+        new_text.write(NEW_NOTE_TEMPLATE)
+
+        new_text.flush()
+        call([EDITOR, new_text.name])
+        new_text.seek(0)
         
+        new_text = new_text.read().split('\n')
+
+        # don't write unchanged notes.
+        if '# title' != new_text[0]:
+            new_component = note_component(new_text)
+            stored_notes.update(new_component)
+            save_data(stored_notes)
+        else:
+            print('Aborted New Note')
