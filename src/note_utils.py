@@ -99,7 +99,12 @@ def delete_note(note, stored_data):
     if note in stored_notes:
         delete_file = NOTE.format(note_name=note)
         recycle_bin = BIN.format(note_name=note)
-        
+        d = 1
+
+        while os.path.isfile(recycle_bin):
+            recycle_bin = BIN.format(note_name='{} ({})'.format(note, str(d)))
+            d += 1
+
         os.rename(delete_file, recycle_bin)
 
         stored_data.pop(note, None)
