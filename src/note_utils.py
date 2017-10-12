@@ -16,10 +16,10 @@ from .parse_utils import (
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
 
 NOTE_STORAGE = '\\notes\\{note_name}.txt'
-REAL_NOTE = SCRIPT_DIR + NOTE_STORAGE
+NOTE = SCRIPT_DIR + NOTE_STORAGE
 
 RECYCLE_BIN = '\\deleted\\{note_name}.txt'
-REAL_BIN = SCRIPT_DIR + RECYCLE_BIN
+BIN = SCRIPT_DIR + RECYCLE_BIN
 
 EDITOR = os.environ.get('EDITOR', 'vim')
 
@@ -48,7 +48,7 @@ def view_note(note, stored_data):
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
-        note_text = load_text(REAL_NOTE.format(note_name=note))
+        note_text = load_text(NOTE.format(note_name=note))
         
         for line in note_text:
             print(line)
@@ -97,8 +97,8 @@ def delete_note(note, stored_data):
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
-        delete_file = REAL_NOTE.format(note_name=note)
-        recycle_bin = REAL_BIN.format(note_name=note)
+        delete_file = NOTE.format(note_name=note)
+        recycle_bin = BIN.format(note_name=note)
         
         os.rename(delete_file, recycle_bin)
 
@@ -119,7 +119,7 @@ def edit_note(note, stored_data):
     stored_notes = stored_data.keys()
     
     if note in stored_notes:
-        edited_note = REAL_NOTE.format(note_name=note)
+        edited_note = NOTE.format(note_name=note)
         
         with open(edited_note, 'r') as editing_text:
             editing_text.flush()
@@ -156,3 +156,4 @@ def new_note(stored_notes):
             save_data(stored_notes)
         else:
             print('Aborted New Note')
+
