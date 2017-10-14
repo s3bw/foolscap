@@ -172,6 +172,8 @@ def move_lines(note, from_note, stored_data):
     :param stored_data: (dict) of notes in data.
     """
     stored_notes = stored_data.keys()
+    if note not in stored_notes:
+        print('{} not found.'.format(note))
 
     if from_note in stored_notes:
         edited_note = NOTE.format(note_name=from_note)
@@ -181,7 +183,8 @@ def move_lines(note, from_note, stored_data):
             call([EDITOR, editing_text.name])
 
         stored_data = shift_lines(from_note, note)
-
+    else:
+        print('{} not found.'.format(from_note))
 
 
 
