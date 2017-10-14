@@ -9,6 +9,7 @@ from src.note_utils import (
     delete_note,
     edit_note,
     new_note,
+    move_lines,
 )
 
 
@@ -37,6 +38,11 @@ def main(action, note, filter_tags):
 
     if action == 'new' or action == 'n':
         new_note(whole_foolscap)
+
+
+    if action == 'move-to':
+        from_note = input('Move lines from? ')
+        move_lines(note, from_note, whole_foolscap)
 
 
     print('Action called {}'.format(action))
