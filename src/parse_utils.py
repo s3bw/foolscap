@@ -41,8 +41,7 @@ def save_text(heading, content):
     heading = unique_note(heading)
     
     text_string =  '\n# {heading}\n'.format(heading=heading)
-    for line in content:
-        text_string += '{}\n'.format(line)
+    text_string += '\n'.join(content)
         
     name_note = REAL_NOTE.format(
         note_name=heading
@@ -59,6 +58,16 @@ def get_sections(note):
     _sections = [line[2:] for line in note if line[:2] == '# ']
     return _sections
     
+
+def get_moving_lines(note):
+    _lines = [line for line in note if line[:1] == '>']
+    return _lines
+
+
+def remove_moving_lines(note):
+    _lines = [line for line in note if line[:1] != '>']
+    return _lines
+
     
 def pairwise(iterable):
     a = iter(iterable)
@@ -106,8 +115,7 @@ def note_component(note_lines):
     """
     sections = get_sections(note_lines)
     contents = get_contents(note_lines)
-    
-    
+        
     note_component = {}
     for heading, content in zip(sections, contents):
         heading = save_text(heading, content)
@@ -126,10 +134,35 @@ def note_component(note_lines):
         if tags:
             note_component[heading]['tags'] = tags
             
-        
     return note_component
 
+
+def shift_lines(from_note, note):
+    path_from = REAL_NOTE.format(note_name=from_note)
+    _from = load_text(path_from)
+
+    move_lines = get_moving_lines(_from)
+
+    new_from = get_contents(_from)[0]
+
+    new_from = remove_moving_lines(new_from)
     
+    os.remove(path_from)
+    save_text(from_note, new_from)
+    
+    path_to = REAL_NOTE.format(note_name=note)
+    _to = load_text(path_to)
+    _to = get_contents(_to)[0]
+    
+    new_line_index = len(_to) - 2
+    
+    # Insert new lines into 'to' note.
+    _to[new_line_index:new_line_index] = move_lines
+    
+    os.remove(path_to)
+    save_text(note, _to)
+
+
 def update_component(note, stored_data):
     stored_notes = stored_data.keys()
 
@@ -165,3 +198,4 @@ def update_component(note, stored_data):
         stored_data[new_name]['tags'] = tags
         
     return stored_data
+

@@ -9,6 +9,7 @@ from .data_utils import (
 from .parse_utils import (
     load_text,
     note_component,
+    shift_lines,
     update_component,
 )
 
@@ -161,4 +162,26 @@ def new_note(stored_notes):
             save_data(stored_notes)
         else:
             print('Aborted New Note')
+
+
+def move_lines(note, from_note, stored_data):
+    """ Move selected lines from a note to another note.
+
+    :parma note: (string) title of note to move lines to.
+    :param from_note: (string) title of note to take lines from.
+    :param stored_data: (dict) of notes in data.
+    """
+    stored_notes = stored_data.keys()
+
+    if from_note in stored_notes:
+        edited_note = NOTE.format(note_name=from_note)
+        
+        with open(edited_note, 'r') as editing_text:
+            editing_text.flush()
+            call([EDITOR, editing_text.name])
+
+        stored_data = shift_lines(from_note, note)
+
+
+
 
