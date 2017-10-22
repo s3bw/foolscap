@@ -14,8 +14,8 @@ from parse_text import (
 )
 
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
-
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+print(SCRIPT_DIR)
 NOTE_STORAGE = '\\notes\\{note_name}.txt'
 NOTE = SCRIPT_DIR + NOTE_STORAGE
 
