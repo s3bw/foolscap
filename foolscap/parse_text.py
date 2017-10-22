@@ -1,6 +1,6 @@
 import os
 
-from .data_utils import save_data
+from note_data import save_data
 
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]

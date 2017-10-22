@@ -2,11 +2,11 @@ import os
 import tempfile
 from subprocess import call
 
-from .data_utils import (
+from note_data import (
     save_data,
 )
 
-from .parse_utils import (
+from parse_text import (
     load_text,
     note_component,
     shift_lines,
