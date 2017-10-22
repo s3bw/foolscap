@@ -13,6 +13,7 @@ setup(
     name='foolscap',
     version='0.0.1',
     author='GiantsLoveDeathMetal',
+    author_email='s.williamswynn.mail@gmail.com'
     packages=find_packages(
         SOURCE,
         exclude='tests',
