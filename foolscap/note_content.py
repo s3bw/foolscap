@@ -175,13 +175,14 @@ def new_note(stored_notes):
             print('Aborted New Note')
 
 
-def move_lines(note, from_note, stored_data):
+def move_lines(note, stored_data):
     """ Move selected lines from a note to another note.
 
     :parma note: (string) title of note to move lines to.
-    :param from_note: (string) title of note to take lines from.
     :param stored_data: (dict) of notes in data.
     """
+    from_note = input('Move lines from? ')
+
     stored_notes = stored_data.keys()
     if note not in stored_notes:
         print('{} not found.'.format(note))
