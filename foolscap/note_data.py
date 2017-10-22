@@ -1,7 +1,7 @@
 import os
 import pickle
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 DATA_STORAGE = '\\data\\note_data.pkl'
 REAL_DATA = SCRIPT_DIR + DATA_STORAGE

@@ -2,11 +2,11 @@ import os
 import tempfile
 from subprocess import call
 
-from .data_utils import (
+from note_data import (
     save_data,
 )
 
-from .parse_utils import (
+from parse_text import (
     load_text,
     note_component,
     shift_lines,
@@ -14,7 +14,7 @@ from .parse_utils import (
 )
 
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))[:-4]
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 NOTE_STORAGE = '\\notes\\{note_name}.txt'
 NOTE = SCRIPT_DIR + NOTE_STORAGE
