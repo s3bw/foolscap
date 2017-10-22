@@ -18,8 +18,8 @@ FUNCTION_MAP = {
     '-s': save_note,
     'view': view_note,
     '-v': view_note,
-    'list': list_note,
-    '-ls': list_note,
+    'list': list_notes,
+    '-ls': list_notes,
     'delete': delete_note,
     '-d': delete_note,
     'edit': edit_note,
@@ -45,12 +45,16 @@ parser.add_argument(
 def main():
     args = parser.parse_args()
 
-    action = FUNCTION_MAP[args.command]
+    command = args.command
+    action = FUNCTION_MAP[command]
     note_args = args.positional
     whole_foolscap = note_data()
 
+    print(note_args)
     if note_args:
         action(note_args, whole_foolscap)
+    elif command == 'list' or command == 'ls':
+        action(None, whole_foolscap)
     else:
         action(whole_foolscap)
 
