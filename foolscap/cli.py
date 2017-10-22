@@ -50,7 +50,6 @@ def main():
     note_args = args.positional
     whole_foolscap = note_data()
 
-    print(note_args)
     if note_args:
         action(note_args, whole_foolscap)
     elif command == 'list' or command == 'ls':
