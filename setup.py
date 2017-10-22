@@ -20,7 +20,7 @@ setup(
     package_dir={'': SOURCE},
     entry_points={
         'console_scripts' : [
-            'fscap=foolscap.cli:main',
+            'fscap=cli:main',
         ]
     },
     install_requires=[],
