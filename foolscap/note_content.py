@@ -5,14 +5,13 @@ from subprocess import call
 from note_data import (
     save_data,
 )
-
 from parse_text import (
     load_text,
     note_component,
     shift_lines,
     update_component,
 )
-
+from subprocess_utils import edit_in_vim
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -21,8 +20,6 @@ NOTE = SCRIPT_DIR + NOTE_STORAGE
 
 RECYCLE_BIN = '\\deleted\\{note_name}.txt'
 BIN = SCRIPT_DIR + RECYCLE_BIN
-
-EDITOR = os.environ.get('EDITOR', 'vim')
 
 NEW_NOTE_TEMPLATE = """# title
 ==========
@@ -126,7 +123,7 @@ def delete_note(note, stored_data):
         # Fuzzy here
         print('Not found')
 
-
+# Refactor the subprocess
 def edit_note(note, stored_data):
     """ Edit the note from data in vim.
 
@@ -139,8 +136,7 @@ def edit_note(note, stored_data):
         edited_note = NOTE.format(note_name=note)
 
         with open(edited_note, 'r') as editing_text:
-            editing_text.flush()
-            call([EDITOR, editing_text.name])
+            edit_in_vim(editing_text)
 
         stored_data = update_component(note, stored_data)
         save_data(stored_data)
@@ -160,8 +156,7 @@ def new_note(stored_notes):
     with tempfile.NamedTemporaryFile(mode='r+', suffix=".tmp") as new_text:
         new_text.write(NEW_NOTE_TEMPLATE)
 
-        new_text.flush()
-        call([EDITOR, new_text.name])
+        edit_in_vim(new_text)
         new_text.seek(0)
 
         new_text = new_text.read().split('\n')
@@ -191,8 +186,7 @@ def move_lines(note, stored_data):
         edited_note = NOTE.format(note_name=from_note)
 
         with open(edited_note, 'r') as editing_text:
-            editing_text.flush()
-            call([EDITOR, editing_text.name])
+            edit_in_vim(editing_text)
 
         stored_data = shift_lines(from_note, note)
     else:
