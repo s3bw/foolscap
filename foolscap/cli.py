@@ -1,4 +1,3 @@
-import sys
 import argparse
 
 from note_data import note_data
@@ -56,5 +55,4 @@ def main():
         action(None, whole_foolscap)
     else:
         action(whole_foolscap)
-
 

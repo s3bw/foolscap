@@ -13,13 +13,14 @@ setup(
     name='foolscap',
     version='0.0.1',
     author='GiantsLoveDeathMetal',
+    author_email='s.williamswynn.mail@gmail.com',
     packages=find_packages(
         SOURCE,
         exclude='tests',
     ),
     package_dir={'': SOURCE},
     entry_points={
-        'console_scripts' : [
+        'console_scripts': [
             'fscap=cli:main',
         ]
     },
@@ -33,4 +34,5 @@ setup(
     ],
     include_package_data=False,
     zip_safe=False,
+    setup_requires=['pytest-runner'],
 )
