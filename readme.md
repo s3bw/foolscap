@@ -1,5 +1,7 @@
 # Foolscap Note Manager
 
+![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
+
 The foolscap note manager allows a user to track and maintain notes over many topics.
 
 ---
