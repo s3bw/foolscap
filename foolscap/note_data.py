@@ -1,12 +1,13 @@
 import os
 import pickle
 
+
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
-DATA_STORAGE = '\\data\\note_data.pkl'
-REAL_DATA = SCRIPT_DIR + DATA_STORAGE
+DATA_STORAGE = os.path.join('data', 'note_data.pkl')
+REAL_DATA = os.path.join(SCRIPT_DIR, DATA_STORAGE)
 
-
+# Write example data:
 def save_data(data):
     """:param data: (dict) containing all notes."""
     with open(REAL_DATA, 'wb') as output:
