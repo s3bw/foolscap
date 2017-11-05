@@ -13,13 +13,15 @@ from parse_text import (
 )
 from subprocess_utils import edit_in_vim
 
+
+# These could all move
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
-NOTE_STORAGE = '\\notes\\{note_name}.txt'
-NOTE = SCRIPT_DIR + NOTE_STORAGE
+NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
+NOTE = os.path.join(SCRIPT_DIR + NOTE_STORAGE)
 
-RECYCLE_BIN = '\\deleted\\{note_name}.txt'
-BIN = SCRIPT_DIR + RECYCLE_BIN
+RECYCLE_BIN = os.path.join('deleted', '{note_name}.txt')
+BIN = os.path.join(SCRIPT_DIR + RECYCLE_BIN)
 
 NEW_NOTE_TEMPLATE = """# title
 ==========
@@ -123,7 +125,7 @@ def delete_note(note, stored_data):
         # Fuzzy here
         print('Not found')
 
-# Refactor the subprocess
+
 def edit_note(note, stored_data):
     """ Edit the note from data in vim.
 

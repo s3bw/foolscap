@@ -3,16 +3,17 @@ import os
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
-NOTE_DIR = '\\notes\\'
-REAL_DIR = SCRIPT_DIR + NOTE_DIR
+NOTE_DIR = 'notes'
+REAL_DIR = os.path.join(SCRIPT_DIR, NOTE_DIR)
 
-NOTE_STORAGE = '\\notes\\{note_name}.txt'
-REAL_NOTE = SCRIPT_DIR + NOTE_STORAGE
+NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
+REAL_NOTE = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
 
 
 def load_text(text):
     with open(text) as notes:
         notes = notes.read()
+        # Handle for dos and unix
         return notes.split('\n')
 
 
@@ -52,7 +53,7 @@ def save_text(heading, content):
 
 
 def get_sections(note):
-    # Section parsing needs improvement
+    # Section parsing needs improvement (regex)
     _sections = [line[2:] for line in note if line[:2] == '# ']
     return _sections
 
