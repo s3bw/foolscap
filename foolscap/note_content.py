@@ -2,9 +2,7 @@ import os
 import tempfile
 from subprocess import call
 
-from note_data import (
-    save_data,
-)
+from note_data import save_data
 from parse_text import (
     load_text,
     note_component,
@@ -12,18 +10,11 @@ from parse_text import (
     update_component,
 )
 from subprocess_utils import edit_in_vim
+from file_paths import NOTES, BIN
 
 
-# These could all move
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-
-NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
-NOTE = os.path.join(SCRIPT_DIR + NOTE_STORAGE)
-
-RECYCLE_BIN = os.path.join('deleted', '{note_name}.txt')
-BIN = os.path.join(SCRIPT_DIR + RECYCLE_BIN)
-
-NEW_NOTE_TEMPLATE = """# title
+NEW_NOTE_TEMPLATE = """\
+# title
 ==========
 : description
 Make sure you change the title!
@@ -55,7 +46,7 @@ def view_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        note_text = load_text(NOTE.format(note_name=note))
+        note_text = load_text(NOTES.format(note_name=note))
 
         for line in note_text:
             print(line)
@@ -108,7 +99,7 @@ def delete_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        delete_file = NOTE.format(note_name=note)
+        delete_file = NOTES.format(note_name=note)
         recycle_bin = BIN.format(note_name=note)
         d = 1
 
@@ -135,7 +126,7 @@ def edit_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        edited_note = NOTE.format(note_name=note)
+        edited_note = NOTES.format(note_name=note)
 
         with open(edited_note, 'r') as editing_text:
             edit_in_vim(editing_text)
@@ -185,7 +176,7 @@ def move_lines(note, stored_data):
         print('{} not found.'.format(note))
 
     if from_note in stored_notes:
-        edited_note = NOTE.format(note_name=from_note)
+        edited_note = NOTES.format(note_name=from_note)
 
         with open(edited_note, 'r') as editing_text:
             edit_in_vim(editing_text)

@@ -1,13 +1,6 @@
 import os
 
-
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-
-NOTE_DIR = 'notes'
-REAL_DIR = os.path.join(SCRIPT_DIR, NOTE_DIR)
-
-NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
-REAL_NOTE = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
+from file_paths import NOTE_DIR, NOTES
 
 
 def load_text(text):
@@ -18,7 +11,7 @@ def load_text(text):
 
 
 def unique_note(heading):
-    saved_notes = [filename for filename in os.listdir(REAL_DIR)]
+    saved_notes = [filename for filename in os.listdir(NOTE_DIR)]
 
     suffix = 0
     if '{heading}.txt'.format(heading=heading) in saved_notes:
@@ -42,7 +35,7 @@ def save_text(heading, content):
     text_string = '\n# {heading}\n'.format(heading=heading)
     text_string += '\n'.join(content)
 
-    name_note = REAL_NOTE.format(
+    name_note = NOTES.format(
         note_name=heading
     )
 
@@ -140,7 +133,7 @@ def note_component(note_lines):
 
 
 def shift_lines(from_note, note):
-    path_from = REAL_NOTE.format(note_name=from_note)
+    path_from = NOTES.format(note_name=from_note)
     _from = load_text(path_from)
 
     move_lines = get_moving_lines(_from)
@@ -152,7 +145,7 @@ def shift_lines(from_note, note):
     os.remove(path_from)
     save_text(from_note, new_from)
 
-    path_to = REAL_NOTE.format(note_name=note)
+    path_to = NOTES.format(note_name=note)
     _to = load_text(path_to)
     _to = get_contents(_to)[0]
 
@@ -168,7 +161,7 @@ def shift_lines(from_note, note):
 def update_component(note, stored_data):
     stored_notes = stored_data.keys()
 
-    note_name = REAL_NOTE.format(
+    note_name = NOTES.format(
         note_name=note
     )
     note_edited = load_text(note_name)
