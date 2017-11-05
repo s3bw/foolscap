@@ -24,7 +24,7 @@ setup(
             'fscap=cli:main',
         ]
     },
-    install_requires=[],
+    install_requires=['mock'],
     classifiers=[
         "Environment :: Console",
         "Operation System :: OS Independent",
