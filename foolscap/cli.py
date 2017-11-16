@@ -11,7 +11,7 @@ from note_content import (
     move_lines,
 )
 
-
+# map <> {'-s': 'save'}
 FUNCTION_MAP = {
     'save': save_note,
     'view': view_note,
