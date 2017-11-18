@@ -93,10 +93,15 @@ def delete_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        delete_file = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
-        recycle_bin = unique_heading(note, folder='IN_BIN')
+        folders = NOTE_FOLDERS
 
-        os.rename(delete_file, recycle_bin)
+        delete_file = folders['GET_NOTE'].format(note_name=note)
+
+        recycle_bin = unique_heading(note, folder='IN_BIN')
+        bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
+
+        print(recycle_bin, bin_note)
+        os.rename(delete_file, bin_note)
 
         stored_data.pop(note, None)
         save_data(stored_data)
