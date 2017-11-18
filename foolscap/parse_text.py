@@ -1,7 +1,11 @@
 import os
+import tempfile
 
-from file_paths import NOTE_DIR, NOTES
+from file_paths import NOTE_FOLDERS # NOTE_DIR, NOTES
 
+
+
+from subprocess_utils import edit_in_vim
 
 def load_text(text):
     with open(text) as notes:
@@ -10,12 +14,40 @@ def load_text(text):
         return notes.split('\n')
 
 
-def unique_note(heading):
-    saved_notes = [filename for filename in os.listdir(NOTE_DIR)]
+NEW_NOTE_TEMPLATE = """\
+# title
+==========
+: description
+Make sure you change the title!
+
+
+{tag}
+=========="""
+
+
+def edit_text(editing=None):
+    # Maybe this can be split into two functions in subprocess_utils
+
+    if not editing:
+        with tempfile.NamedTemporaryFile(mode='r+', suffix='.tmp') as editing_text:
+            editing_text.write(NEW_NOTE_TEMPLATE)
+            edit_in_vim(editing_text)
+            editing_text.seek(0)
+
+            return editing_text.read().split('\n')
+
+    with open(editing, 'r') as editing_text:
+        edit_in_vim(editing_text)
+
+
+def unique_heading(heading, folder='ALL_NOTES'):
+    check_directory = NOTE_FOLDERS[folder]
+
+    all_notes = [filename for filename in os.listdir(check_directory)]
 
     suffix = 0
-    if '{heading}.txt'.format(heading=heading) in saved_notes:
-        while '{}_{}.txt'.format(heading, str(suffix)) in saved_notes:
+    if '{heading}.txt'.format(heading=heading) in all_notes:
+        while '{}_{}.txt'.format(heading, str(suffix)) in all_notes:
             suffix += 1
 
         new_name = '{}_{}'.format(heading, str(suffix))
@@ -24,31 +56,26 @@ def unique_note(heading):
     return heading
 
 
-def save_text(heading, content):
+def save_text(note_title, content):
     """ This saves the note as a text file.
 
-    :param heading: (string) the heading of the note used as filename.
-    :param content: (list) containing the lines of the note.
+    :param str note_title: the title of the note used as filename.
+    :param list[str] content: containing the lines of the note.
     """
-    heading = unique_note(heading)
-
-    text_string = '\n# {heading}\n'.format(heading=heading)
+    text_string = '\n# {heading}\n'.format(heading=note_title)
     text_string += '\n'.join(content)
 
-    name_note = NOTES.format(
-        note_name=heading
+    name_note = NOTE_FOLDERS['GET_NOTE'].format(
+        note_name=note_title
     )
 
     with open(name_note, 'w') as save_txt:
         save_txt.write(text_string)
 
-    return heading
 
-
-def get_sections(note):
-    # Section parsing needs improvement (regex)
-    _sections = [line[2:] for line in note if line[:2] == '# ']
-    return _sections
+def get_title(note):
+    # title parsing needs improvement (regex)
+    return [line[2:] for line in note if line[:2] == '# ']
 
 
 def get_moving_lines(note):
@@ -62,6 +89,16 @@ def remove_moving_lines(note):
 
 
 def pairwise(iterable):
+    """ Pairs even length iterables.
+
+    Returns:
+        (:obj:list[tuple]) paired tuples
+
+    Example:
+        >>> pairwise([1, 2, 3, 4])
+        [(1, 2), (3, 4)]
+    """
+    # Do I throw error for odd length iterable? 
     a = iter(iterable)
     return zip(a, a)
 
@@ -84,94 +121,101 @@ def note_tags(contents):
 
 
 def get_contents(note):
+    """ Get note content.
+    
+    Looks for '==' lines and extract only that which
+        is between them.
+
+    parse_text.pairwise in this case, pairs sets of content-indexes
+    """
     content_index = [
         index
         for index, line
         in enumerate(note)
         if line[:2] == '=='
     ]
-
-    content_list = []
+    # This should only deal with one Note, split notes then get content.
     indexes = pairwise(content_index)
 
-    for start, end in indexes:
-        content = note[start:end+1]
-        content_list.append(content)
+    # for start, end in indexes:
+    content = [note[start:end+1] for start, end in indexes]
 
-    return content_list
+    return content
 
 
 def note_component(note_lines):
     """ Creates the new note data structure.
         Here is where one would add more note information.
 
-    :param note: (list) of string containing a single note.
+    :param list[str] note: containing a single note.
     :return: the dict note element.
     """
-    sections = get_sections(note_lines)
+    titles = get_title(note_lines)
     contents = get_contents(note_lines)
 
+    # This loops through multiple notes
     note_component = {}
-    for heading, content in zip(sections, contents):
-        heading = save_text(heading, content)
+    for note_title, content in zip(titles, contents):
+        title = unique_heading(note_title)
+        save_text(title, content)
 
-        note_component[heading] = {
+        note_component[title] = {
             'timestamp': None,
         }
 
-        note_component[heading]['timestamp'] = 'now'
+        note_component[title]['timestamp'] = 'now'
 
         description = note_description(content)
         if description:
-            note_component[heading]['description'] = description
+            note_component[title]['description'] = description
 
         tags = note_tags(content)
         if tags:
-            note_component[heading]['tags'] = tags
+            note_component[title]['tags'] = tags
 
     return note_component
 
 
-def shift_lines(from_note, note):
-    path_from = NOTES.format(note_name=from_note)
-    _from = load_text(path_from)
+def shift_lines(name_from_note, name_to_note):
+    # load text, return note, delete, save new
+    name_note = NOTE_FOLDERS['GET_NOTE']
 
-    move_lines = get_moving_lines(_from)
-
-    new_from = get_contents(_from)[0]
-
-    new_from = remove_moving_lines(new_from)
-
+    path_from = name_note.format(note_name=name_from_note)
+    take_from_note = load_text(path_from)
     os.remove(path_from)
-    save_text(from_note, new_from)
 
-    path_to = NOTES.format(note_name=note)
-    _to = load_text(path_to)
-    _to = get_contents(_to)[0]
+    replace_note = get_contents(take_from_note)[0]
+    replace_note = remove_moving_lines(replace_note)
+    save_text(name_from_note, replace_note)
 
-    new_line_index = len(_to) - 2
+    #load text, return note, apply new, delete old, save new
+    path_to = name_note.format(note_name=name_to_note)
+    apply_to_note = load_text(path_to)
+    apply_to_note = get_contents(apply_to_note)[0]
 
-    # Insert new lines into 'to' note.
-    _to[new_line_index:new_line_index] = move_lines
+    line_index = len(apply_to_note) - 2
+
+    # Insert moved lines into other note.
+    apply_to_note[line_index:line_index] = get_moving_lines(take_from_note)
 
     os.remove(path_to)
-    save_text(note, _to)
+    save_text(name_to_note, apply_to_note)
 
 
 def update_component(note, stored_data):
     stored_notes = stored_data.keys()
 
-    note_name = NOTES.format(
+    note_name = NOTE_FOLDERS['GET_NOTE'].format(
         note_name=note
     )
     note_edited = load_text(note_name)
 
-    new_name = get_sections(note_edited)[0]
+    new_name = get_title(note_edited)[0]
     new_content = get_contents(note_edited)[0]
 
     if new_name != note and new_name in stored_notes:
         print('Warning!: Edited note title already exists!')
-        new_name = unique_note(new_name)
+        new_name = unique_heading(new_name)
 
     if new_name != note and new_name not in stored_notes:
         stored_data[new_name] = stored_data[note]
