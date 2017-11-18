@@ -48,42 +48,6 @@ def view_note(note, stored_data):
         print('Not found')
 
 
-def list_notes(tags, all_notes):
-    # change template if more info is wanted
-    # add config for changing list style
-    # This should get data, cli face should order data.
-
-    if tags is not None:
-        all_notes = {
-            key: values
-            for key, values in all_notes.items()
-            if 'tags' in values and tags in values['tags']
-        }
-
-    if len(all_notes) == 0:
-        print("No note tagged with '{tag}'".format(tag=tags))
-
-    basic_template = "+---> {title}\n"
-    description_template = "   \\->  {description}\n"
-    # tags_template = " --  {tags}\n"
-
-    # Below for loop should move to cli.
-    for key, values in all_notes.items():
-        if 'description' in values:
-            print(basic_template.format(title=key), end=' ')
-            print(
-                description_template.format(
-                    description=values['description']
-                )
-            )
-
-            # if 'tags' in values:
-            # print tags_template.format(tags=(' '.join(values['tags'])))
-
-        else:
-            print(basic_template.format(title=key))
-
-
 def delete_note(note, stored_data):
     """ Delete a note stored in foolscap
 

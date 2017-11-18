@@ -1,10 +1,10 @@
 import argparse
 
 from note_data import note_data
+from note_display import list_notes
 from note_content import (
     save_note,
     view_note,
-    list_notes,
     delete_note,
     edit_note,
     new_note,
