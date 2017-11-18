@@ -1,7 +1,21 @@
+from display.console import display_list
 
 
 def list_notes(tags, all_notes):
-    
+    """ Presents notes in the terminal.
+
+    all_notes = {
+        'note_title: {
+            'description': 'note description',
+            'timestamp': 'TIME',
+            'updated': 'TIME',
+            'tags': ['tag', 'example'],
+        }
+    }
+
+    :param str tags: Filter by tag.
+    :param dict[dict[list]] all_notes: Meta information on notes.
+    """
     if tags:
         all_notes = {
             key: values
@@ -12,25 +26,7 @@ def list_notes(tags, all_notes):
     if len(all_notes) == 0:
         print("No note tagged with '{tag}'".format(tag=tags))
 
-    basic_template = "+---> {title}\n"
-    description_template = "    \\->  {description}\n"
-    # tags_template = " -- {tags}\n"
+    all_notes = [k for k in all_notes]
 
-    # Below for loop should move to cli
-    for key, values in all_notes.items():
-        if 'description' in values:
-            print(basic_template.format(title=key), end=' ')
-            print(
-                description_template.format(
-                    description=values['description']
-                )
-            )
-
-            # if 'tags' in values:
-            # print tags_template.format(tags=(' '.join(values['tags'])))
-
-        else:
-            print(basic_template.format(title=key))
-
-
+    display_list(all_notes)
 
