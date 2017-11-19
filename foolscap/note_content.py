@@ -48,42 +48,6 @@ def view_note(note, stored_data):
         print('Not found')
 
 
-def list_notes(tags, all_notes):
-    # change template if more info is wanted
-    # add config for changing list style
-    # This should get data, cli face should order data.
-
-    if tags is not None:
-        all_notes = {
-            key: values
-            for key, values in all_notes.items()
-            if 'tags' in values and tags in values['tags']
-        }
-
-    if len(all_notes) == 0:
-        print("No note tagged with '{tag}'".format(tag=tags))
-
-    basic_template = "+---> {title}\n"
-    description_template = "   \\->  {description}\n"
-    # tags_template = " --  {tags}\n"
-
-    # Below for loop should move to cli.
-    for key, values in all_notes.items():
-        if 'description' in values:
-            print(basic_template.format(title=key), end=' ')
-            print(
-                description_template.format(
-                    description=values['description']
-                )
-            )
-
-            # if 'tags' in values:
-            # print tags_template.format(tags=(' '.join(values['tags'])))
-
-        else:
-            print(basic_template.format(title=key))
-
-
 def delete_note(note, stored_data):
     """ Delete a note stored in foolscap
 
@@ -93,10 +57,15 @@ def delete_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        delete_file = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
-        recycle_bin = unique_heading(note, folder='IN_BIN')
+        folders = NOTE_FOLDERS
 
-        os.rename(delete_file, recycle_bin)
+        delete_file = folders['GET_NOTE'].format(note_name=note)
+
+        recycle_bin = unique_heading(note, folder='IN_BIN')
+        bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
+
+        print(recycle_bin, bin_note)
+        os.rename(delete_file, bin_note)
 
         stored_data.pop(note, None)
         save_data(stored_data)
