@@ -1,4 +1,6 @@
-from mock import call, patch, MagicMock
+from mock import call
+from mock import patch
+from mock import MagicMock
 
 from foolscap.cli import main
 
@@ -18,7 +20,7 @@ def test_save_note_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'save': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         expected = call('mock_note.txt', FAKE_DATA)
         main()
         mock_action.assert_called_once()
@@ -30,7 +32,7 @@ def test_save_note_fail_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'save': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         expected = call('mock_note.txt', FAKE_DATA)
         main()
         mock_action.assert_called_once()
@@ -42,7 +44,7 @@ def test_view_note_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'view': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == (('mock_note', FAKE_DATA),)
@@ -53,7 +55,7 @@ def test_list_note_command_no_tags():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'list': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == ((None, FAKE_DATA),)
@@ -64,7 +66,7 @@ def test_list_note_command_tags():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'list': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == (('code', FAKE_DATA),)
@@ -75,7 +77,7 @@ def test_edit_note_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'edit': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == (('mock_note', FAKE_DATA),)
@@ -86,7 +88,7 @@ def test_delete_note_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'delete': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == (('mock_note', FAKE_DATA),)
@@ -97,7 +99,7 @@ def test_new_note_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'new': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         print(mock_action.call_args)
@@ -109,7 +111,7 @@ def test_move_lines_command():
     mock_action = MagicMock()
     with patch('sys.argv', test_args),\
          patch.dict('foolscap.cli.FUNCTION_MAP', {'move_lines': mock_action}),\
-         patch('foolscap.cli.note_data', side_effect=[FAKE_DATA]):
+         patch('foolscap.cli.load_data', side_effect=[FAKE_DATA]):
         main()
         mock_action.assert_called_once()
         assert mock_action.call_args == (('mock_note', FAKE_DATA),)
