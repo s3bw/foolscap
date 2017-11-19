@@ -21,7 +21,7 @@ def save_data(data):
         pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
 
-def note_data():
+def load_data():
     """ Load the note data into a dict."""
     try:
         with open(NOTE_DATA, 'rb') as _input:
