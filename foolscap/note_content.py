@@ -1,6 +1,6 @@
 import os
 
-from note_data import save_data
+from meta_data import save_data
 from parse_text import (
     load_text,
     edit_text,
