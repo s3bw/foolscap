@@ -1,17 +1,17 @@
 import argparse
 
 from note_data import note_data
+from note_display import list_notes
 from note_content import (
     save_note,
     view_note,
-    list_notes,
     delete_note,
     edit_note,
     new_note,
     move_lines,
 )
 
-
+# map <> {'-s': 'save'}
 FUNCTION_MAP = {
     'save': save_note,
     'view': view_note,

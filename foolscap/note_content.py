@@ -1,36 +1,27 @@
 import os
-import tempfile
-from subprocess import call
 
 from note_data import save_data
 from parse_text import (
     load_text,
-    note_component,
+    edit_text,
+    unique_heading,
     shift_lines,
+    note_component,
     update_component,
 )
-from subprocess_utils import edit_in_vim
-from file_paths import NOTES, BIN
+from file_paths import NOTE_FOLDERS
 
 
-NEW_NOTE_TEMPLATE = """\
-# title
-==========
-: description
-Make sure you change the title!
-
-
-{tag}
-=========="""
-
-
-def save_note(new_note, saved_notes):
+def save_note(new_note, saved_notes, temp_file=False):
     """ Convert note.txt to dict components and save.
 
     :param new_note: (string) name of .txt file.
     :param saved_notes: (dict) of notes in data.
     """
-    new_note = load_text(new_note)
+
+    if not temp_file:
+        new_note = load_text(new_note)
+
     new_component = note_component(new_note)
 
     saved_notes.update(new_component)
@@ -44,9 +35,10 @@ def view_note(note, stored_data):
     :param saved_notes: (dict) of notes in data.
     """
     stored_notes = stored_data.keys()
+    name_note = NOTE_FOLDERS['GET_NOTE']
 
     if note in stored_notes:
-        note_text = load_text(NOTES.format(note_name=note))
+        note_text = load_text(name_note.format(note_name=note))
 
         for line in note_text:
             print(line)
@@ -54,40 +46,6 @@ def view_note(note, stored_data):
     else:
         # Fuzzy here
         print('Not found')
-
-
-def list_notes(tags, all_notes):
-    # change template if more info is wanted
-    # add config for changing list style
-
-    if tags is not None:
-        all_notes = {
-            key: values
-            for key, values in all_notes.items()
-            if 'tags' in values and tags in values['tags']
-        }
-
-    if len(all_notes) == 0:
-        print("No note tagged with '{tag}'".format(tag=tags))
-
-    basic_template = "+---> {title}\n"
-    description_template = "   \\->  {description}\n"
-    # tags_template = " --  {tags}\n"
-
-    for key, values in all_notes.items():
-        if 'description' in values:
-            print(basic_template.format(title=key), end=' ')
-            print(
-                description_template.format(
-                    description=values['description']
-                )
-            )
-
-            # if 'tags' in values:
-            # print tags_template.format(tags=(' '.join(values['tags'])))
-
-        else:
-            print(basic_template.format(title=key))
 
 
 def delete_note(note, stored_data):
@@ -99,15 +57,14 @@ def delete_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        delete_file = NOTES.format(note_name=note)
-        recycle_bin = BIN.format(note_name=note)
-        d = 1
+        folders = NOTE_FOLDERS
 
-        while os.path.isfile(recycle_bin):
-            recycle_bin = BIN.format(note_name='{} ({})'.format(note, str(d)))
-            d += 1
+        delete_file = folders['GET_NOTE'].format(note_name=note)
 
-        os.rename(delete_file, recycle_bin)
+        recycle_bin = unique_heading(note, folder='IN_BIN')
+        bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
+
+        os.rename(delete_file, bin_note)
 
         stored_data.pop(note, None)
         save_data(stored_data)
@@ -126,10 +83,8 @@ def edit_note(note, stored_data):
     stored_notes = stored_data.keys()
 
     if note in stored_notes:
-        edited_note = NOTES.format(note_name=note)
-
-        with open(edited_note, 'r') as editing_text:
-            edit_in_vim(editing_text)
+        edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
+        edit_text(editing=edited_note)
 
         stored_data = update_component(note, stored_data)
         save_data(stored_data)
@@ -146,21 +101,14 @@ def new_note(stored_notes):
 
     :param stored_notes: (dict) of notes in data.
     """
-    with tempfile.NamedTemporaryFile(mode='r+', suffix=".tmp") as new_text:
-        new_text.write(NEW_NOTE_TEMPLATE)
+    new_text = edit_text()
 
-        edit_in_vim(new_text)
-        new_text.seek(0)
+    # don't write unchanged notes.
+    if '# title' != new_text[0]:
+        save_note(new_text, stored_notes, temp_file=True)
 
-        new_text = new_text.read().split('\n')
-
-        # don't write unchanged notes.
-        if '# title' != new_text[0]:
-            new_component = note_component(new_text)
-            stored_notes.update(new_component)
-            save_data(stored_notes)
-        else:
-            print('Aborted New Note')
+    else:
+        print('Aborted New Note')
 
 
 def move_lines(note, stored_data):
@@ -176,10 +124,8 @@ def move_lines(note, stored_data):
         print('{} not found.'.format(note))
 
     if from_note in stored_notes:
-        edited_note = NOTES.format(note_name=from_note)
-
-        with open(edited_note, 'r') as editing_text:
-            edit_in_vim(editing_text)
+        edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=from_note)
+        edit_text(editing=edited_note)
 
         stored_data = shift_lines(from_note, note)
     else:
