@@ -1,6 +1,6 @@
 import argparse
 
-from meta_data import note_data
+from meta_data import load_data
 from note_display import list_notes
 from note_content import (
     save_note,
@@ -40,7 +40,7 @@ def main():
     command = args.command
     action = FUNCTION_MAP[command]
     note_args = args.positional
-    whole_foolscap = note_data()
+    whole_foolscap = load_data()
 
     if note_args:
         action(note_args, whole_foolscap)
