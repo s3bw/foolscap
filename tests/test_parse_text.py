@@ -101,10 +101,13 @@ def test_pairwise():
 
 
 def test_note_description():
-    note = EXPECTED_NOTE.split('\n')
-    content = parse_text.get_contents(note)[0]
-    description = parse_text.note_description(content)
-    assert description == ':Description of note'
+    fake_content = ['', ':Description of note', '']
+    description = parse_text.note_description(fake_content)
+    assert description == 'Description of note'
+
+    fake_content = ['', ':    My awesome note', '']
+    result = parse_text.note_description(fake_content)
+    assert result == 'My awesome note'
 
 
 def test_note_tags():
@@ -140,7 +143,7 @@ def test_note_component():
         expected_component = {
             'note_is_test': {
                 'timestamp': 'now',
-                'description': ':Description of note',
+                'description': 'Description of note',
                 'tags': ['test', 'unit'],
             }
         }

@@ -1,17 +1,8 @@
 import os
 import tempfile
 
-from file_paths import NOTE_FOLDERS # NOTE_DIR, NOTES
-
-
-
+from file_paths import NOTE_FOLDERS
 from subprocess_utils import edit_in_vim
-
-def load_text(text):
-    with open(text) as notes:
-        notes = notes.read()
-        # Handle for dos and unix
-        return notes.split('\n')
 
 
 NEW_NOTE_TEMPLATE = """\
@@ -23,6 +14,13 @@ Make sure you change the title!
 
 {tag}
 =========="""
+
+
+def load_text(text):
+    with open(text) as notes:
+        notes = notes.read()
+        # Handle for dos and unix
+        return notes.split('\n')
 
 
 def edit_text(editing=None):
@@ -107,7 +105,7 @@ def note_description(content):
     # Needs to return multiple descriptions (sectioning)
     description = content[1]
     if description and description[0] == ':':
-        return description
+        return description[1:].lstrip()
     return None
 
 
