@@ -64,7 +64,6 @@ def delete_note(note, stored_data):
         recycle_bin = unique_heading(note, folder='IN_BIN')
         bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
 
-        print(recycle_bin, bin_note)
         os.rename(delete_file, bin_note)
 
         stored_data.pop(note, None)
