@@ -1,6 +1,8 @@
 import os
 
 from meta_data import save_data
+from fuzzy_note import fuzzy_guess
+from file_paths import NOTE_FOLDERS
 from parse_text import (
     load_text,
     edit_text,
@@ -9,7 +11,8 @@ from parse_text import (
     note_component,
     update_component,
 )
-from file_paths import NOTE_FOLDERS
+
+not_found = '\n\tNot found, did you mean "{}"?\n'
 
 
 def save_note(new_note, saved_notes, temp_file=False):
@@ -44,8 +47,8 @@ def view_note(note, stored_data):
             print(line)
 
     else:
-        # Fuzzy here
-        print('Not found')
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
 
 
 def delete_note(note, stored_data):
@@ -70,8 +73,8 @@ def delete_note(note, stored_data):
         save_data(stored_data)
 
     else:
-        # Fuzzy here
-        print('Not found')
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
 
 
 def edit_note(note, stored_data):
@@ -92,8 +95,8 @@ def edit_note(note, stored_data):
         print('Note updated')
 
     else:
-        # Fuzzy here
-        print('Not found')
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
 
 
 def new_note(stored_notes):
@@ -121,7 +124,8 @@ def move_lines(note, stored_data):
 
     stored_notes = stored_data.keys()
     if note not in stored_notes:
-        print('{} not found.'.format(note))
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
 
     if from_note in stored_notes:
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=from_note)
@@ -129,5 +133,6 @@ def move_lines(note, stored_data):
 
         stored_data = shift_lines(from_note, note)
     else:
-        print('{} not found.'.format(from_note))
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
 
