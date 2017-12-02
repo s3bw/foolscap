@@ -1,31 +1,23 @@
 import argparse
 
 from meta_data import load_data
-from note_display import list_notes
-from note_content import (
-    save_note,
-    view_note,
-    delete_note,
-    edit_note,
-    new_note,
-    move_lines,
-)
+from actor import action
 
-# map <> {'-s': 'save'}
-FUNCTION_MAP = {
-    'save': save_note,
-    'view': view_note,
-    'list': list_notes,
-    'delete': delete_note,
-    'edit': edit_note,
-    'new': new_note,
-    'move_lines': move_lines,
-}
+
+FEATURES = [
+    'save',
+    'view',
+    'list',
+    'delete',
+    'edit',
+    'new',
+    'move_lines',
+]
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'command',
-    choices=FUNCTION_MAP.keys(),
+    choices=FEATURES,
 )
 parser.add_argument(
     'positional',
@@ -36,16 +28,9 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-
     command = args.command
-    action = FUNCTION_MAP[command]
     note_args = args.positional
-    whole_foolscap = load_data()
 
-    if note_args:
-        action(note_args, whole_foolscap)
-    elif command == 'list':
-        action(None, whole_foolscap)
-    else:
-        action(whole_foolscap)
+    whole_foolscap = load_data()
+    action(command, whole_foolscap, note_args)
 

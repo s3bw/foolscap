@@ -4,7 +4,7 @@ from curses import panel
 
 def display_list(list_data):
     # print(list_data)
-    curses.wrapper(setup_list_display, list_data)
+    return curses.wrapper(setup_list_display, list_data)
 
 
 def setup_list_display(stdscreen, list_data):
@@ -12,7 +12,7 @@ def setup_list_display(stdscreen, list_data):
     curses.curs_set(0)
 
     main_menu = FoolScapMenu(list_data, screen)
-    main_menu.display()
+    return main_menu.run_display()
 
 
 class FoolScapMenu(object):
@@ -27,45 +27,24 @@ class FoolScapMenu(object):
         self.items = items
 
 
-    def _check_bounds(self, new_pos, max_len):
-        if new_pos < 0:
-            return 0
-        if max_len <= new_pos:
-            return max_len
-        return new_pos
-
-
-    def move(self, n):
-        # Key result
-        self.position += n
-
-        max_len = len(self.items) - 1
-        return self._check_bounds(self.position, max_len)
-
-
-    def help_line(self, bottom_line):
-        help_string = " [q]uit "
-
-        self.screen.addstr(bottom_line, 2, help_string)
-        
-
-    def draw_border(self):
-        max_y, max_x = self.screen.getmaxyx()
-        self.max_y, self.max_x = max_y, max_x
-
-        self.screen.border('#', '#', '#', '#', '#', '#', '#', '#')
-        self.screen.addstr(7, 2, "MaxY: {}".format(max_y))
-        self.screen.addstr(8, 2, "MaxX: {}".format(max_x))
-
-        self.help_line(max_y - 1)
-        
-
     def render(self):
+        def _draw_border(y, x):
+            bottom_line = y - 1
+
+            self.screen.border('#', '#', '#', '#', '#', '#', '#', '#')
+            self.screen.addstr(y - 6, 2, "MaxY: {}".format(y))
+            self.screen.addstr(y - 5, 2, "MaxX: {}".format(x))
+
+            help_string = " [q]uit ### [e]dit ### [d]elete "
+            self.screen.addstr(bottom_line, 2, help_string)
+
         self.screen.refresh()
         curses.doupdate()
 
-        self.draw_border()
+        self.max_y, self.max_x = self.screen.getmaxyx()
         self.centre_x = int(self.max_x/2)
+
+        _draw_border(self.max_y, self.max_x)
         
         # Move to Function
         heading = "|   FoolScap   |"
@@ -89,31 +68,49 @@ class FoolScapMenu(object):
 
 
     def handle_keys(self):
-        cursor_position = self.position
+
+        def _check_bounds(new_pos, max_len):
+            if new_pos < 0:
+                return 0
+            if max_len <= new_pos:
+                return max_len
+            return new_pos
+
+        def _move(position, n):
+            # Key result
+            position += n
+
+            max_len = len(self.items) - 1
+            return _check_bounds(position, max_len)
+
         max_len = len(self.items) - 1
-        enter_key = [curses.KEY_ENTER, ord('\n')]
+
+        cursor_position = self.position
+
         key = self.screen.getch()
+        enter_key = [curses.KEY_ENTER, ord('\n')]
+
 
         if key in enter_key:
-            raise NotImplementedError 
-            self.items[cursor_position][1]()
+            return ('view', self.items[cursor_position][0])
+
+        if key == ord('e'):
+            return ('edit', self.items[cursor_position][0])
 
         if key == ord('q'):
             exit()
-
-        #implement edit, from list
 
         elif key == curses.KEY_RESIZE:
             self.screen.erase()
 
         elif key == curses.KEY_UP:
-            self.position = self.move(-1)
+            self.position = _move(cursor_position, -1)
 
         elif key == curses.KEY_DOWN:
-            self.position = self.move(1)
+            self.position = _move(cursor_position, 1)
 
 
-    def display(self):
+    def run_display(self):
         """ Displays Menus
         """
         # init render
@@ -121,12 +118,14 @@ class FoolScapMenu(object):
         self.panel.show()
         self.screen.clear()
 
-        while True:
+        new_action = None
+        while not new_action:
             self.render()
-            self.handle_keys()
+            new_action = self.handle_keys()
 
         # tscreenn
         self.screen.clear()
         self.panel.hide()
         panel.update_panels()
         curses.doupdate()
+        return new_action

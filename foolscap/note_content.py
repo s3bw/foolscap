@@ -12,6 +12,7 @@ from parse_text import (
     update_component,
 )
 
+
 not_found = '\n\tNot found, did you mean "{}"?\n'
 
 
