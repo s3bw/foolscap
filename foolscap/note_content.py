@@ -118,7 +118,7 @@ def new_note(stored_notes):
 def move_lines(note, stored_data):
     """ Move selected lines from a note to another note.
 
-    :parma note: (string) title of note to move lines to.
+    :param note: (string) title of note to move lines to.
     :param stored_data: (dict) of notes in data.
     """
     from_note = input('Move lines from? ')

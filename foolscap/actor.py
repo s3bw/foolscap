@@ -21,22 +21,24 @@ FUNCTION_MAP = {
 }
 
 
-def action(do_action, meta_data, *args):
+def action(do_action, meta_data, arg):
     func = FUNCTION_MAP[do_action]
 
     new_action = None
     if do_action == 'list':
-        if args[0]:
-            filter_tag = args[0]
-            new_action = func(filter_tag, meta_data)
+        # Quitting from list calls exit() method.
+        # arg is filter in this case
+        if arg:
+            new_action = func(arg, meta_data)
         else:
             new_action = func(None, meta_data)
+
     if new_action:
         new_func, note = new_action
         action(new_func, meta_data, note)
-    elif args:
-        note = args[0]
-        func(note, meta_data)
+    # arg is note in this case
+    elif arg:
+        func(arg, meta_data)
     else:
         func(meta_data)
         
