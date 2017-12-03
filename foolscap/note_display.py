@@ -31,4 +31,4 @@ def list_notes(tags, all_notes):
         for k, values in all_notes.items()
     ]
 
-    display_list(all_notes)
+    return display_list(all_notes)
