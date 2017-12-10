@@ -40,7 +40,7 @@ def update_version(meta_data):
         if 'updated' in value.keys():
             value.pop('updated', None)
 
-    save_date(meta_data)
+    save_data(meta_data)
     print('All meta data has been migrated.')
 
 
