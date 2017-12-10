@@ -31,7 +31,7 @@ class FoolScapMenu(object):
         def _draw_border(y, x):
             bottom_line = y - 1
 
-            self.screen.border('#', '#', '#', '#', '#', '#', '#', '#')
+            self.screen.border('|', '|', '-', '-', '+', '+', '+', '+')
             self.screen.addstr(y - 6, 2, "MaxY: {}".format(y))
             self.screen.addstr(y - 5, 2, "MaxX: {}".format(x))
 
@@ -54,7 +54,10 @@ class FoolScapMenu(object):
         cursor_position = self.position
         for index, item in enumerate(self.items):
             print_line = 1 + index
+
             mode = curses.A_NORMAL
+            if index % 2 == 0:
+                mode = curses.A_DIM
             if index == cursor_position:
                 mode = curses.A_REVERSE
             
