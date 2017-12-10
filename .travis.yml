@@ -1,5 +1,6 @@
+sudo: false
 language: python
 python:
     - 3.6
-script:
-    - python setup.py pytest
+install: pip install tox-travis
+script: tox
