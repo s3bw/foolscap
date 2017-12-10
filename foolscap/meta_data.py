@@ -1,11 +1,11 @@
 import os
 import pickle
 
-
 from file_paths import NOTE_DATA
+from file_paths import BACKUP_DATA
 
 
-def save_data(data):
+def save_data(data, backup=False):
     """
     data = {
         'test_note': {
@@ -16,9 +16,14 @@ def save_data(data):
     }
 
     :param data: (dict) containing all notes.
+    :param backup: (boolean) save data to backup.
     """
-    with open(NOTE_DATA, 'wb') as output:
-        pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+    if backup == False:
+        with open(NOTE_DATA, 'wb') as output:
+            pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+    else:
+        with open(BACKUP_DATA, 'wb') as output:
+            pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
 
 def load_data():

@@ -1,5 +1,6 @@
 import os
 import tempfile
+from datetime import datetime
 
 from file_paths import NOTE_FOLDERS
 from subprocess_utils import edit_in_vim
@@ -157,13 +158,11 @@ def note_component(note_lines):
         title = unique_heading(note_title)
         save_text(title, content)
 
-        note_component[title] = {
-            'timestamp': None,
-        }
-
-        note_component[title]['timestamp'] = 'now'
+        note_component[title] = {'created': datetime.now()}
+        note_component[title]['views'] = 1
 
         description = note_description(content)
+
         if description:
             note_component[title]['description'] = description
 
@@ -214,7 +213,8 @@ def update_component(note, stored_data):
     if new_name != note and new_name in stored_notes:
         print('Warning!: Edited note title already exists!')
         new_name = unique_heading(new_name)
-
+    
+    # Note name has been changed, update the meta_data hook.
     if new_name != note and new_name not in stored_notes:
         stored_data[new_name] = stored_data[note]
         stored_data.pop(note, None)
@@ -222,9 +222,8 @@ def update_component(note, stored_data):
     os.remove(note_name)
     save_text(new_name, new_content)
 
-    stored_data[new_name]['updated'] = 'at_this_time'
-
-    # stored_data[new_name]['times_viewed'] += 1
+    stored_data[new_name]['modified'] = datetime.now()
+    stored_data[new_name]['views'] += 1
 
     description = note_description(new_content)
     if description:
@@ -235,4 +234,5 @@ def update_component(note, stored_data):
         stored_data[new_name]['tags'] = tags
 
     return stored_data
+
 
