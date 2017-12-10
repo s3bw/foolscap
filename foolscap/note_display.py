@@ -27,7 +27,7 @@ def list_notes(tags, all_notes):
         print("No note tagged with '{tag}'".format(tag=tags))
 
     all_notes = [
-        (k, values['description']) 
+        (k, values['description'])
         for k, values in all_notes.items()
     ]
 

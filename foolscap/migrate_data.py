@@ -25,7 +25,7 @@ def update_version(meta_data):
         }
     }
     """
-    time_now = datetime.now() 
+    time_now = datetime.now()
 
     # Backup data before migrating
     save_data(meta_data, backup=True)
@@ -42,5 +42,4 @@ def update_version(meta_data):
 
     save_data(meta_data)
     print('All meta data has been migrated.')
-
 

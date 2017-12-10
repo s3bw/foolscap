@@ -43,4 +43,4 @@ def action(do_action, meta_data, arg):
         func(arg, meta_data)
     else:
         func(meta_data)
-        
+

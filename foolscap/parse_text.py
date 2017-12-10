@@ -1,6 +1,6 @@
 import os
-import tempfile
 from datetime import datetime
+from tempfile import NamedTemporaryFile
 
 from file_paths import NOTE_FOLDERS
 from subprocess_utils import edit_in_vim
@@ -28,7 +28,7 @@ def edit_text(editing=None):
     # Maybe this can be split into two functions in subprocess_utils
 
     if not editing:
-        with tempfile.NamedTemporaryFile(mode='r+', suffix='.tmp') as editing_text:
+        with NamedTemporaryFile(mode='r+', suffix='.tmp') as editing_text:
             editing_text.write(NEW_NOTE_TEMPLATE)
             edit_in_vim(editing_text)
             editing_text.seek(0)
@@ -97,7 +97,7 @@ def pairwise(iterable):
         >>> pairwise([1, 2, 3, 4])
         [(1, 2), (3, 4)]
     """
-    # Do I throw error for odd length iterable? 
+    # Do I throw error for odd length iterable?
     a = iter(iterable)
     return zip(a, a)
 
@@ -121,7 +121,7 @@ def note_tags(contents):
 
 def get_contents(note):
     """ Get note content.
-    
+
     Looks for '==' lines and extract only that which
         is between them.
 
@@ -137,7 +137,7 @@ def get_contents(note):
     indexes = pairwise(content_index)
 
     # for start, end in indexes:
-    content = [note[start:end+1] for start, end in indexes]
+    content = [note[start:end + 1] for start, end in indexes]
 
     return content
 
@@ -185,7 +185,7 @@ def shift_lines(name_from_note, name_to_note):
     replace_note = remove_moving_lines(replace_note)
     save_text(name_from_note, replace_note)
 
-    #load text, return note, apply new, delete old, save new
+    # load text, return note, apply new, delete old, save new
     path_to = name_note.format(note_name=name_to_note)
     apply_to_note = load_text(path_to)
     apply_to_note = get_contents(apply_to_note)[0]
@@ -213,7 +213,7 @@ def update_component(note, stored_data):
     if new_name != note and new_name in stored_notes:
         print('Warning!: Edited note title already exists!')
         new_name = unique_heading(new_name)
-    
+
     # Note name has been changed, update the meta_data hook.
     if new_name != note and new_name not in stored_notes:
         stored_data[new_name] = stored_data[note]
@@ -234,5 +234,4 @@ def update_component(note, stored_data):
         stored_data[new_name]['tags'] = tags
 
     return stored_data
-
 

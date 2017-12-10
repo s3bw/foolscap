@@ -31,4 +31,3 @@ NOTE_FOLDERS = {
     'IN_BIN': BIN_DIR,
 }
 
-

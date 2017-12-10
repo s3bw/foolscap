@@ -26,7 +26,6 @@ class FoolScapMenu(object):
         self.position = 0
         self.items = items
 
-
     def render(self):
         def _draw_border(y, x):
             bottom_line = y - 1
@@ -42,13 +41,13 @@ class FoolScapMenu(object):
         curses.doupdate()
 
         self.max_y, self.max_x = self.screen.getmaxyx()
-        self.centre_x = int(self.max_x/2)
+        self.centre_x = int(self.max_x / 2)
 
         _draw_border(self.max_y, self.max_x)
-        
+
         # Move to Function
         heading = "|   FoolScap   |"
-        centre_heading = self.centre_x - int(len(heading)/2)
+        centre_heading = self.centre_x - int(len(heading) / 2)
         self.screen.addstr(0, centre_heading, heading)
 
         cursor_position = self.position
@@ -60,15 +59,19 @@ class FoolScapMenu(object):
                 mode = curses.A_DIM
             if index == cursor_position:
                 mode = curses.A_REVERSE
-            
+
             item_title, description = item
             option_title = " >  {}:".format(item_title)
             option_description = "{}".format(description)
 
             self.screen.addstr(print_line, 1, option_title, mode)
             if self.max_x > 50:
-                self.screen.addstr(print_line, self.centre_x, option_description, mode)
-
+                self.screen.addstr(
+                    print_line,
+                    self.centre_x,
+                    option_description,
+                    mode
+                )
 
     def handle_keys(self):
 
@@ -86,13 +89,10 @@ class FoolScapMenu(object):
             max_len = len(self.items) - 1
             return _check_bounds(position, max_len)
 
-        max_len = len(self.items) - 1
-
         cursor_position = self.position
 
         key = self.screen.getch()
         enter_key = [curses.KEY_ENTER, ord('\n')]
-
 
         if key in enter_key:
             return ('view', self.items[cursor_position][0])
@@ -111,7 +111,6 @@ class FoolScapMenu(object):
 
         elif key == curses.KEY_DOWN:
             self.position = _move(cursor_position, 1)
-
 
     def run_display(self):
         """ Displays Menus
