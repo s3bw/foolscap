@@ -1,4 +1,3 @@
-import os
 import pickle
 
 from file_paths import NOTE_DATA
@@ -18,7 +17,7 @@ def save_data(data, backup=False):
     :param data: (dict) containing all notes.
     :param backup: (boolean) save data to backup.
     """
-    if backup == False:
+    if not backup:
         with open(NOTE_DATA, 'wb') as output:
             pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
     else:
