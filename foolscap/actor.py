@@ -1,3 +1,4 @@
+from migrate_data import update_version
 from note_display import list_notes
 from note_content import (
     save_note,
@@ -18,6 +19,7 @@ FUNCTION_MAP = {
     'edit': edit_note,
     'new': new_note,
     'move_lines': move_lines,
+    'migrate': update_version,
 }
 
 

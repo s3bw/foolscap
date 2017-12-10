@@ -7,6 +7,9 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DATA_STORAGE = os.path.join('data', 'note_data.pkl')
 NOTE_DATA = os.path.join(SCRIPT_DIR, DATA_STORAGE)
 
+DATA_STORAGE = os.path.join('data', 'backup_data.pkl')
+BACKUP_DATA = os.path.join(SCRIPT_DIR, DATA_STORAGE)
+
 NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
 NOTES = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
 

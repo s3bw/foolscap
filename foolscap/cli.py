@@ -1,7 +1,7 @@
 import argparse
 
-from meta_data import load_data
 from actor import action
+from meta_data import load_data
 
 
 FEATURES = [
@@ -12,6 +12,7 @@ FEATURES = [
     'edit',
     'new',
     'move_lines',
+    'migrate',
 ]
 
 parser = argparse.ArgumentParser()
