@@ -136,15 +136,19 @@ def test_get_contents():
 
 def test_note_component():
     with patch('foolscap.parse_text.save_text') as mock_save_text,\
-    patch('foolscap.parse_text.unique_heading') as mock_unique_heading:
+    patch('foolscap.parse_text.unique_heading') as mock_unique_heading,\
+    patch('foolscap.parse_text.datetime') as fake_time:
+        fake_time.now.return_value = 'now'
         mock_unique_heading.return_value = 'note_is_test'
+
         note = EXPECTED_NOTE.split('\n')
         component = parse_text.note_component(note)
         expected_component = {
             'note_is_test': {
-                'timestamp': 'now',
                 'description': 'Description of note',
                 'tags': ['test', 'unit'],
+                'created': 'now',
+                'views': 1
             }
         }
         assert component == expected_component
