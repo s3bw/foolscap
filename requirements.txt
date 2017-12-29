@@ -4,4 +4,9 @@
 #
 #    pip-compile --output-file requirements.txt requirements.txt
 #
-fuzzywuzzy==0.15.1
+coverage==4.4.2
+mock==2.0.0
+pytest-cov==2.5.1
+pytest==3.2.3
+six==1.11.0
+virtualenv==15.1.0
