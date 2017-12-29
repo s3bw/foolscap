@@ -1,6 +1,7 @@
 import os
 
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_packages
 
 
 def local_file(name):
@@ -24,7 +25,6 @@ setup(
             'fscap=cli:main',
         ]
     },
-    tests_require=['mock'],
     classifiers=[
         "Environment :: Console",
         "Operation System :: OS Independent",
@@ -32,7 +32,4 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
     ],
-    include_package_data=False,
-    zip_safe=False,
-    setup_requires=['pytest-runner'],
 )
