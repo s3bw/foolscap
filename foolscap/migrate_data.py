@@ -32,12 +32,26 @@ def update_version(meta_data):
     for key, value in meta_data.items():
         print('Migrating: {}.'.format(key))
         # Adding new meta data
-        meta_data[key]['create'] = time_now
-        meta_data[key]['modified'] = time_now
-        meta_data[key]['views'] = 1
+
+        # Typo change
+        meta_fields = value.keys()
+        if 'create' in meta_fields and 'created' in meta_fields:
+            value.pop('create', None)
+        elif 'create' in meta_fields and 'created' not in meta_fields:
+            meta_data[key]['created'] = meta_data[key]['create']
+            value.pop('create', None)
+        elif 'create' not in meta_fields and 'created' not in meta_fields:
+            meta_data[key]['create'] = time_now
+
+        if 'views' not in meta_fields:
+            meta_data[key]['views'] = 1
+        if 'modified' not in meta_fields:
+            meta_data[key]['modified'] = time_now
 
         # Removing outdated data
-        if 'updated' in value.keys():
+        if 'timestamp' in meta_fields:
+            value.pop('timestamp', None)
+        if 'updated' in meta_fields:
             value.pop('updated', None)
 
     save_data(meta_data)
