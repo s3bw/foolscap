@@ -47,6 +47,9 @@ def view_note(note, stored_data):
         for line in note_text:
             print(line)
 
+        stored_data = update_component(note, stored_data)
+        save_data(stored_data)
+
     else:
         guess = fuzzy_guess(note, stored_notes)
         print(not_found.format(guess))

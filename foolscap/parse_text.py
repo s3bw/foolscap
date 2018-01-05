@@ -160,6 +160,7 @@ def note_component(note_lines):
 
         note_component[title] = {'created': datetime.now()}
         note_component[title]['views'] = 1
+        note_component[title]['modified'] = datetime.now()
 
         description = note_description(content)
 

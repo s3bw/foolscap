@@ -148,6 +148,7 @@ def test_note_component():
                 'description': 'Description of note',
                 'tags': ['test', 'unit'],
                 'created': 'now',
+                'modified': 'now',
                 'views': 1
             }
         }
