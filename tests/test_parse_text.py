@@ -1,5 +1,8 @@
 import pkg_resources
-from mock import patch, Mock
+from mock import Mock
+from mock import patch
+from mock import MagicMock
+from mock import mock_open
 
 import foolscap.parse_text as parse_text
 
@@ -22,6 +25,16 @@ Some content.
 
 """
 
+TEST_NOTE_TEMPLATE = """\
+# title
+==========
+: description
+Make sure you change the title!
+
+
+{tag}
+=========="""
+
 
 # I should do multiple notes with different results,
 # No lines to move, lines to move.
@@ -37,10 +50,23 @@ def test_load_text():
     assert len(note) == 12
 
 
-# def test_edit_text():
-  #   note = parse_text.edit_text(TEST_NOTE)
-  #   assert note == EXPECTED_NOTE.split('\n')
-  #   assert len(note) == 12
+def test_edit_temp_text():
+    temp_note = parse_text.NEW_NOTE_TEMPLATE
+    with patch('foolscap.parse_text.NamedTemporaryFile', mock_open(read_data=temp_note)),\
+         patch('foolscap.parse_text.edit_in_vim'),\
+         patch('builtins.open', mock_open()) as mock_file:
+        note = parse_text.edit_text()
+        assert note == TEST_NOTE_TEMPLATE.split('\n')
+        assert not mock_file.called
+
+
+def test_edit_text():
+    with patch('foolscap.parse_text.NamedTemporaryFile'),\
+         patch('foolscap.parse_text.edit_in_vim'),\
+         patch('builtins.open', mock_open()) as mock_file:
+        note = parse_text.edit_text('test_note.txt')
+        assert note == None
+        mock_file.assert_called_with('test_note.txt', 'r')
 
 
 def test_unique_heading():
