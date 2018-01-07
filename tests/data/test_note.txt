@@ -1,5 +1,5 @@
 
-# note_is_test
+# test_note
 ====================
 :Description of note
 
@@ -8,4 +8,3 @@ Some content.
 
 {test} {unit}
 ====================
-
