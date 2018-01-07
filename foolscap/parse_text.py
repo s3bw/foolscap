@@ -161,6 +161,22 @@ def get_contents(note):
     return content
 
 
+def index_sub_headings(content):
+    return [index
+            for index, line in enumerate(content[2:])
+            if line and line[0] == ':']
+
+
+def parse_sub_headings(content):
+    sub_headings_indexs = index_sub_headings(content)
+    return [
+        (content[index + 1], content[index + 2])
+        if content[index + 1]
+        else ('Content line {}:'.format(index + 1), content[index + 2])
+        for index in sub_headings_indexs
+    ]
+
+
 def note_component(note_lines):
     """ Creates the new note data structure.
         Here is where one would add more note information.
@@ -182,7 +198,6 @@ def note_component(note_lines):
         note_component[title]['modified'] = datetime.now()
 
         description = note_description(content)
-
         if description:
             note_component[title]['description'] = description
 
@@ -190,6 +205,11 @@ def note_component(note_lines):
         if tags:
             note_component[title]['tags'] = tags
 
+        sub_headings = parse_sub_headings(content)
+        if sub_headings:
+            note_component[title]['sub_headings'] = sub_headings
+
+    print(note_component)
     return note_component
 
 
