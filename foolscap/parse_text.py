@@ -6,6 +6,7 @@ from file_paths import NOTE_FOLDERS
 from subprocess_utils import edit_in_vim
 
 
+MAX_TITLE_LEN = 32
 NEW_NOTE_TEMPLATE = """\
 # title
 ==========
@@ -72,9 +73,27 @@ def save_text(note_title, content):
         save_txt.write(text_string)
 
 
+def replace_spaces(title):
+    """ Replaces spaces contained in a title."""
+    if ' ' in title:
+        return title.replace(' ', '_')
+    return title
+
+
+def max_title_len(title):
+    if len(title) > MAX_TITLE_LEN:
+        print('Title must be less than {} characters.'.format(MAX_TITLE_LEN))
+        return title[:MAX_TITLE_LEN]
+    return title
+
+
+def restrict_title(title):
+    return replace_spaces(max_title_len(title))
+
+
 def get_title(note):
     # title parsing needs improvement (regex)
-    return [line[2:] for line in note if line[:2] == '# ']
+    return [restrict_title(line[2:]) for line in note if line[:2] == '# ']
 
 
 def get_moving_lines(note):
