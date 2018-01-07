@@ -1,3 +1,5 @@
+import os
+
 import pkg_resources
 from mock import Mock
 from mock import patch
@@ -5,6 +7,7 @@ from mock import MagicMock
 from mock import mock_open
 
 import foolscap.parse_text as parse_text
+from foolscap.file_paths import NOTE_FOLDERS
 
 
 TITLE_LEN = parse_text.MAX_TITLE_LEN
@@ -16,7 +19,7 @@ TEST_NOTE = pkg_resources.resource_filename(
 )
 
 EXPECTED_NOTE = """
-# note_is_test
+# test_note
 ====================
 :Description of note
 
@@ -24,9 +27,7 @@ Some content.
 >Move content.
 
 {test} {unit}
-====================
-
-"""
+===================="""
 
 TEST_NOTE_TEMPLATE = """\
 # title
@@ -50,7 +51,7 @@ def test_load_text():
     note = parse_text.load_text(TEST_NOTE)
 
     assert note == EXPECTED_NOTE.split('\n')
-    assert len(note) == 12
+    assert len(note) == 10
 
 
 def test_edit_temp_text():
@@ -83,9 +84,13 @@ def test_unique_heading():
         assert parse_text.unique_heading('mock_note') != 'mock_note'
 
 
-# def test_save_text():
-#   This needs to check it returns heading.
-#   
+def test_save_text():
+    with patch('builtins.open', mock_open()) as mock_file:
+        note_title = 'test_title'
+        expected = NOTE_FOLDERS['GET_NOTE'].format(note_name=note_title)
+
+        parse_text.save_text(note_title, ['Note', 'content.'])
+        mock_file.assert_called_with(expected, 'w')
 
 
 def test_replace_spaces():
@@ -108,7 +113,7 @@ def test_get_titles():
     note = EXPECTED_NOTE.split('\n')
 
     section = parse_text.get_title(note)
-    assert section == ['note_is_test']
+    assert section == ['test_note']
     assert len(section) == 1
 
 
@@ -123,7 +128,7 @@ def test_remove_moving_lines():
     note = EXPECTED_NOTE.split('\n')
     expected_content = [
         '',
-        '# note_is_test',
+        '# test_note',
         '====================', 
         ':Description of note', 
         '', 
@@ -131,8 +136,6 @@ def test_remove_moving_lines():
         '', 
         '{test} {unit}', 
         '====================',
-        '',
-        ''
     ]
     result = parse_text.remove_moving_lines(note)
     assert result == expected_content
@@ -201,53 +204,41 @@ def test_note_component():
         mock_save_text.assert_called_once()
 
 
-SHIFT_FROM_NOTE = """
-# remove_lines
-====================
-:Description of note
 
-Some content.
->Move content.
-
-{test} {unit}
-====================
-"""
-
-SHIFT_TO_NOTE = """
-# get_lines
-====================
-:Description of note
-
-Some content.
-
-{test} {unit}
-====================
-"""
-
-fake_responses = [Mock(), Mock()]
-fake_responses[0].return_value = SHIFT_FROM_NOTE.split('\n')
-fake_responses[1].return_value = SHIFT_TO_NOTE.split('\n')
-
-fake_responses = SHIFT_FROM_NOTE.split('\n')# , SHIFT_TO_NOTE.split('\n')]
-
-def test_shift_lines():
-    with patch('foolscap.parse_text.load_text') as mock_load_text,\
-    patch('foolscap.parse_text.save_text'),\
-    patch('foolscap.parse_text.os.remove'): #,\
-        mock_load_text.side_effect = (SHIFT_FROM_NOTE.split('\n'), SHIFT_TO_NOTE.split('\n'))
-        print(parse_text.shift_lines('fake_it', 'make_it'))
-        
-        
-
-        # mock_load_text.return_value = SHIFT_FROM_NOTE.split('\n')
-
-    # Setup:
-        # Two temp notes, with content
-        # Assert that the notes end up as expected.
-        # In the integration test - test that error is raised for typos!
-
-    # note = EXPECTED_NOTE.split('\n')
+# def test_shift_lines():
 
 
-# def test_update_component():
+FAKE_COMPONENT = {
+    'test_note': {
+        'description': 'description',
+        'tags': ['tag', 'unit'],
+        'created': 'datetime',
+        'modified': 'datetime',
+        'views': 2,
+    }
+}
+# This needs to be decomposed and thoroughly tested.
+def test_update_component():
+    SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+    NOTE_STORAGE = os.path.join('data', '{note_name}.txt')
+    NOTES = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
+    new_value = {'GET_NOTE': NOTES}
+    with patch.dict('foolscap.parse_text.NOTE_FOLDERS', new_value),\
+         patch('foolscap.parse_text.datetime') as time:
+        time.now.return_value = 'new_datetime'
+        component = FAKE_COMPONENT.copy()
+        # These are different from fake component as not has been changed.
+        expected = {
+            'test_note': {
+                'description': 'Description of note',
+                'tags': ['test', 'unit'],
+                'created': 'datetime',
+                'modified': 'new_datetime',
+                'views': 3,
+            }
+        }
+        result = parse_text.update_component('test_note', component)
+        print(result)
+        print(expected)
+        assert result == expected
 
