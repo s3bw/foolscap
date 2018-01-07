@@ -1,6 +1,7 @@
 import os
 
 import pkg_resources
+import pytest
 from mock import Mock
 from mock import patch
 from mock import MagicMock
@@ -182,6 +183,69 @@ def test_get_contents():
     assert content == expected_content
 
 
+@pytest.mark.parametrize("mock_content,expected",
+    [([ '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],[2]),
+    ([  '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],[2,5]),
+    ([  '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        'testing subtitles',
+        '',
+        '===================='],[])])
+def test_index_sub_headings(mock_content, expected):
+    result = parse_text.index_sub_headings(mock_content)
+    assert result == expected
+
+@pytest.mark.parametrize("mock_content,expected",
+    [([ '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],
+        [('Sub Title:', ':testing subtitles')]),
+    ([  '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],
+        [('Sub Title:', ':testing subtitles'),
+         ('Sub Title:', ':testing subtitles')]),
+    ([  '====================', 
+        ':Description of note', 
+        '',
+        'Sub Title:',
+        'testing subtitles',
+        '',
+        '===================='],
+        [])])
+def test_parse_sub_headings(mock_content, expected):
+    result = parse_text.parse_sub_headings(mock_content)
+    assert result == expected
+
+
 def test_note_component():
     with patch('foolscap.parse_text.save_text') as mock_save_text,\
     patch('foolscap.parse_text.unique_heading') as mock_unique_heading,\
@@ -191,6 +255,7 @@ def test_note_component():
 
         note = EXPECTED_NOTE.split('\n')
         component = parse_text.note_component(note)
+        # Decompose and parametize with notes of different entries (sub-titles tags descriptions)
         expected_component = {
             'note_is_test': {
                 'description': 'Description of note',
