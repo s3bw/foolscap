@@ -1,7 +1,12 @@
 import os
 
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+foolscap_location = os.environ.get('FSCAP_PATH')
+if not foolscap_location:
+    print("Please set FSCAP_PATH variable")
+
+
+SCRIPT_DIR = os.path.join(os.path.expanduser('~'), foolscap_location)
 
 # data/note_data.pkl.
 DATA_STORAGE = os.path.join('data', 'note_data.pkl')
