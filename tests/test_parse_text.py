@@ -7,6 +7,9 @@ from mock import mock_open
 import foolscap.parse_text as parse_text
 
 
+TITLE_LEN = parse_text.MAX_TITLE_LEN
+
+
 TEST_NOTE = pkg_resources.resource_filename(
     __name__,
     'data/test_note.txt'
@@ -83,6 +86,22 @@ def test_unique_heading():
 # def test_save_text():
 #   This needs to check it returns heading.
 #   
+
+
+def test_replace_spaces():
+    result = parse_text.replace_spaces('note title')
+    assert result == 'note_title'
+
+
+def test_max_title_len():
+    test_title = 'note_title_which_is_a_little_too_long'
+    result = parse_text.max_title_len(test_title)
+    assert result == test_title[:TITLE_LEN]
+
+
+def test_restict_title():
+    result = parse_text.restrict_title('note title')
+    assert result == 'note_title'
 
 
 def test_get_titles():
