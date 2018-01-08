@@ -212,6 +212,7 @@ def test_index_sub_headings(mock_content, expected):
     result = parse_text.index_sub_headings(mock_content)
     assert result == expected
 
+
 @pytest.mark.parametrize("mock_content,expected",
     [([ '====================', 
         ':Description of note', 
