@@ -6,9 +6,9 @@ from foolscap.display import key_events
 
 @pytest.mark.parametrize("pos,max_len,expected",
     [(5, 10, 5),
-     (11,10, 9),
-     (10,10, 9),
-     (-1,10, 0)])
+     (11,10, 0),
+     (10,10, 0),
+     (-1,10, 9)])
 def test_check_bounds(pos, max_len, expected):
     result = key_events._check_bounds(pos, max_len)
     assert result == expected
@@ -17,7 +17,7 @@ def test_check_bounds(pos, max_len, expected):
 @pytest.mark.parametrize("pos,max_len,expected",
     [(5, 10, 4),
      (9, 10, 8),
-     (0, 10, 0)])
+     (0, 10, 9)])
 def test_move_up(pos, max_len, expected):
     result = key_events._move_up(pos, max_len)
     assert result == expected
@@ -25,7 +25,7 @@ def test_move_up(pos, max_len, expected):
 
 @pytest.mark.parametrize("pos,max_len,expected",
     [(5, 10, 6),
-     (9, 10, 9),
+     (9, 10, 0),
      (0, 10, 1)])
 def test_move_down(pos, max_len, expected):
     result = key_events._move_down(pos, max_len)

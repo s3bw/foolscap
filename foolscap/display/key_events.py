@@ -9,9 +9,9 @@ DOWN_ARROW = curses.KEY_DOWN
 
 def _check_bounds(pos, max_len):
     if pos < 0:
-        return 0
-    if max_len <= pos:
         return max_len - 1
+    if max_len <= pos:
+        return 0
     return pos
 
 
