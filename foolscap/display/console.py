@@ -1,133 +1,107 @@
 import curses
 from curses import panel
 
+from .render_screen import Frame
+from .render_screen import HelpBar
+from .render_screen import StatusBar
+from .render_screen import TitleBar
+from .content_display import DisplayContents
+from .key_events import HandleKeys
 
-def display_list(list_data):
-    # print(list_data)
-    return curses.wrapper(setup_list_display, list_data)
+
+def display_list(display_data):
+    """ Terminal Handler for curses programs.
+        Setup curses context and tear down to terminal.
+
+    :param display_data: (dict) data for display.
+    :return: (string) indicating action to perform.
+    """
+    return curses.wrapper(setup_folio, display_data)
 
 
-def setup_list_display(stdscreen, list_data):
-    screen = stdscreen
+def setup_folio(stdscreen, display_data):
+    # Called after curses __init__
     curses.curs_set(0)
+    with FolioConsole(stdscreen, display_data) as folio_console:
+        selected_action = folio_console.show()
+    return selected_action
 
-    main_menu = FoolScapMenu(list_data, screen)
-    return main_menu.run_display()
 
-
-class FoolScapMenu(object):
-    def __init__(self, items, stdscreen):
-        self.screen = stdscreen.subwin(0, 0)
-        self.screen.keypad(1)
-        self.panel = panel.new_panel(self.screen)
-        self.panel.hide()
+class FolioConsole(object):
+    def __enter__(self):
         panel.update_panels()
 
-        self.position = 0
-        self.items = items
-
-    def render(self):
-        def _draw_border(y, x):
-            bottom_line = y - 1
-
-            self.screen.border('|', '|', '-', '-', '+', '+', '+', '+')
-            self.screen.addstr(y - 6, 2, "MaxY: {}".format(y))
-            self.screen.addstr(y - 5, 2, "MaxX: {}".format(x))
-
-            help_string = " [q]uit ### [e]dit ### [d]elete "
-            self.screen.addstr(bottom_line, 2, help_string)
-
-        self.screen.refresh()
-        curses.doupdate()
-
-        self.max_y, self.max_x = self.screen.getmaxyx()
-        self.centre_x = int(self.max_x / 2)
-
-        _draw_border(self.max_y, self.max_x)
-
-        # Move to Function
-        heading = "|   FoolScap   |"
-        centre_heading = self.centre_x - int(len(heading) / 2)
-        self.screen.addstr(0, centre_heading, heading)
-
-        cursor_position = self.position
-        for index, item in enumerate(self.items):
-            print_line = 1 + index
-
-            mode = curses.A_NORMAL
-            if index % 2 == 0:
-                mode = curses.A_DIM
-            if index == cursor_position:
-                mode = curses.A_REVERSE
-
-            item_title, description = item
-            option_title = " >  {}:".format(item_title)
-            option_description = "{}".format(description)
-
-            self.screen.addstr(print_line, 1, option_title, mode)
-            if self.max_x > 50:
-                self.screen.addstr(
-                    print_line,
-                    self.centre_x,
-                    option_description,
-                    mode
-                )
-
-    def handle_keys(self):
-
-        def _check_bounds(new_pos, max_len):
-            if new_pos < 0:
-                return 0
-            if max_len <= new_pos:
-                return max_len
-            return new_pos
-
-        def _move(position, n):
-            # Key result
-            position += n
-
-            max_len = len(self.items) - 1
-            return _check_bounds(position, max_len)
-
-        cursor_position = self.position
-
-        key = self.screen.getch()
-        enter_key = [curses.KEY_ENTER, ord('\n')]
-
-        if key in enter_key:
-            return ('view', self.items[cursor_position][0])
-
-        if key == ord('e'):
-            return ('edit', self.items[cursor_position][0])
-
-        if key == ord('q'):
-            exit()
-
-        elif key == curses.KEY_RESIZE:
-            self.screen.erase()
-
-        elif key == curses.KEY_UP:
-            self.position = _move(cursor_position, -1)
-
-        elif key == curses.KEY_DOWN:
-            self.position = _move(cursor_position, 1)
-
-    def run_display(self):
-        """ Displays Menus
-        """
-        # init render
+        self.panel.hide()
         self.panel.top()
         self.panel.show()
+
+        self.screen.keypad(1)
         self.screen.clear()
+        return self
 
-        new_action = None
-        while not new_action:
-            self.render()
-            new_action = self.handle_keys()
-
-        # tscreenn
+    def __exit__(self, _type, value, traceback):
         self.screen.clear()
         self.panel.hide()
         panel.update_panels()
         curses.doupdate()
-        return new_action
+
+    def __init__(self, stdscreen, items):
+        self.render_objects = []
+        self.items = items
+        # self.expand_indexs = []
+        self.screen = stdscreen.subwin(0, 0)
+        self.panel = panel.new_panel(self.screen)
+        self.count_notes = len(self.items)
+
+        self.ui_collection()
+
+        self.key_handler = HandleKeys(self.screen, self.count_notes)
+
+    def ui_collection(self):
+        self.frame = Frame(self.screen)
+        self.add_child(self.frame)
+
+        self.status_bar = StatusBar(self.screen, self.count_notes)
+        self.add_child(self.status_bar)
+
+        self.title_bar = TitleBar(self.screen)
+        self.add_child(self.title_bar)
+
+        self.help_bar = HelpBar(self.screen)
+        self.add_child(self.help_bar)
+
+        self.list_content = DisplayContents(self.screen, self.items)
+        # self.list_content.update_position(self.position)
+        self.add_child(self.list_content)
+
+    def add_child(self, child_object):
+        self.render_objects.append(child_object)
+
+    def render_all(self):
+        self.screen.clear()
+        for child in self.render_objects:
+            child.update()
+            child.draw()
+
+    def show(self):
+        """ Displays Menus
+        """
+        selected_action = None
+        while not selected_action:
+            self.position = self.key_handler.get_position()
+            self.list_content.update_position(self.position)
+
+            self.render_all()
+            selected_action = self.key_handler.get_action()
+        return selected_action, self.items[self.position][0]
+
+        # What happens if the expansion happens to the
+        # expanded one above it?
+        # elif key == curses.KEY_RIGHT:
+        #     self.expand_indexs.append(cursor_position)
+
+        # What happens if the you hit left mid way down
+        # a expanded section?
+        # elif key == curses.KEY_LEFT:
+        #     self.expand_indexs.remove(cursor_position)
+
