@@ -61,6 +61,7 @@ def find_last_opened(note_data):
     # Remove once Issue #56. is resolved.
     if modified:
         return max(modified, key=lambda x: x[1])[0]
+    print('modified', modified)
 
 
 def most_views_pop(note_dict):
@@ -68,6 +69,7 @@ def most_views_pop(note_dict):
     """
     if note_dict:
         max_views = max(note_dict, key=lambda x: note_dict[x]['views'])
+        print(max_views, note_dict[max_views]['views'])
         note_dict.pop(max_views)
         return max_views
 

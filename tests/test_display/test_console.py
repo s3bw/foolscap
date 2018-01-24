@@ -145,7 +145,6 @@ def test_FolioConsole_render(mock_keys, mock_display, mock_titlebar,
 def test_FolioConsole_show(mock_keys, mock_display, mock_titlebar,
                            mock_statusbar, mock_helpbar, mock_frame):
     mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 100, 100
     with patch('foolscap.display.console.panel') as mock_panel,\
          patch('foolscap.display.console.curses') as mock_curses:
         mocked_render_objects = [
@@ -155,9 +154,12 @@ def test_FolioConsole_show(mock_keys, mock_display, mock_titlebar,
             mock_helpbar(),
             mock_display(),
         ]
-        test_position = 1
         test_console = FolioConsole(mock_screen, FAKE_ITEMS)
-        result = test_console.show()
-        mock_keys.get_position.return_value = test_position
-        mock_display().update_position.assert_called_with(mock_keys().get_position())
+        with patch.object(test_console, 'key_handler') as mocked_keys:
+            mock_position = (0, 1)
+            mocked_keys.get_position.return_value = mock_position
+            mocked_keys.get_action.return_value = ('action', 1)
+
+            result = test_console.show()
+            mock_display().update_pointers.assert_called_with(mock_position[0], mock_position[1])
 
