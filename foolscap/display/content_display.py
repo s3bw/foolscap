@@ -35,7 +35,7 @@ class DisplayContents(Displayable):
 
         """
         print_note = self.top_note
-        for line_y in range(self.top_line + 1, self.bottom_line - 2):
+        for line_y in range(self.top_line + 1, self.bottom_line - 1):
             if print_note > len(self.items) - 1:
                 break
 
