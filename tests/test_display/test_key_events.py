@@ -55,14 +55,7 @@ def test_key_events(key_press, expected):
 
 @pytest.mark.parametrize("pos,max_len,expected",
     [(5, 10, (4, 3)),
-    # (11,10, 0),
-    # (10,10, 0),
      (1, 10, (10, 9)),
-    # (5, 10, 4),
-    # (9, 10, 8),
-    # (0, 10, 9),
-    # (5, 10, 6),
-    # (9, 10, 0),
      (0, 10, (10, 9))])
 def test_cursor_up_movement_large_term(pos, max_len, expected):
     expected_pos, expected_list_index = expected
@@ -127,7 +120,6 @@ def test_cursor_up_movement_small_term(max_len, test_with, expected):
      (10, (3, 2, 2), (3, 3, 3)),
      (10, (2, 3, 2), (3, 4, 2)),
      (10, (3, 9, 7), (1, 0, 0))])
-    # (10, (0, 0, 0), (3, 9, 7))])
 def test_cursor_down_movement_small_term(max_len, test_with, expected):
     pos, list_pos, list_top = test_with
     expected_pos, expected_list_pos, expected_top_note = expected
