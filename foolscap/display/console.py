@@ -30,7 +30,6 @@ def setup_folio(stdscreen, display_data):
 class FolioConsole(object):
     def __enter__(self):
         panel.update_panels()
-
         self.panel.hide()
         self.panel.top()
         self.panel.show()
@@ -71,7 +70,6 @@ class FolioConsole(object):
         self.add_child(self.help_bar)
 
         self.list_content = DisplayContents(self.screen, self.items)
-        # self.list_content.update_position(self.position)
         self.add_child(self.list_content)
 
     def add_child(self, child_object):
@@ -88,12 +86,12 @@ class FolioConsole(object):
         """
         selected_action = None
         while not selected_action:
-            self.position = self.key_handler.get_position()
-            self.list_content.update_position(self.position)
+            list_top, self.position = self.key_handler.get_position()
+            self.list_content.update_pointers(list_top, self.position)
 
             self.render_all()
-            selected_action = self.key_handler.get_action()
-        return selected_action, self.items[self.position][0]
+            selected_action, action_note = self.key_handler.get_action()
+        return selected_action, self.items[action_note][0]
 
         # What happens if the expansion happens to the
         # expanded one above it?

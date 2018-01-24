@@ -209,7 +209,6 @@ def note_component(note_lines):
         if sub_headings:
             note_component[title]['sub_headings'] = sub_headings
 
-    print(note_component)
     return note_component
 
 

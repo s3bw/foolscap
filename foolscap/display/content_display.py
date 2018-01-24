@@ -9,6 +9,7 @@ REVERSE_LINE_COLOUR = curses.A_REVERSE
 
 TITLE = "|>  {}"
 DESCRIPTION = "{}"
+INDICATE_SCROLL = "\t\t V~V~V MORE V~V~V "
 
 
 def _set_colour(line, cursor):
@@ -24,20 +25,28 @@ class DisplayContents(Displayable):
         Displayable.__init__(self, screen)
         self.items = items
 
-    def update_position(self, position):
+    def update_pointers(self, top_note, position):
+        self.top_note = top_note
         self.position = position
 
     def draw(self):
-        for index, item in enumerate(self.items):
-            line_colour = _set_colour(index, self.position)
+        """
+        'top_note' first note in list
 
-            item_title, description = item
-            item_title = TITLE.format(item_title)
-            item_description = DESCRIPTION.format(description)
+        """
+        print_note = self.top_note
+        for line_y in range(self.top_line + 1, self.bottom_line - 2):
+            if print_note > len(self.items) - 1:
+                break
 
-            self.screen.addstr(index + 1, 0, item_title, line_colour)
+            line_colour = _set_colour(line_y, self.position)
+            note_title, note_desc = self.items[print_note]
+            note_title = TITLE.format(note_title)
+            note_desc = DESCRIPTION.format(note_desc)
+            self.screen.addstr(line_y, 0, note_title, line_colour)
             if self.max_x > 64:
-                self.screen.addstr(index + 1, self.centre_x,
-                                   item_description, line_colour)
+                self.screen.addstr(line_y, self.centre_x,
+                                   note_desc, line_colour)
+            print_note += 1
 
 
