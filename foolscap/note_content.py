@@ -23,8 +23,10 @@ def save_note(new_note, saved_notes, temp_file=False):
     :param saved_notes: (dict) of notes in data.
     """
 
+    # Used for parsing '.txt' notes.
     if not temp_file:
         new_note = load_text(new_note)
+        print("\n\tAdded: '{}'.\n".format(new_note[0][2:]))
 
     new_component = note_component(new_note)
 
@@ -75,6 +77,7 @@ def delete_note(note, stored_data):
 
         stored_data.pop(note, None)
         save_data(stored_data)
+        print("\n\tDeleted: '{}'.\n".format(note))
 
     else:
         guess = fuzzy_guess(note, stored_notes)
@@ -96,7 +99,7 @@ def edit_note(note, stored_data):
         stored_data = update_component(note, stored_data)
         save_data(stored_data)
 
-        print('Note updated')
+        print("\n\tUpdated: '{}'.\n".format(note))
 
     else:
         guess = fuzzy_guess(note, stored_notes)
@@ -113,9 +116,10 @@ def new_note(stored_notes):
     # don't write unchanged notes.
     if '# title' != new_text[0]:
         save_note(new_text, stored_notes, temp_file=True)
+        print("\n\tSaved new note: '{}'.\n".format(new_text[0][2:]))
 
     else:
-        print('Aborted New Note')
+        print('\n\tAborted Note.\n')
 
 
 def move_lines(note, stored_data):
