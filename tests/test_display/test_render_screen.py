@@ -70,17 +70,21 @@ def test_TitleBar_init():
     assert isinstance(test_title_bar, TitleBar)
     assert mock_screen.getmaxyx.called_once()
     assert hasattr(test_title_bar, 'heading')
+    assert hasattr(test_title_bar, 'cwd')
 
 
 def test_TitleBar_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     mock_heading = "HEADER"
+    mock_path = "PATH"
     test_title_bar = TitleBar(mock_screen)
     test_title_bar.heading = mock_heading
+    test_title_bar.cwd = mock_path
     test_title_bar.centre_header = 22
     test_title_bar.draw()
-    mock_screen.addstr.assert_called_with(0, 22, mock_heading)
+    calls = [call(0, 22, mock_heading), call(0, 42, mock_path)]
+    assert mock_screen.addstr.call_args_list == calls
 
 
 def test_TitleBar_update():
