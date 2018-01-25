@@ -6,6 +6,7 @@ from note_content import (
     delete_note,
     edit_note,
     new_note,
+    export_note,
     move_lines,
 )
 
@@ -18,6 +19,7 @@ FUNCTION_MAP = {
     'delete': delete_note,
     'edit': edit_note,
     'new': new_note,
+    'export': export_note,
     'move_lines': move_lines,
     'migrate': update_version,
 }

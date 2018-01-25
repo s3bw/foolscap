@@ -34,6 +34,26 @@ def save_note(new_note, saved_notes, temp_file=False):
     save_data(saved_notes)
 
 
+def export_note(note, stored_data):
+    stored_notes = stored_data.keys()
+    name_note = NOTE_FOLDERS['GET_NOTE']
+
+    if note in stored_notes:
+        note_text = load_text(name_note.format(note_name=note))
+        with open(note + '.txt', 'w') as write_file:
+            for line in note_text:
+                write_file.write(line + '\n')
+
+        stored_data = update_component(note, stored_data)
+        save_data(stored_data)
+
+        print("\n\tExported: '{}'.\n".format(note))
+
+    else:
+        guess = fuzzy_guess(note, stored_notes)
+        print(not_found.format(guess))
+
+
 def view_note(note, stored_data):
     """ Print the note to console if found.
 

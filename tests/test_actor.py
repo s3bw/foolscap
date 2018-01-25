@@ -29,7 +29,19 @@ def test_view_note_command():
         # Pass to actor:
         actor.action('view', FAKE_META_DATA, 'mock_note')
         mock_action.assert_called_once()
-        assert mock_action.call_args == expected 
+        assert mock_action.call_args == expected
+
+
+def test_export_note_command():
+    mock_action = MagicMock()
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'export': mock_action}):
+        # export expects the following:
+        expected = call('mock_note', FAKE_META_DATA)
+
+        # Pass to actor:
+        actor.action('export', FAKE_META_DATA, 'mock_note')
+        mock_action.assert_called_once()
+        assert mock_action.call_args == expected
 
 
 def test_list_note_command_no_tags():
@@ -54,7 +66,7 @@ def test_list_note_command_tags():
         # List with tags expects:
         # Note: same as last test.
         expected = [
-            call('tag', FAKE_META_DATA), 
+            call('tag', FAKE_META_DATA),
             call('tag', FAKE_META_DATA)
         ]
 
@@ -100,7 +112,7 @@ def test_delete_note_command():
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'delete': mock_action}):
         # Delete expects:
         expected = call('mock_note', FAKE_META_DATA)
-         
+
         actor.action('delete', FAKE_META_DATA, 'mock_note')
         mock_action.assert_called_once()
         assert mock_action.call_args == expected
@@ -111,7 +123,7 @@ def test_new_note_command():
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'new': mock_action}):
         # New expects:
         expected = call(FAKE_META_DATA)
-         
+
         actor.action('new', FAKE_META_DATA, None)
         mock_action.assert_called_once()
         assert mock_action.call_args == expected
@@ -122,7 +134,7 @@ def test_move_lines_command():
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'move_lines': mock_action}):
         # Move Lines expects:
         expected = call('mock_note', FAKE_META_DATA)
-         
+
         actor.action('move_lines', FAKE_META_DATA, 'mock_note')
         mock_action.assert_called_once()
         assert mock_action.call_args == expected

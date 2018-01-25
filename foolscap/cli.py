@@ -11,6 +11,7 @@ FEATURES = [
     'delete',
     'edit',
     'new',
+    'export',
     'move_lines',
     'migrate',
 ]
