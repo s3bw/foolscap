@@ -28,3 +28,4 @@ wheels/
 .installed.cfg
 *.egg
 
+.coverage
