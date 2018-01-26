@@ -99,6 +99,11 @@ def test_replace_spaces():
     assert result == 'note_title'
 
 
+def test_lower_case():
+    result = parse_text.lower_case('NOTE_TITLE')
+    assert result == 'note_title'
+
+
 def test_max_title_len():
     test_title = 'note_title_which_is_a_little_too_long'
     result = parse_text.max_title_len(test_title)
@@ -106,7 +111,7 @@ def test_max_title_len():
 
 
 def test_restict_title():
-    result = parse_text.restrict_title('note title')
+    result = parse_text.restrict_title('note TITle')
     assert result == 'note_title'
 
 
