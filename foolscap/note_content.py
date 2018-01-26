@@ -32,6 +32,9 @@ def save_note(new_note, saved_notes, temp_file=False):
 
     saved_notes.update(new_component)
     save_data(saved_notes)
+    if temp_file:
+        title = list(new_component.keys())[0]
+        print("\n\tSaved note: '{}'.\n".format(title))
 
 
 def export_note(note, stored_data):
@@ -134,12 +137,11 @@ def new_note(stored_notes):
     new_text = edit_text()
 
     # don't write unchanged notes.
-    if '# title' != new_text[0]:
-        save_note(new_text, stored_notes, temp_file=True)
-        print("\n\tSaved new note: '{}'.\n".format(new_text[0][2:]))
+    if '# title' == new_text[0]:
+        print('\n\tAborted Note.\n')
 
     else:
-        print('\n\tAborted Note.\n')
+        save_note(new_text, stored_notes, temp_file=True)
 
 
 def move_lines(note, stored_data):

@@ -49,10 +49,25 @@ Make sure you change the title!
 
 
 def test_load_text():
+    """ Title upper case to check for convert to lower
+    in other tests.
+    """
     note = parse_text.load_text(TEST_NOTE)
-
-    assert note == EXPECTED_NOTE.split('\n')
-    assert len(note) == 10
+    expected_note = [
+        '',
+        '# TEST_NOTE',
+        '====================',
+        ':Description of note',
+        '',
+        'Some content.',
+        '>Move content.',
+        '',
+        '{test} {unit}',
+        '====================',
+        '',
+    ]
+    assert note == expected_note
+    assert len(note) == 11
 
 
 def test_edit_temp_text():
