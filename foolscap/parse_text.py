@@ -82,13 +82,27 @@ def replace_spaces(title):
 
 def max_title_len(title):
     if len(title) > MAX_TITLE_LEN:
-        print('Title must be less than {} characters.'.format(MAX_TITLE_LEN))
+        print('\nTitle must be less than {} characters.'.format(MAX_TITLE_LEN))
         return title[:MAX_TITLE_LEN]
     return title
 
 
+def lower_case(title):
+    """ They should expect the title to be low case next time.
+    """
+    alphabet_upper = "ABCDEFGHIJKLMNOP"
+    contains_upper = any(char in title for char in alphabet_upper)
+    if contains_upper:
+        title = title.lower()
+        print('\nTitle made lowercase: {}'.format(title))
+    return title
+
+
 def restrict_title(title):
-    return replace_spaces(max_title_len(title))
+    title = max_title_len(title)
+    title = replace_spaces(title)
+    title = lower_case(title)
+    return title
 
 
 def get_title(note):
@@ -126,7 +140,6 @@ def note_description(content):
     description = content[1]
     if description and description[0] == ':':
         return description[1:].lstrip()
-    return None
 
 
 def note_tags(contents):
@@ -135,7 +148,6 @@ def note_tags(contents):
     if tag_line and '{' in tag_line:
         tags = [tag[1:-1] for tag in tag_line.split(' ') if tag]
         return tags
-    return None
 
 
 def get_contents(note):
