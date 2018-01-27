@@ -90,7 +90,7 @@ def max_title_len(title):
 def lower_case(title):
     """ They should expect the title to be low case next time.
     """
-    alphabet_upper = "ABCDEFGHIJKLMNOP"
+    alphabet_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     contains_upper = any(char in title for char in alphabet_upper)
     if contains_upper:
         title = title.lower()
@@ -99,6 +99,11 @@ def lower_case(title):
 
 
 def restrict_title(title):
+    """
+    This is implemented in two places:
+        - new_components
+        - update_component
+    """
     title = max_title_len(title)
     title = replace_spaces(title)
     title = lower_case(title)
@@ -107,7 +112,7 @@ def restrict_title(title):
 
 def get_title(note):
     # title parsing needs improvement (regex)
-    return [restrict_title(line[2:]) for line in note if line[:2] == '# ']
+    return [line[2:] for line in note if line[:2] == '# ']
 
 
 def get_moving_lines(note):
@@ -202,7 +207,9 @@ def note_component(note_lines):
     # This loops through multiple notes
     note_component = {}
     for note_title, content in zip(titles, contents):
+        note_title = restrict_title(note_title)
         title = unique_heading(note_title)
+
         save_text(title, content)
 
         note_component[title] = {'created': datetime.now()}
@@ -258,7 +265,7 @@ def update_component(note, stored_data):
     )
     note_edited = load_text(note_name)
 
-    new_name = get_title(note_edited)[0]
+    new_name = restrict_title(get_title(note_edited)[0])
     new_content = get_contents(note_edited)[0]
 
     if new_name != note and new_name in stored_notes:
