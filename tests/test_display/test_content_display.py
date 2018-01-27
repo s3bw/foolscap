@@ -50,10 +50,22 @@ def test_DisplayContents_update_position():
     test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
 
     test_DC.update_pointers(1, 3)
-    assert hasattr(test_DC, 'position')
-    assert hasattr(test_DC, 'top_note')
-    assert test_DC.position == 3
-    assert test_DC.top_note == 1
+    assert hasattr(test_DC, 'cursor')
+    assert hasattr(test_DC, 'first_index')
+    assert test_DC.cursor == 3
+    assert test_DC.first_index == 1
+
+
+def test_DisplayContents_get_item():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
+
+    expected = ("|another_title|", "|another description|")
+    with patch(patch_TITLE, '|{}|'),\
+         patch(patch_DESCRIP, '|{}|'):
+        result = test_DC.get_item(1)
+        assert result == expected
 
 
 def test_DisplayContents_draw():
