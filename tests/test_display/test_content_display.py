@@ -56,6 +56,18 @@ def test_DisplayContents_update_position():
     assert test_DC.first_index == 1
 
 
+def test_DisplayContents_get_item():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
+
+    expected = ("|another_title|", "|another description|")
+    with patch(patch_TITLE, '|{}|'),\
+         patch(patch_DESCRIP, '|{}|'):
+        result = test_DC.get_item(1)
+        assert result == expected
+
+
 def test_DisplayContents_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
