@@ -2,6 +2,11 @@ from display.console import display_list
 
 
 TOP_X_VIEWED = 3
+# This rule is so perfectly subtle,
+# - the number of views on notes
+# - is so few at this stage
+# - that one doesn't even notice it take effect.
+SORT_BY_VIEWS_RULE = 5
 
 
 def list_notes(tags, all_notes):
@@ -63,13 +68,35 @@ def find_last_opened(note_data):
         return max(modified, key=lambda x: x[1])[0]
 
 
-def most_views_pop(note_dict):
-    """ Get most viewed note and remove it from dict.
+def most_viewed(note_dict):
+    """ Remove top notes from dict
+
+    Unless less than sort_by_views_rule:
+        - don't rank most viewed to index 2, 3, 4 if
+          notes number less than 5.
     """
-    if note_dict:
-        max_views = max(note_dict, key=lambda x: note_dict[x]['views'])
-        note_dict.pop(max_views)
-        return max_views
+    organised_notes = []
+    num_notes = len(list(note_dict))
+    if num_notes > SORT_BY_VIEWS_RULE:
+        organised_notes = pull_top_viewed(note_dict)
+        for note in organised_notes:
+            note_dict.pop(note)
+    return organised_notes
+
+
+def pull_top_viewed(note_dict):
+    """ Get top X viewed notes.
+    """
+    note_and_views = [
+        (note_title, note_dict[note_title]['views'])
+        for note_title in note_dict
+    ]
+    # Sort by views then sort by name.
+    sorted_by_views = sorted(note_and_views, key=lambda x: (-x[1], x[0]))
+    return [
+        note_name
+        for note_name, _ in sorted_by_views[:TOP_X_VIEWED]
+    ]
 
 
 def sort_notes(note_data):
@@ -83,18 +110,16 @@ def sort_notes(note_data):
     """
     data_copy = note_data.copy()
 
-    # I could iter this instead of looping
-    # sort list, grab first 3.
-    organised_notes = []
-    for _ in range(TOP_X_VIEWED):
-        organised_notes.append(most_views_pop(data_copy))
+    organised_notes = most_viewed(data_copy)
 
+    # Own function
     last_opened = find_last_opened(data_copy)
     if last_opened:
         organised_notes.insert(0, last_opened)
         data_copy.pop(last_opened)
 
-    alphabetise = sorted(list(data_copy), key=lambda x: x.lower())
+    remaining_notes = list(data_copy)
+    alphabetise = sorted(remaining_notes, key=lambda x: x.lower())
 
     return [
         note_title
