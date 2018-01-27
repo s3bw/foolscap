@@ -5,6 +5,8 @@ import foolscap.note_display as note_display
 
 from data.test_meta_data import FAKE_SINGLE_NOTE
 from data.test_meta_data import FAKE_MANY_NOTES
+from data.test_meta_data import FAKE_NOTES_EDGE_CASE
+from data.test_meta_data import FOUR_FAKE_NOTES
 
 
 # Little reminder on how to use parametrize:
@@ -21,7 +23,7 @@ def test_param(inp, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("test_dict,expected",[ 
+@pytest.mark.parametrize("test_dict,expected",[
     (FAKE_MANY_NOTES.copy(),[
         ('recently_opened', 'This is a fake note'),
         ('most_viewed', 'This is a fake note'),
@@ -74,30 +76,29 @@ def test_display_information(sorted_list, test_dict, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("test_dict,expected",[
-    (FAKE_MANY_NOTES.copy(),'most_viewed'),
-    (FAKE_SINGLE_NOTE.copy(), 'most_viewed')
+@pytest.mark.parametrize("test_dict, expected",[
+    (FAKE_MANY_NOTES.copy(),['most_viewed', 'second_most', 'third_most']),
+    (FOUR_FAKE_NOTES.copy(),['C', 'B', 'A']),
+    (FAKE_NOTES_EDGE_CASE.copy(),['A', 'B', 'C']),
+    (FAKE_SINGLE_NOTE.copy(),['most_viewed']),
     ])
-def test_most_views_pop(test_dict, expected):
-   result = note_display.most_views_pop(test_dict)
+def test_pull_top_viewed(test_dict, expected):
+   result = note_display.pull_top_viewed(test_dict)
    assert result == expected
 
 
-@pytest.mark.parametrize("test_dict,expected",[
-    (FAKE_MANY_NOTES.copy(),['most_viewed',
-                             'second_most',
-                             'third_most']),
-    (FAKE_SINGLE_NOTE.copy(),['most_viewed',
-                               None,
-                               None])
+@pytest.mark.parametrize("test_dict, expected",[
+    (FAKE_MANY_NOTES.copy(),['most_viewed', 'second_most', 'third_most']),
+    # Test notes are note sorted when num < 5:
+    (FOUR_FAKE_NOTES.copy(),[]),
+    (FAKE_SINGLE_NOTE.copy(),[])
     ])
-def test_most_views_pop_range(test_dict, expected):
-    for n in range(3):
-        result = note_display.most_views_pop(test_dict)
-        assert result == expected[n]
+def test_most_viewed(test_dict, expected):
+    result = note_display.most_viewed(test_dict)
+    assert result == expected
 
 
-@pytest.mark.parametrize("test_dict,expected",[
+@pytest.mark.parametrize("test_dict, expected",[
     (FAKE_MANY_NOTES.copy(),'recently_opened'),
     ({}, None)
     ])
@@ -106,7 +107,7 @@ def test_find_last_opened(test_dict, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("test_dict,expected",[ 
+@pytest.mark.parametrize("test_dict, expected",[
     (FAKE_MANY_NOTES.copy(),[
         'recently_opened',
         'most_viewed',
@@ -116,15 +117,12 @@ def test_find_last_opened(test_dict, expected):
         'fake_note_1',
         'Z',
         ]),
-    (FAKE_SINGLE_NOTE.copy(),[
-        'most_viewed'
-        ])
+    # Test case where all views are the same.
+    (FAKE_NOTES_EDGE_CASE.copy(), ['G', 'A', 'B', 'C', 'D', 'E', 'F']),
+    (FOUR_FAKE_NOTES.copy(),['recently_opened', 'A', 'B', 'C']),
+    (FAKE_SINGLE_NOTE.copy(),['most_viewed'])
     ])
 def test_sort_notes(test_dict, expected):
     result = note_display.sort_notes(test_dict)
     assert result == expected
-    
-
-
-
 

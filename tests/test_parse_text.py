@@ -309,7 +309,9 @@ def test_update_component():
     NOTE_STORAGE = os.path.join('data', '{note_name}.txt')
     NOTES = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
     new_value = {'GET_NOTE': NOTES}
-    with patch.dict('foolscap.parse_text.NOTE_FOLDERS', new_value),\
+    with patch('os.remove'),\
+         patch('foolscap.parse_text.save_text'),\
+         patch.dict('foolscap.parse_text.NOTE_FOLDERS', new_value),\
          patch('foolscap.parse_text.datetime') as time:
         time.now.return_value = 'new_datetime'
         component = FAKE_COMPONENT.copy()
@@ -324,7 +326,5 @@ def test_update_component():
             }
         }
         result = parse_text.update_component('test_note', component)
-        print(result)
-        print(expected)
         assert result == expected
 
