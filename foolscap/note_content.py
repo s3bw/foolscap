@@ -26,7 +26,6 @@ def save_note(new_note, saved_notes, temp_file=False):
     # Used for parsing '.txt' notes.
     if not temp_file:
         new_note = load_text(new_note)
-        print("\n\tAdded: '{}'.\n".format(new_note[0][2:]))
 
     new_component = note_component(new_note)
 
@@ -35,6 +34,9 @@ def save_note(new_note, saved_notes, temp_file=False):
     if temp_file:
         title = list(new_component.keys())[0]
         print("\n\tSaved note: '{}'.\n".format(title))
+    else:
+        for title in new_component.keys():
+            print("\n\tAdded: '{}'.\n".format(title))
 
 
 def export_note(note, stored_data):
