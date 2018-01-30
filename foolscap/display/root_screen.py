@@ -1,4 +1,4 @@
-class Displayable():
+class Terminal:
     def __init__(self, screen):
         self.screen = screen
         self.top_line = 0
