@@ -1,27 +1,17 @@
-import curses
+from .root_screen import Terminal
 
 
-ENTER_KEY = [curses.KEY_ENTER, ord('\n')]
-# BACKSPACE = curses.KEY_RESIZE
-UP_ARROW = curses.KEY_UP
-DOWN_ARROW = curses.KEY_DOWN
-
-
-class HandleKeys():
-    def __init__(self, screen, count_notes):
-        self.screen = screen
+class Scrollable(Terminal):
+    def __init__(self, screen, max_pos):
+        Terminal.__init__(self, screen)
         self.position = 1
-        self.list_pointer = 0
         self.list_top = 0
-        self.max_pos = count_notes
-        self.command = None
-        self.update()
+        self.list_pointer = 0
+        self.max_pos = max_pos
 
-    def update(self):
-        self.top_line = 0
-        self.max_y, self.max_x = self.screen.getmaxyx()
-        self.bottom_line = self.max_y - 1
-        self.centre_x = int(self.max_x / 2)
+    def update(self, max_pos):
+        Terminal.update(self)
+        self.max_pos = max_pos
 
     def move_up(self):
         """
@@ -68,25 +58,4 @@ class HandleKeys():
         else:
             self.position += 1
             self.list_pointer += 1
-
-    def get_action(self):
-        self.update()
-        key = self.screen.getch()
-        if key in ENTER_KEY:
-            self.command = 'view'
-        if key == ord('e'):
-            self.command = 'edit'
-        if key == ord('q'):
-            exit()
-        # elif key == BACKSPACE:
-        #     self.screen.erase()
-        elif key == UP_ARROW:
-            self.move_up()
-        elif key == DOWN_ARROW:
-            self.move_down()
-        return self.command, self.list_pointer
-
-    def get_position(self):
-        return self.list_top, self.position
-
 

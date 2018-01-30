@@ -66,7 +66,7 @@ def test_FolioConsole_contextmanager():
 @patch('foolscap.display.console.StatusBar')
 @patch('foolscap.display.console.TitleBar')
 @patch('foolscap.display.console.DisplayContents')
-@patch('foolscap.display.console.HandleKeys')
+@patch('foolscap.display.console.KeyListener')
 def test_FolioConsole_init(mock_keys, mock_display, mock_titlebar,
                            mock_statusbar, mock_helpbar, mock_frame):
     mock_screen = MagicMock()
@@ -88,18 +88,14 @@ def test_FolioConsole_init(mock_keys, mock_display, mock_titlebar,
         assert hasattr(test_console, 'panel')
         assert hasattr(test_console, 'count_notes')
 
-        assert hasattr(test_console, 'frame')
-        assert hasattr(test_console, 'status_bar')
-        assert hasattr(test_console, 'title_bar')
-        assert hasattr(test_console, 'help_bar')
         assert hasattr(test_console, 'list_content')
-        assert hasattr(test_console, 'key_handler')
+        assert hasattr(test_console, 'key_listener')
 
         assert test_console.items == FAKE_ITEMS
         assert test_console.count_notes == 2
         assert test_console.render_objects == mocked_render_objects
         assert len(test_console.render_objects) == 5
-        assert test_console.key_handler == mock_keys()
+        assert test_console.key_listener == mock_keys()
 
         mock_frame.assert_called_with(mock_screen.subwin())
         mock_statusbar.assert_called_with(mock_screen.subwin(), 2)
@@ -113,8 +109,8 @@ def test_FolioConsole_init(mock_keys, mock_display, mock_titlebar,
 @patch('foolscap.display.console.StatusBar')
 @patch('foolscap.display.console.TitleBar')
 @patch('foolscap.display.console.DisplayContents')
-@patch('foolscap.display.console.HandleKeys')
-def test_FolioConsole_render(mock_keys, mock_display, mock_titlebar,
+@patch('foolscap.display.console.KeyListener')
+def test_FolioConsole_render(mock_listener, mock_display, mock_titlebar,
                            mock_statusbar, mock_helpbar, mock_frame):
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
@@ -141,8 +137,8 @@ def test_FolioConsole_render(mock_keys, mock_display, mock_titlebar,
 @patch('foolscap.display.console.StatusBar')
 @patch('foolscap.display.console.TitleBar')
 @patch('foolscap.display.console.DisplayContents')
-@patch('foolscap.display.console.HandleKeys')
-def test_FolioConsole_show(mock_keys, mock_display, mock_titlebar,
+@patch('foolscap.display.console.KeyListener')
+def test_FolioConsole_show(mock_listener, mock_display, mock_titlebar,
                            mock_statusbar, mock_helpbar, mock_frame):
     mock_screen = MagicMock()
     with patch('foolscap.display.console.panel') as mock_panel,\
@@ -155,10 +151,10 @@ def test_FolioConsole_show(mock_keys, mock_display, mock_titlebar,
             mock_display(),
         ]
         test_console = FolioConsole(mock_screen, FAKE_ITEMS)
-        with patch.object(test_console, 'key_handler') as mocked_keys:
+        with patch.object(test_console, 'key_listener') as mocked_listener:
             mock_position = (0, 1)
-            mocked_keys.get_position.return_value = mock_position
-            mocked_keys.get_action.return_value = ('action', 1)
+            mocked_listener.get_position.return_value = mock_position
+            mocked_listener.get_action.return_value = ('action', 1)
 
             result = test_console.show()
             mock_display().update_pointers.assert_called_with(mock_position[0], mock_position[1])

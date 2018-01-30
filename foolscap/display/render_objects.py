@@ -1,22 +1,22 @@
 import os
 
-from .root_widget import Displayable
+from .root_screen import Terminal
 
 
-class Frame(Displayable):
+class Frame(Terminal):
     def __init__(self, screen, frame_type='default'):
-        Displayable.__init__(self, screen)
+        Terminal.__init__(self, screen)
 
     def draw(self):
         self.screen.border('|', '|', '-', '-', '+', '+', '+', '+')
 
     def update(self):
-        Displayable.update(self)
+        Terminal.update(self)
 
 
-class HelpBar(Displayable):
+class HelpBar(Terminal):
     def __init__(self, screen):
-        Displayable.__init__(self, screen)
+        Terminal.__init__(self, screen)
         # help_options = [
         #     ' [q]uit ',
         #     ' [e]dit ',
@@ -32,12 +32,12 @@ class HelpBar(Displayable):
         self.screen.addstr(self.bottom_line, 2, self.help_string)
 
     def update(self):
-        Displayable.update(self)
+        Terminal.update(self)
 
 
-class TitleBar(Displayable):
+class TitleBar(Terminal):
     def __init__(self, screen):
-        Displayable.__init__(self, screen)
+        Terminal.__init__(self, screen)
         self.heading = "|   FoolScap   |"
         path = os.path.normpath(os.getcwd())
         self.cwd = self.format_path(path)
@@ -53,13 +53,13 @@ class TitleBar(Displayable):
         self.screen.addstr(self.top_line, self.centre_header + 20, self.cwd)
 
     def update(self):
-        Displayable.update(self)
+        Terminal.update(self)
         self.centre_header = int((self.max_x - len(self.heading)) / 2)
 
 
-class StatusBar(Displayable):
+class StatusBar(Terminal):
     def __init__(self, screen, n_notes):
-        Displayable.__init__(self, screen)
+        Terminal.__init__(self, screen)
         display_text = "Notes: {}".format(n_notes)
         self.display_text = display_text
 
@@ -67,5 +67,5 @@ class StatusBar(Displayable):
         self.screen.addstr(self.bottom_line - 1, 2, self.display_text)
 
     def update(self):
-        Displayable.update(self)
+        Terminal.update(self)
 

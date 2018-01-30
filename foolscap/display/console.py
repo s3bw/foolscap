@@ -1,12 +1,12 @@
 import curses
 from curses import panel
 
-from .render_screen import Frame
-from .render_screen import HelpBar
-from .render_screen import StatusBar
-from .render_screen import TitleBar
+from .render_objects import Frame
+from .render_objects import HelpBar
+from .render_objects import StatusBar
+from .render_objects import TitleBar
 from .content_display import DisplayContents
-from .key_events import HandleKeys
+from .key_listener import KeyListener
 
 
 def display_list(display_data):
@@ -27,7 +27,7 @@ def setup_folio(stdscreen, display_data):
     return selected_action
 
 
-class FolioConsole(object):
+class FolioConsole:
     def __enter__(self):
         panel.update_panels()
         self.panel.hide()
@@ -45,7 +45,6 @@ class FolioConsole(object):
         curses.doupdate()
 
     def __init__(self, stdscreen, items):
-        self.render_objects = []
         self.items = items
         # self.expand_indexs = []
         self.screen = stdscreen.subwin(0, 0)
@@ -54,20 +53,22 @@ class FolioConsole(object):
 
         self.ui_collection()
 
-        self.key_handler = HandleKeys(self.screen, self.count_notes)
+        self.key_listener = KeyListener(self.screen, self.count_notes)
 
     def ui_collection(self):
-        self.frame = Frame(self.screen)
-        self.add_child(self.frame)
+        self.render_objects = []
 
-        self.status_bar = StatusBar(self.screen, self.count_notes)
-        self.add_child(self.status_bar)
+        frame = Frame(self.screen)
+        self.add_child(frame)
 
-        self.title_bar = TitleBar(self.screen)
-        self.add_child(self.title_bar)
+        status_bar = StatusBar(self.screen, self.count_notes)
+        self.add_child(status_bar)
 
-        self.help_bar = HelpBar(self.screen)
-        self.add_child(self.help_bar)
+        title_bar = TitleBar(self.screen)
+        self.add_child(title_bar)
+
+        help_bar = HelpBar(self.screen)
+        self.add_child(help_bar)
 
         self.list_content = DisplayContents(self.screen, self.items)
         self.add_child(self.list_content)
@@ -86,11 +87,11 @@ class FolioConsole(object):
         """
         selected_action = None
         while not selected_action:
-            list_top, self.position = self.key_handler.get_position()
+            list_top, self.position = self.key_listener.get_position()
             self.list_content.update_pointers(list_top, self.position)
 
             self.render_all()
-            selected_action, action_note = self.key_handler.get_action()
+            selected_action, action_note = self.key_listener.get_action()
         return selected_action, self.items[action_note][0]
 
         # What happens if the expansion happens to the

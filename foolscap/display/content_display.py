@@ -1,6 +1,6 @@
 import curses
 
-from .root_widget import Displayable
+from .root_screen import Terminal
 
 
 NORMAL_LINE_COLOUR = curses.A_NORMAL
@@ -20,9 +20,9 @@ def _set_colour(line, cursor):
     return NORMAL_LINE_COLOUR
 
 
-class DisplayContents(Displayable):
+class DisplayContents(Terminal):
     def __init__(self, screen, items):
-        Displayable.__init__(self, screen)
+        Terminal.__init__(self, screen)
         self.items = items
 
     def update_pointers(self, first_index, cursor):

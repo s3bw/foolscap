@@ -2,10 +2,10 @@ import pytest
 from mock import call
 from mock import MagicMock
 
-from foolscap.display.render_screen import Frame
-from foolscap.display.render_screen import HelpBar
-from foolscap.display.render_screen import TitleBar
-from foolscap.display.render_screen import StatusBar
+from foolscap.display.render_objects import Frame
+from foolscap.display.render_objects import HelpBar
+from foolscap.display.render_objects import TitleBar
+from foolscap.display.render_objects import StatusBar
 
 
 def test_Frame_init():

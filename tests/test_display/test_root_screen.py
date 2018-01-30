@@ -1,13 +1,13 @@
 from mock import MagicMock
 
-from foolscap.display import root_widget
+from foolscap.display import root_screen
 
 
-def test_Displayable_init():
+def test_Terminal_init():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 90, 110
-    test_dis = root_widget.Displayable(mock_screen)
-    assert isinstance(test_dis, root_widget.Displayable)
+    test_dis = root_screen.Terminal(mock_screen)
+    assert isinstance(test_dis, root_screen.Terminal)
     assert test_dis.screen == mock_screen
     assert test_dis.top_line == 0
     assert test_dis.max_y == 90
@@ -16,10 +16,10 @@ def test_Displayable_init():
     assert test_dis.centre_x == 55
 
 
-def test_Displayable_update():
+def test_Terminal_update():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 90, 110
-    test_dis = root_widget.Displayable(mock_screen)
+    test_dis = root_screen.Terminal(mock_screen)
     assert test_dis.max_y == 90
     assert test_dis.max_x == 110
     assert test_dis.bottom_line == 89
