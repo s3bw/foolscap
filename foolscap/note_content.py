@@ -1,152 +1,114 @@
 import os
 
-from meta_data import save_data
-from fuzzy_note import fuzzy_guess
-from file_paths import NOTE_FOLDERS
+from file_paths import NOTE_FOLDERS # io handler
 from parse_text import (
-    load_text,
-    edit_text,
-    unique_heading,
-    shift_lines,
-    note_component,
+    load_text, # IO handler
+    edit_text # IO handler,
+    unique_heading, # new component?
+    shift_lines, # move here
+)
+from meta_data import (
+    new_component,
     update_component,
 )
 
 
-not_found = '\n\tNot found, did you mean "{}"?\n'
-
-
-def save_note(new_note, saved_notes, temp_file=False):
+def save_note(new_note, temp_file=False):
     """ Convert note.txt to dict components and save.
 
     :param new_note: (string) name of .txt file.
     :param saved_notes: (dict) of notes in data.
     """
-
     # Used for parsing '.txt' notes.
     if not temp_file:
         new_note = load_text(new_note)
-
-    new_component = note_component(new_note)
-
-    saved_notes.update(new_component)
-    save_data(saved_notes)
+    titles, contents  = new_component(new_note)
     if temp_file:
-        title = list(new_component.keys())[0]
+        title = note_titles[0]
+        content = contents[0]
+        save_text(title, content)
         print("\n\tSaved note: '{}'.\n".format(title))
     else:
-        for title in new_component.keys():
+        for title, content in zip(titles, contents):
+            save_text(title, content)
             print("\n\tAdded: '{}'.\n".format(title))
 
 
-def export_note(note, stored_data):
-    stored_notes = stored_data.keys()
-    name_note = NOTE_FOLDERS['GET_NOTE']
-
-    if note in stored_notes:
-        note_text = load_text(name_note.format(note_name=note))
+def export_note(note):
+    if note_exists:
+        note_text = load_text(note)
         with open(note + '.txt', 'w') as write_file:
             for line in note_text:
                 write_file.write(line + '\n')
 
-        stored_data = update_component(note, stored_data)
-        save_data(stored_data)
-
+        update_component(note)
         print("\n\tExported: '{}'.\n".format(note))
 
-    else:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
 
-
-def view_note(note, stored_data):
+def view_note(note):
     """ Print the note to console if found.
 
     :param new_note: (string) name of .txt file.
     :param saved_notes: (dict) of notes in data.
     """
-    stored_notes = stored_data.keys()
-    name_note = NOTE_FOLDERS['GET_NOTE']
-
-    if note in stored_notes:
-        note_text = load_text(name_note.format(note_name=note))
-
+    if note_exists(note):
+        # Move to IO handler:
+        note_text = load_text(note)
         for line in note_text:
             print(line)
 
-        stored_data = update_component(note, stored_data)
-        save_data(stored_data)
-
-    else:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
+        update_component(note)
 
 
-def delete_note(note, stored_data):
+def delete_note(note):
     """ Delete a note stored in foolscap
 
     :param new_note: (string) name of .txt file.
     :param saved_notes: (dict) of notes in data.
     """
-    stored_notes = stored_data.keys()
-
-    if note in stored_notes:
+    if note_exists(note):
         folders = NOTE_FOLDERS
-
+        # IO Hander
         delete_file = folders['GET_NOTE'].format(note_name=note)
 
+        # Move unique heading to components
         recycle_bin = unique_heading(note, folder='IN_BIN')
         bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
 
         os.rename(delete_file, bin_note)
-
-        stored_data.pop(note, None)
-        save_data(stored_data)
         print("\n\tDeleted: '{}'.\n".format(note))
 
-    else:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
 
-
-def edit_note(note, stored_data):
+def edit_note(note):
     """ Edit the note from data in vim.
 
     :param note: (string) name of .txt file.
     :param stored_data: (dict) of notes in data.
     """
-    stored_notes = stored_data.keys()
-
-    if note in stored_notes:
+    if note_exists(note):
+        # path to Handle IO
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
         edit_text(editing=edited_note)
 
-        stored_data = update_component(note, stored_data)
-        save_data(stored_data)
-
+        update_component(note)
         print("\n\tUpdated: '{}'.\n".format(note))
 
-    else:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
 
-
-def new_note(stored_notes):
+def new_note():
     """ Create a new note in vim from template.
 
     :param stored_notes: (dict) of notes in data.
     """
+    # Edit text to Handle IO
     new_text = edit_text()
-
     # don't write unchanged notes.
     if '# title' == new_text[0]:
         print('\n\tAborted Note.\n')
-
     else:
-        save_note(new_text, stored_notes, temp_file=True)
+        save_note(new_text, temp_file=True)
 
 
-def move_lines(note, stored_data):
+def move_lines(note):
     """ Move selected lines from a note to another note.
 
     :param note: (string) title of note to move lines to.
@@ -154,17 +116,9 @@ def move_lines(note, stored_data):
     """
     from_note = input('Move lines from? ')
 
-    stored_notes = stored_data.keys()
-    if note not in stored_notes:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
-
-    if from_note in stored_notes:
+    if note_exists(note) and note_exists(from_note):
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=from_note)
         edit_text(editing=edited_note)
 
-        stored_data = shift_lines(from_note, note)
-    else:
-        guess = fuzzy_guess(note, stored_notes)
-        print(not_found.format(guess))
+        shift_lines(from_note, note)
 
