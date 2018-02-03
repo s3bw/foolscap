@@ -1,7 +1,5 @@
-from meta_data import load_data
-from migrate_data import update_version
-from note_display import list_notes
-from note_content import (
+from foolscap.note_display import list_notes
+from foolscap.note_content import (
     save_note,
     view_note,
     delete_note,
@@ -9,6 +7,7 @@ from note_content import (
     new_note,
     export_note,
     move_lines,
+    update_notes,
 )
 
 
@@ -22,10 +21,8 @@ FUNCTION_MAP = {
     'new': new_note,
     'export': export_note,
     'move_lines': move_lines,
-    'migrate': update_version,
+    'migrate': update_notes,
 }
-
-META_DATA = load_data()
 
 
 def action(do_action, arg):
@@ -36,16 +33,16 @@ def action(do_action, arg):
         # Quitting from list calls exit() method.
         # arg is filter in this case
         if arg:
-            new_action = func(arg, META_DATA)
+            new_action = func(arg)
         else:
-            new_action = func(None, META_DATA)
+            new_action = func(None)
 
     if new_action:
         new_func, note = new_action
         action(new_func, note)
     # arg is note in this case
     elif arg:
-        func(arg, META_DATA)
+        func(arg)
     else:
-        func(META_DATA)
+        func()
 

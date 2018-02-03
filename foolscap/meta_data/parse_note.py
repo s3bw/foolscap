@@ -122,16 +122,3 @@ def pairwise(iterable):
 
 
 
-def unique_text(heading, folder='ALL_NOTES'):
-    check_directory = NOTE_FOLDERS[folder]
-
-    all_notes = [filename for filename in os.listdir(check_directory)]
-    suffix = 0
-    if '{heading}.txt'.format(heading=heading) in all_notes:
-        while '{}_{}.txt'.format(heading, str(suffix)) in all_notes:
-            suffix += 1
-        new_name = '{}_{}'.format(heading, str(suffix))
-        heading = new_name
-
-    return heading
-

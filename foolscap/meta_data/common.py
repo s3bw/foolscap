@@ -1,18 +1,31 @@
 from datetime import datetime
 
-from foolscap.file_paths import NOTE_FOLDERS
+from foolscap.handle_note_io import save_text
+from foolscap.handle_note_io import load_text
+from foolscap.handle_note_io import remove_text
+from foolscap.handle_note_io import unique_text
 
 from foolscap.meta_data.io import load_meta
 from foolscap.meta_data.io import save_meta
+from foolscap.meta_data.io import migrate_meta
 from foolscap.meta_data.utils import fuzzy_guess
 from foolscap.meta_data.parse_note import (
-
-
+    restrict_title,
+    get_title,
+    get_contents,
+    note_tags,
+    note_description,
+    parse_sub_headings,
 )
 
 
+def upgrade_components():
+    migrate_meta()
+
+
+
 def note_exists(note):
-    stored_notes = load_meta.keys()
+    stored_notes = load_meta().keys()
     if note in stored_notes:
         return True
     else:
@@ -20,7 +33,7 @@ def note_exists(note):
 
 
 def remove_component(note):
-    stored_notes = load_meta.keys()
+    stored_notes = load_meta().keys()
     stored_notes.pop(note, None)
     save_meta(stored_notes)
 
@@ -28,15 +41,14 @@ def remove_component(note):
 def add_component(component):
     stored_notes = load_meta()
     stored_notes.update(component)
+    save_meta(stored_notes)
 
 
 def update_component(note):
-    stored_notes = load_meta.keys()
+    stored_data = load_meta()
+    stored_notes = stored_data.keys()
 
-    note_name = NOTE_FOLDERS['GET_NOTE'].format(
-        note_name=note
-    )
-    note_edited = load_text(note_name)
+    note_edited = load_text(note)
 
     new_name = restrict_title(get_title(note_edited)[0])
     new_content = get_contents(note_edited)[0]
@@ -50,7 +62,7 @@ def update_component(note):
         stored_data[new_name] = stored_data[note]
         stored_data.pop(note, None)
 
-    os.remove(note_name)
+    remove_text(note)
     save_text(new_name, new_content)
 
     stored_data[new_name]['modified'] = datetime.now()
@@ -64,7 +76,7 @@ def update_component(note):
     if tags:
         stored_data[new_name]['tags'] = tags
 
-    save_data(stored_data)
+    save_meta(stored_data)
 
 
 def new_component(text):
@@ -83,9 +95,12 @@ def new_component(text):
     # This loops through multiple notes
     note_component = {}
     for note_title, content in zip(titles, contents):
-        note_title = restrict_title(text)
-        title = unique_heading(note_title)
+        note_title = restrict_title(note_title)
+        title = unique_text(note_title)
 
+        save_text(title, content)
+
+        print(title)
         note_component[title] = {'created': datetime.now()}
         note_component[title]['views'] = 1
         note_component[title]['modified'] = datetime.now()

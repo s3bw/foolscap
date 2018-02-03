@@ -1,8 +1,8 @@
 import os
 from tempfile import NamedTemporaryFile
 
-from file_paths import NOTE_FOLDERS
-from subprocess_utils import edit_in_vim
+from foolscap.file_paths import NOTE_FOLDERS
+from foolscap.subprocess_utils import edit_in_vim
 
 
 NEW_NOTE_TEMPLATE = """\
@@ -15,13 +15,16 @@ Make sure you change the title!
 {tag}
 =========="""
 
+
 def remove_text(note):
-    path = NOTE_FOLDERS['GET_NOTE'].format(note_name=name_to_note)
+    path = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
     os.remove(path)
 
-def load_text(note):
-    path = NOTE_FOLDERS['GET_NOTE'].format(note_name=name_to_note)
-    with open(text) as notes:
+
+def load_text(path, new_note=False):
+    if not new_note:
+        path = NOTE_FOLDERS['GET_NOTE'].format(note_name=path)
+    with open(path) as notes:
         notes = notes.read()
         # Handle for dos and unix
         return notes.split('\n')
@@ -52,4 +55,17 @@ def save_text(note_title, content):
     with open(name_note, 'w') as save_txt:
         save_txt.write(text_string)
 
+
+def unique_text(heading, folder='ALL_NOTES'):
+    check_directory = NOTE_FOLDERS[folder]
+
+    all_notes = [filename for filename in os.listdir(check_directory)]
+    suffix = 0
+    if '{heading}.txt'.format(heading=heading) in all_notes:
+        while '{}_{}.txt'.format(heading, str(suffix)) in all_notes:
+            suffix += 1
+        new_name = '{}_{}'.format(heading, str(suffix))
+        heading = new_name
+
+    return heading
 

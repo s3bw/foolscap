@@ -1,6 +1,6 @@
 import argparse
 
-from actor import action
+from foolscap.actor import action
 
 
 FEATURES = [

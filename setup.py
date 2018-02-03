@@ -16,13 +16,14 @@ setup(
     author='GiantsLoveDeathMetal',
     author_email='s.williamswynn.mail@gmail.com',
     packages=find_packages(
-        SOURCE,
+        #SOURCE,
+        include='foolscap',
         exclude='tests',
     ),
-    package_dir={'': SOURCE},
+    # package_dir={'': SOURCE},
     entry_points={
         'console_scripts': [
-            'fscap=cli:main',
+            'fscap=foolscap.cli:main',
         ]
     },
     classifiers=[
