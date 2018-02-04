@@ -31,11 +31,9 @@ def save_note(new_note, temp_file=False):
         new_note = load_text(new_note, new_note=True)
     titles, contents = new_component(new_note)
     if temp_file:
-        # save_text(note_titles[0], contents[0])
         print("\n\tSaved note: '{}'.\n".format(titles[0]))
     else:
         for title, content in zip(titles, contents):
-            # save_text(title, content)
             print("\n\tAdded: '{}'.\n".format(title))
 
 
@@ -57,7 +55,6 @@ def view_note(note):
     :param saved_notes: (dict) of notes in data.
     """
     if note_exists(note):
-        # Move to IO handler:
         note_text = load_text(note)
         for line in note_text:
             print(line)
@@ -73,10 +70,8 @@ def delete_note(note):
     """
     if note_exists(note):
         folders = NOTE_FOLDERS
-        # IO Hander
         delete_file = folders['GET_NOTE'].format(note_name=note)
 
-        # Move unique heading to components
         recycle_bin = unique_text(note, folder='IN_BIN')
         bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
 
@@ -91,7 +86,6 @@ def edit_note(note):
     :param stored_data: (dict) of notes in data.
     """
     if note_exists(note):
-        # path to Handle IO
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
         edit_text(editing=edited_note)
 
@@ -104,7 +98,6 @@ def new_note():
 
     :param stored_notes: (dict) of notes in data.
     """
-    # Edit text to Handle IO
     new_text = edit_text()
     # don't write unchanged notes.
     if '# title' == new_text[0]:
