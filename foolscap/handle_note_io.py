@@ -42,6 +42,11 @@ def edit_text(editing=None):
         edit_in_vim(editing_text)
 
 
+def replace_text(note, new_name, content):
+    remove_text(note)
+    save_text(new_name, content)
+
+
 def save_text(note_title, content):
     """ This saves the note as a text file.
     :param str note_title: the title of the note used as filename.

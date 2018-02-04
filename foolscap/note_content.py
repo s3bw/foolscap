@@ -4,17 +4,17 @@ from foolscap.file_paths import NOTE_FOLDERS
 from foolscap.handle_note_io import (
     load_text,
     edit_text,
-    save_text,
-    remove_text,
     unique_text,
 )
 
 from foolscap.meta_data import (
+    shift_lines,
     note_exists,
     new_component,
     update_component,
     upgrade_components,
 )
+
 
 def update_notes():
     upgrade_components()
@@ -113,44 +113,18 @@ def new_note():
         save_note(new_text, temp_file=True)
 
 
-def move_lines(note):
+def move_lines(from_note):
     """ Move selected lines from a note to another note.
 
     :param note: (string) title of note to move lines to.
     :param stored_data: (dict) of notes in data.
     """
-    from_note = input('Move lines from? ')
+    note = input('Move lines to? ')
 
     if note_exists(note) and note_exists(from_note):
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=from_note)
         edit_text(editing=edited_note)
 
         shift_lines(from_note, note)
-
-
-def remove_moving_lines(note):
-    _lines = [line for line in note if line[:1] != '>']
-    return _lines
-
-
-def shift_lines(name_from_note, name_to_note):
-    # load text, return note, delete, save new
-    take_from_note = load_text(path_from)
-    remove_text(path_from)
-
-    replace_note = get_contents(take_from_note)[0]
-    replace_note = remove_moving_lines(replace_note)
-    save_text(name_from_note, replace_note)
-
-    # load text, return note, apply new, delete old, save new
-    apply_to_note = load_text(name_to_note)
-    # Get contents with be tricky to refactor
-    apply_to_note = get_contents(apply_to_note)[0]
-
-    line_index = len(apply_to_note) - 2
-    # Insert moved lines into other note.
-    apply_to_note[line_index:line_index] = get_moving_lines(take_from_note)
-    remove_text(name_to_note)
-    save_text(name_to_note, apply_to_note)
 
 

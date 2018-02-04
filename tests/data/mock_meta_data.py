@@ -46,3 +46,18 @@ FAKE_NOTES_EDGE_CASE = {
     'B': mock_data(5),
     'C': mock_data(5),
 }
+
+
+def mock_component(views, year=2000, modified='no_change'):
+    return {
+        'description': 'This is a fake note',
+        'created': 'created_date',
+        'modified': modified,
+        'tags': ['fake_tag'],
+        'views': views
+    }
+
+def MOCK_COMPONENT(x, y, name='note'):
+    return {
+        name: mock_component(x, modified=y)
+    }

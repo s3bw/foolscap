@@ -3,13 +3,11 @@
 MAX_TITLE_LEN = 32
 
 
-
 def replace_spaces(title):
     """ Replaces spaces contained in a title."""
     if ' ' in title:
         return title.replace(' ', '_')
     return title
-
 
 
 def max_title_len(title):
@@ -30,10 +28,6 @@ def lower_case(title):
     return title
 
 
-def get_title(note):
-    # title parsing needs improvement (regex)
-    return [line[2:] for line in note if line[:2] == '# ']
-
 def restrict_title(title):
     """
     This is implemented in two places:
@@ -46,9 +40,15 @@ def restrict_title(title):
     return title
 
 
+def get_title(note):
+    # title parsing needs improvement (regex)
+    return [line[2:] for line in note if line[:2] == '# ']
+
+
 def get_moving_lines(note):
     _lines = [line for line in note if line[:1] == '>']
     return _lines
+
 
 def parse_sub_headings(content):
     sub_headings_indexs = index_sub_headings(content)
@@ -64,7 +64,6 @@ def index_sub_headings(content):
     return [index
             for index, line in enumerate(content[2:])
             if line and line[0] == ':']
-
 
 
 def get_contents(note):
@@ -105,7 +104,6 @@ def note_tags(contents):
         return tags
 
 
-
 def pairwise(iterable):
     """ Pairs even length iterables.
 
@@ -119,6 +117,4 @@ def pairwise(iterable):
     # Do I throw error for odd length iterable?
     a = iter(iterable)
     return zip(a, a)
-
-
 

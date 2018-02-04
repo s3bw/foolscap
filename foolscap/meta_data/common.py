@@ -2,7 +2,7 @@ from datetime import datetime
 
 from foolscap.handle_note_io import save_text
 from foolscap.handle_note_io import load_text
-from foolscap.handle_note_io import remove_text
+from foolscap.handle_note_io import replace_text
 from foolscap.handle_note_io import unique_text
 
 from foolscap.meta_data.io import load_meta
@@ -13,6 +13,7 @@ from foolscap.meta_data.parse_note import (
     restrict_title,
     get_title,
     get_contents,
+    get_moving_lines,
     note_tags,
     note_description,
     parse_sub_headings,
@@ -23,7 +24,6 @@ def upgrade_components():
     migrate_meta()
 
 
-
 def note_exists(note):
     stored_notes = load_meta().keys()
     if note in stored_notes:
@@ -32,8 +32,32 @@ def note_exists(note):
         fuzzy_guess(note, stored_notes)
 
 
+def remove_moving_lines(note):
+    _lines = [line for line in note if line[:1] != '>']
+    return _lines
+
+
+def shift_lines(path_from, name_to_note):
+    # load text, return note, delete, save new
+    from_note = load_text(path_from)
+
+    replace_note = get_contents(from_note)[0]
+    replace_note = remove_moving_lines(replace_note)
+    replace_text(path_from, path_from, replace_note)
+
+    # load text, return note, apply new, delete old, save new
+    apply_to_note = load_text(name_to_note)
+    # Get contents with be tricky to refactor
+    apply_to_note = get_contents(apply_to_note)[0]
+
+    line_index = len(apply_to_note) - 2
+    # Insert moved lines into other note.
+    apply_to_note[line_index:line_index] = get_moving_lines(from_note)
+    replace_text(name_to_note, name_to_note, apply_to_note)
+
+
 def remove_component(note):
-    stored_notes = load_meta().keys()
+    stored_notes = load_meta()
     stored_notes.pop(note, None)
     save_meta(stored_notes)
 
@@ -44,35 +68,50 @@ def add_component(component):
     save_meta(stored_notes)
 
 
-def update_component(note):
-    stored_data = load_meta()
+def avoid_conflict(note, new_name, stored_data):
+    """ Check if note name has changed and that the new name
+    does not exists in the note directory.
+        - if there is a conflict, find a name that does not
+          conflict
+    """
     stored_notes = stored_data.keys()
-
-    note_edited = load_text(note)
-
-    new_name = restrict_title(get_title(note_edited)[0])
-    new_content = get_contents(note_edited)[0]
-
     if new_name != note and new_name in stored_notes:
         print('Warning!: Edited note title already exists!')
-        new_name = unique_heading(new_name)
+        new_name = unique_text(new_name)
+    return new_name
+
+
+def update_note_hooks(note, stored_data):
+    """ If the name of note has been changed, update the
+    hook in the meta_data (hash key).
+    """
+    note_edited = load_text(note)
+    new_name = restrict_title(get_title(note_edited)[0])
+    new_content = get_contents(note_edited)[0]
+    new_name = avoid_conflict(note, new_name, stored_data)
 
     # Note name has been changed, update the meta_data hook.
-    if new_name != note and new_name not in stored_notes:
+    if new_name != note:
         stored_data[new_name] = stored_data[note]
         stored_data.pop(note, None)
 
-    remove_text(note)
-    save_text(new_name, new_content)
+    replace_text(note, new_name, new_content)
+    return new_name, new_content
+
+
+def update_component(note):
+    stored_data = load_meta()
+
+    new_name, content = update_note_hooks(note, stored_data)
 
     stored_data[new_name]['modified'] = datetime.now()
     stored_data[new_name]['views'] += 1
 
-    description = note_description(new_content)
+    description = note_description(content)
     if description:
         stored_data[new_name]['description'] = description
 
-    tags = note_tags(new_content)
+    tags = note_tags(content)
     if tags:
         stored_data[new_name]['tags'] = tags
 
@@ -100,7 +139,6 @@ def new_component(text):
 
         save_text(title, content)
 
-        print(title)
         note_component[title] = {'created': datetime.now()}
         note_component[title]['views'] = 1
         note_component[title]['modified'] = datetime.now()
