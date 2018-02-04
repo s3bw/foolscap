@@ -11,6 +11,7 @@ from foolscap.meta_data import (
     shift_lines,
     note_exists,
     new_component,
+    remove_component,
     update_component,
     upgrade_components,
 )
@@ -76,6 +77,7 @@ def delete_note(note):
         bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
 
         os.rename(delete_file, bin_note)
+        remove_component(note)
         print("\n\tDeleted: '{}'.\n".format(note))
 
 
