@@ -1,9 +1,11 @@
+import pytest
 from mock import call
 from mock import patch
 from mock import MagicMock
 
 from foolscap.cli import main
-
+from foolscap.cli import FEATURES
+from foolscap.actor import FUNCTION_MAP
 
 # foolscap.cli.note_data
 FAKE_DATA = 'mock_data'
@@ -37,6 +39,16 @@ def test_valid_command_optional():
         assert mock_action.call_args == expected
 
 
+def test_all_commands_available():
+    expected = set(FUNCTION_MAP.keys())
+    result = set(FEATURES)
+    assert result == expected
+
+
 def test_invalid_command():
-    # Must do:
-    pass
+    test_args = make_test_args(['create'])
+    with patch('sys.argv', test_args),\
+         patch('foolscap.cli.action') as mock_action,\
+         pytest.raises(SystemExit):
+        main()
+
