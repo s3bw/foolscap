@@ -1,7 +1,6 @@
 import argparse
 
-from actor import action
-from meta_data import load_data
+from foolscap.actor import action
 
 
 FEATURES = [
@@ -33,6 +32,5 @@ def main():
     command = args.command
     note_args = args.positional
 
-    whole_foolscap = load_data()
-    action(command, whole_foolscap, note_args)
+    action(command, note_args)
 

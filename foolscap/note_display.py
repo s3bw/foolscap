@@ -1,5 +1,5 @@
-from display.console import display_list
-
+from foolscap.display.console import display_list
+from foolscap.meta_data import load_meta
 
 TOP_X_VIEWED = 3
 # This rule is so perfectly subtle,
@@ -9,7 +9,7 @@ TOP_X_VIEWED = 3
 SORT_BY_VIEWS_RULE = 5
 
 
-def list_notes(tags, all_notes):
+def list_notes(tags):
     """ Presents notes in the terminal.
 
     all_notes = {
@@ -24,6 +24,7 @@ def list_notes(tags, all_notes):
     :param str tags: Filter by tag.
     :param dict[dict[list]] all_notes: Meta information on notes.
     """
+    all_notes = load_meta()
     if tags:
         all_notes = {
             key: values

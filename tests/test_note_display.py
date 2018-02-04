@@ -3,10 +3,10 @@ from mock import patch
 
 import foolscap.note_display as note_display
 
-from data.test_meta_data import FAKE_SINGLE_NOTE
-from data.test_meta_data import FAKE_MANY_NOTES
-from data.test_meta_data import FAKE_NOTES_EDGE_CASE
-from data.test_meta_data import FOUR_FAKE_NOTES
+from data.mock_meta_data import FAKE_SINGLE_NOTE
+from data.mock_meta_data import FAKE_MANY_NOTES
+from data.mock_meta_data import FAKE_NOTES_EDGE_CASE
+from data.mock_meta_data import FOUR_FAKE_NOTES
 
 
 # Little reminder on how to use parametrize:
@@ -42,16 +42,17 @@ def test_list_notes(test_dict, expected):
     def fake_return(input_param):
         return input_param
 
-    with patch('foolscap.note_display.display_list') as mock_display:
+    with patch('foolscap.note_display.display_list') as mock_display,\
+         patch('foolscap.note_display.load_meta') as mock_meta:
+        mock_meta.return_value = test_dict
         mock_display.side_effect = fake_return
-        result = note_display.list_notes(None, test_dict)
+        result = note_display.list_notes(None)
         assert result == expected
 
 
 def test_list_notes_with_no_tag_matches():
-    test_dict = FAKE_MANY_NOTES.copy()
     with pytest.raises(SystemExit):
-        note_display.list_notes('no_match_tag', test_dict)
+        note_display.list_notes('no_match_tag')
 
 
 @pytest.mark.parametrize("sorted_list,test_dict,expected",[

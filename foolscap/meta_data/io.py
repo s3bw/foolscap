@@ -1,9 +1,42 @@
+import pickle
 from datetime import datetime
 
-from meta_data import save_data
+from foolscap.file_paths import NOTE_DATA
+from foolscap.file_paths import BACKUP_DATA
 
 
-def update_version(meta_data):
+def save_meta(data, backup=False):
+    """
+    data = {
+        'test_note': {
+            'description': ': description',
+            'tags': ['tag'],
+            'timestamp': 'now'}
+        }
+    }
+
+    :param data: (dict) containing all notes.
+    :param backup: (boolean) save data to backup.
+    """
+    if not backup:
+        with open(NOTE_DATA, 'wb') as output:
+            pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+    else:
+        with open(BACKUP_DATA, 'wb') as output:
+            pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+
+
+def load_meta():
+    """ Load the note data into a dict."""
+    try:
+        with open(NOTE_DATA, 'rb') as _input:
+            return pickle.load(_input)
+
+    except EOFError and IOError:
+        return {}
+
+
+def migrate_meta():
     """
     OLD:
     data = {
@@ -26,9 +59,10 @@ def update_version(meta_data):
     }
     """
     time_now = datetime.now()
+    meta_data = load_meta()
 
     # Backup data before migrating
-    save_data(meta_data, backup=True)
+    save_meta(meta_data, backup=True)
     for key, value in meta_data.items():
         print('Migrating: {}.'.format(key))
         # Adding new meta data
@@ -54,6 +88,6 @@ def update_version(meta_data):
         if 'updated' in meta_fields:
             value.pop('updated', None)
 
-    save_data(meta_data)
+    save_meta(meta_data)
     print('All meta data has been migrated.')
 
