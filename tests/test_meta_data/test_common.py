@@ -1,3 +1,5 @@
+import pkg_resources
+
 import pytest
 from mock import Mock
 from mock import patch
@@ -8,6 +10,7 @@ from mock import call
 from tests.data.mock_meta_data import MOCK_COMPONENT
 
 import foolscap.meta_data.common as common
+from foolscap.handle_note_io import load_text
 
 
 def test_upgrade_components():
@@ -188,13 +191,47 @@ def test_remove_moving_lines():
     expected_content = [
         '',
         '# test_note',
-        '====================', 
-        ':Description of note', 
-        '', 
-        'Some content.', 
-        '', 
-        '{test} {unit}', 
+        '====================',
+        ':Description of note',
+        '',
+        'Some content.',
+        '',
+        '{test} {unit}',
         '====================',
     ]
     result = common.remove_moving_lines(note)
     assert result == expected_content
+
+
+def test_subheading_components():
+    test_note = pkg_resources.resource_filename(
+        __name__,
+        'data/test_note_subheadings.txt'
+    )
+    expected = {
+        'note': {
+            'created': 'created_date',
+            'views': 1,
+            'modified': 'created_date',
+            'description': 'This tests subheadings',
+            'tags': ['subheadings', 'test'],
+            'sub_headings': [
+                ('First test:', ':this is the first sub'),
+                ('Second test:', ':this is the 2nd sub')],
+            'num_sub': 2
+        }
+    }
+    with patch('foolscap.meta_data.common.save_text') as mock_save_text,\
+         patch('foolscap.meta_data.common.unique_text') as mock_unique_heading,\
+         patch('foolscap.meta_data.common.add_component') as mock_add,\
+         patch('foolscap.meta_data.common.datetime') as fake_time:
+        mock_note = load_text(test_note, new_note=True)
+
+        fake_time.now.return_value = 'created_date'
+        mock_unique_heading.return_value = 'note'
+
+        common.new_component(mock_note)
+
+    mock_add.assert_called_once_with(expected)
+    mock_save_text.assert_called_once()
+

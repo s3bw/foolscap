@@ -115,6 +115,11 @@ def update_component(note):
     if tags:
         stored_data[new_name]['tags'] = tags
 
+    sub_headings = parse_sub_headings(content)
+    if sub_headings:
+        stored_data[new_name]['sub_headings'] = sub_headings
+        stored_data[new_name]['num_sub'] = len(sub_headings)
+
     save_meta(stored_data)
 
 
@@ -154,6 +159,7 @@ def new_component(text):
         sub_headings = parse_sub_headings(content)
         if sub_headings:
             note_component[title]['sub_headings'] = sub_headings
+            note_component[title]['num_sub'] = len(sub_headings)
 
     add_component(note_component)
     return titles, contents

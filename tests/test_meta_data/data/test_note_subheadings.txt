@@ -1,0 +1,15 @@
+
+# test_note
+============
+:This tests subheadings
+
+First test:
+:this is the first sub
+
+Second test:
+:this is the 2nd sub
+
+{subheadings} {test}
+===========
+
+
