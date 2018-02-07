@@ -12,6 +12,24 @@ def mock_data(views, year=2000):
     }
 
 
+def mock_w_subheadings(views, year=2000):
+    modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
+    return {
+        'description': 'This is a fake note',
+        'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
+        'modified': modified,
+        'tags': ['fake_tag'],
+        'views': views,
+        'sub_headings': [('First Sub:', ':A sub headings')],
+        'num_sub': 1
+    }
+
+
+FAKE_SINGLE_NOTE_2 = {
+    'most_viewed': mock_w_subheadings(4)
+}
+
+
 FAKE_SINGLE_NOTE = {
     'most_viewed': mock_data(4)
 }

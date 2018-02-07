@@ -10,8 +10,8 @@ from foolscap.display.console import FolioConsole
 
 
 FAKE_ITEMS = [
-    ("test_title", "test description"),
-    ("another_title", "another description"),
+    {'title': "test_title", 'description': "test description"},
+    {'title': "another_title", 'description': "another description"},
 ]
 
 

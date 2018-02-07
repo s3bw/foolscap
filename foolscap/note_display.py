@@ -39,16 +39,21 @@ def list_notes(tags):
 
     sorted_titles = sort_notes(all_notes)
     display_notes = display_information(sorted_titles, all_notes)
-
     return display_list(display_notes)
 
 
 def display_information(sorted_notes, note_dict):
     """ Get description from list of note titles"""
-    return [
-        (title, note_dict[title]['description'])
-        for title in sorted_notes
-    ]
+    display_notes = []
+    for title in sorted_notes:
+        display_dict = {}
+        display_dict['title'] = title
+        display_dict['description'] = note_dict[title]['description']
+        if 'sub_headings' in note_dict[title]:
+            display_dict['sub_headings'] = note_dict[title]['sub_headings']
+        display_notes.append(display_dict)
+
+    return display_notes
 
 
 def modified_notes(note_dict):

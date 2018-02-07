@@ -4,6 +4,7 @@ from mock import patch
 import foolscap.note_display as note_display
 
 from data.mock_meta_data import FAKE_SINGLE_NOTE
+from data.mock_meta_data import FAKE_SINGLE_NOTE_2
 from data.mock_meta_data import FAKE_MANY_NOTES
 from data.mock_meta_data import FAKE_NOTES_EDGE_CASE
 from data.mock_meta_data import FOUR_FAKE_NOTES
@@ -25,16 +26,16 @@ def test_param(inp, expected):
 
 @pytest.mark.parametrize("test_dict,expected",[
     (FAKE_MANY_NOTES.copy(),[
-        ('recently_opened', 'This is a fake note'),
-        ('most_viewed', 'This is a fake note'),
-        ('second_most', 'This is a fake note'),
-        ('third_most', 'This is a fake note'),
-        ('A', 'This is a fake note'),
-        ('fake_note_1', 'This is a fake note'),
-        ('Z', 'This is a fake note'),
+        {'title': 'recently_opened', 'description': 'This is a fake note'},
+        {'title': 'most_viewed', 'description': 'This is a fake note'},
+        {'title': 'second_most', 'description': 'This is a fake note'},
+        {'title': 'third_most', 'description': 'This is a fake note'},
+        {'title': 'A', 'description': 'This is a fake note'},
+        {'title': 'fake_note_1', 'description': 'This is a fake note'},
+        {'title': 'Z', 'description': 'This is a fake note'},
         ]),
     (FAKE_SINGLE_NOTE.copy(),[
-        ('most_viewed', 'This is a fake note'),
+        {'title': 'most_viewed', 'description': 'This is a fake note'},
         ])
     ])
 # No tag filtering
@@ -60,16 +61,25 @@ def test_list_notes_with_no_tag_matches():
         ['A','second_most','fake_note_1'],
         FAKE_MANY_NOTES.copy(),
         [
-            ('A', 'This is a fake note'),
-            ('second_most', 'This is a fake note'),
-            ('fake_note_1', 'This is a fake note'),
+            {'title': 'A', 'description': 'This is a fake note'},
+            {'title': 'second_most', 'description': 'This is a fake note'},
+            {'title': 'fake_note_1', 'description': 'This is a fake note'},
         ]
     ),
     (
         ['most_viewed'],
         FAKE_SINGLE_NOTE.copy(),
         [
-            ('most_viewed', 'This is a fake note')
+            {'title': 'most_viewed', 'description': 'This is a fake note'}
+        ]
+    ),
+    (
+        ['most_viewed'],
+        FAKE_SINGLE_NOTE_2.copy(),
+        [
+            {'title': 'most_viewed', 
+             'description': 'This is a fake note',
+             'sub_headings': [('First Sub:', ':A sub headings')]},
         ]
     )])
 def test_display_information(sorted_list, test_dict, expected):
@@ -90,7 +100,7 @@ def test_pull_top_viewed(test_dict, expected):
 
 @pytest.mark.parametrize("test_dict, expected",[
     (FAKE_MANY_NOTES.copy(),['most_viewed', 'second_most', 'third_most']),
-    # Test notes are note sorted when num < 5:
+    # Test notes are not sorted when num < 5:
     (FOUR_FAKE_NOTES.copy(),[]),
     (FAKE_SINGLE_NOTE.copy(),[])
     ])

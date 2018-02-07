@@ -92,7 +92,7 @@ class FolioConsole:
 
             self.render_all()
             selected_action, action_note = self.key_listener.get_action()
-        return selected_action, self.items[action_note][0]
+        return selected_action, self.items[action_note]['title']
 
         # What happens if the expansion happens to the
         # expanded one above it?
