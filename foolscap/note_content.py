@@ -39,7 +39,7 @@ def save_note(new_note, temp_file=False):
 
 
 def export_note(note):
-    if note_exists:
+    if note_exists(note):
         note_text = load_text(note)
         with open(note + '.txt', 'w') as write_file:
             for line in note_text:
