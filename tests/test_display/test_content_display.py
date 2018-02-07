@@ -13,11 +13,10 @@ patch_DIM = 'foolscap.display.content_display.DIM_LINE_COLOUR'
 patch_REVERSE = 'foolscap.display.content_display.REVERSE_LINE_COLOUR'
 patch_TITLE = 'foolscap.display.content_display.TITLE'
 patch_DESCRIP = 'foolscap.display.content_display.DESCRIPTION'
-patch_SCROLL = 'foolscap.display.content_display.INDICATE_SCROLL'
 
 FAKE_ITEMS = [
-    ("test_title", "test description"),
-    ("another_title", "another description"),
+    {'title': "test_title", 'description': "test description"},
+    {'title': "another_title", 'description': "another description"},
 ]
 
 
@@ -60,8 +59,8 @@ def test_DisplayContents_get_item():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
-
-    expected = ("|another_title|", "|another description|")
+    # None would be subheading
+    expected = ("|another_title|", "|another description|", None)
     with patch(patch_TITLE, '|{}|'),\
          patch(patch_DESCRIP, '|{}|'):
         result = test_DC.get_item(1)
@@ -84,9 +83,9 @@ def test_DisplayContents_draw():
         test_DC.draw()
         calls = [call.getmaxyx(),
                  call.addstr(1, 0, "test_title", "NORMAL"),
-                 call.addstr(1, 50, "test description", "NORMAL"),
+                 call.addstr(1, 48, "test description", "NORMAL"),
                  call.addstr(2, 0, "another_title", "REVERSE"),
-                 call.addstr(2, 50, "another description", "REVERSE")]
+                 call.addstr(2, 48, "another description", "REVERSE")]
         mock_screen.assert_has_calls(calls)
 
 
@@ -111,12 +110,12 @@ def test_DisplayContents_draw_small():
 
 def test_DisplayContents_draw_smaller():
     fake_items = [
-        ("test_title", "test description"),
-        ("another_title_1", "another description"),
-        ("another_title_2", "another description"),
-        ("another_title_3", "another description"),
-        ("another_title_4", "another description"),
-        ("another_title_5", "another description"),
+        {'title': "test_title", 'description': "test description"},
+        {'title': "another_title_1", 'description': "another description"},
+        {'title': "another_title_2", 'description': "another description"},
+        {'title': "another_title_3", 'description': "another description"},
+        {'title': "another_title_4", 'description': "another description"},
+        {'title': "another_title_5", 'description': "another description"},
     ]
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 7, 50
@@ -128,8 +127,7 @@ def test_DisplayContents_draw_smaller():
          patch(patch_DIM, 'DIM'),\
          patch(patch_REVERSE, 'REVERSE'),\
          patch(patch_TITLE, '{}'),\
-         patch(patch_DESCRIP, '{}'),\
-         patch(patch_SCROLL, 'MORE'):
+         patch(patch_DESCRIP, '{}'):
         test_DC.draw()
         calls = [call.getmaxyx(),
                  call.addstr(1, 0, "test_title", "NORMAL"),
