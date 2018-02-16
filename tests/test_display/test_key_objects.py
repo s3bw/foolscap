@@ -25,6 +25,17 @@ def test_Scrollable_init():
     assert test_scroll.centre_x == 50
 
 
+def test_Scrollable_update():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 100, 100
+
+    fake_max_pos = 10
+    test_scroll = key_objects.Scrollable(mock_screen, fake_max_pos)
+
+    test_scroll.update(20)
+    assert test_scroll.max_pos == 20
+
+
 @pytest.mark.parametrize("pos, max_len, expected",
     [(5, 10, (4, 3)),
      (1, 10, (10, 9)),

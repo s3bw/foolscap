@@ -9,9 +9,10 @@ class Scrollable(Terminal):
         self.list_pointer = 0
         self.max_pos = max_pos
 
-    def update(self, max_pos):
+    def update(self, new_max):
         Terminal.update(self)
-        self.max_pos = max_pos
+        if new_max != self.max_pos:
+            self.max_pos = new_max
 
     def move_up(self):
         """
@@ -58,4 +59,3 @@ class Scrollable(Terminal):
         else:
             self.position += 1
             self.list_pointer += 1
-

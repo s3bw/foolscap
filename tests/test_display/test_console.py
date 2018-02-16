@@ -154,7 +154,7 @@ def test_FolioConsole_show(mock_listener, mock_display, mock_titlebar,
         with patch.object(test_console, 'key_listener') as mocked_listener:
             mock_position = (0, 1)
             mocked_listener.get_position.return_value = mock_position
-            mocked_listener.get_action.return_value = ('action', 1)
+            mocked_listener.get_action.return_value = ('action', 1, None)
 
             result = test_console.show()
             mock_display().update_pointers.assert_called_with(mock_position[0], mock_position[1])

@@ -14,17 +14,26 @@ def test_KeyListener_init():
     assert test_listener.screen == mock_screen
     assert test_listener.max_pos == fake_note_count
     assert test_listener.command == None
-
     assert test_listener.scroll
 
 
+def test_KeyListener_setmax():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 100, 100
+    fake_note_count = 10
+    test_listener = key_listener.KeyListener(mock_screen, fake_note_count)
+    test_listener.set_max(20)
+    assert test_listener.max_pos == 20
+
+
 @pytest.mark.parametrize("key_press,expected",
-    [('ENTER', ('view', 5)),
-     (ord('e'), ('edit', 5)),
-     ('UP_ARROW', (None, 4)),
-     ('DOWN_ARROW', (None, 6))])
+    [('ENTER', ('view', 5, None)),
+     (ord('e'), ('edit', 5, None)),
+     ('UP_ARROW', (None, 4, None)),
+     ('DOWN_ARROW', (None, 6, None)),
+     ('RIGHT_ARROW', (None, 5, 5))])
 def test_key_listener(key_press, expected):
-    expected_command, expected_pointer = expected
+    expected_command, expected_pointer, expected_expand = expected
 
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
@@ -36,7 +45,8 @@ def test_key_listener(key_press, expected):
 
     with patch("foolscap.display.key_listener.ENTER_KEY", ['ENTER']),\
          patch("foolscap.display.key_listener.UP_ARROW", 'UP_ARROW'),\
-         patch("foolscap.display.key_listener.DOWN_ARROW", 'DOWN_ARROW'):
+         patch("foolscap.display.key_listener.DOWN_ARROW", 'DOWN_ARROW'),\
+         patch("foolscap.display.key_listener.RIGHT_ARROW", 'RIGHT_ARROW'):
         mock_screen.getch.return_value = key_press
         assert test_listener.get_action() == expected
         assert test_listener.command == expected_command

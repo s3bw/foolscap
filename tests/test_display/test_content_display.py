@@ -38,8 +38,8 @@ def test_DisplayContents_init():
     test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
 
     assert isinstance(test_DC, DisplayContents)
-    assert hasattr(test_DC, 'items')
-    assert test_DC.items == FAKE_ITEMS
+    assert hasattr(test_DC, 'menu_items')
+    assert len(test_DC.menu_items) == len(FAKE_ITEMS)
     mock_screen.getmaxyx.called_once()
 
 
@@ -55,16 +55,14 @@ def test_DisplayContents_update_position():
     assert test_DC.first_index == 1
 
 
-def test_DisplayContents_get_item():
+def test_DisplayContents_find_next_item():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
     # None would be subheading
-    expected = ("|another_title|", "|another description|", None)
-    with patch(patch_TITLE, '|{}|'),\
-         patch(patch_DESCRIP, '|{}|'):
-        result = test_DC.get_item(1)
-        assert result == expected
+    expected = "another_title"
+    result, index = test_DC.find_next_item(1)
+    assert (result.title, index) == (expected, 1)
 
 
 def test_DisplayContents_draw():
