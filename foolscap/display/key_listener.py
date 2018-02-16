@@ -1,12 +1,13 @@
 import curses
 
-from .key_objects import Scrollable
+from foolscap.display.key_objects import Scrollable
 
 
 ENTER_KEY = [curses.KEY_ENTER, ord('\n')]
-# BACKSPACE = curses.KEY_RESIZE
 UP_ARROW = curses.KEY_UP
 DOWN_ARROW = curses.KEY_DOWN
+RIGHT_ARROW = curses.KEY_RIGHT
+LEFT_ARROW = curses.KEY_LEFT
 
 
 class KeyListener:
@@ -21,8 +22,12 @@ class KeyListener:
     def _update(self):
         self.scroll.update(self.max_pos)
 
+    def set_max(self, count_notes):
+        self.max_pos = count_notes
+
     def get_action(self):
         self._update()
+        toggle_expand = None
         key = self.screen.getch()
         if key in ENTER_KEY:
             self.command = 'view'
@@ -34,9 +39,17 @@ class KeyListener:
             self.scroll.move_up()
         elif key == DOWN_ARROW:
             self.scroll.move_down()
-        return self.command, self.scroll.list_pointer
+        # For a sense of power, left should collapse
+        # and right should expand
+        # elif key == LEFT_ARROW:
+        #     self.drop_down.collapse()
+        elif key == RIGHT_ARROW:
+            toggle_expand = self.scroll.position
+        # command handles foolscap functions
+        # list pointer executes on note at pointer
+        # toggle handle functions for display
+        return self.command, self.scroll.list_pointer, toggle_expand
 
     def get_position(self):
         return self.scroll.list_top, self.scroll.position
-
 
