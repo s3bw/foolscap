@@ -32,24 +32,6 @@ class DisplayContents(Terminal):
         Terminal.__init__(self, screen)
         self.menu_items = self.build_menu(items)
 
-    def expand(self, expand_index=None):
-        if expand_index:
-            expand_item = self.menu_items[expand_index - 1]
-            if hasattr(expand_item, 'sub_items'):
-                self.menu_items[expand_index - 1].toggle_drop_down()
-                self.menu_items = self.update_menu()
-        return self.menu_items
-
-    def update_menu(self):
-        new_menu = []
-        for item in self.menu_items:
-            if not isinstance(item, SubItem):
-                new_menu.append(item)
-            if hasattr(item, 'sub_items') and item.expand:
-                for sub in item.sub_items:
-                    new_menu.append(sub)
-        return new_menu
-
     def build_menu(self, items):
         menu_items = []
         for item in items:
@@ -64,19 +46,27 @@ class DisplayContents(Terminal):
             menu_items.append(menu_item)
         return menu_items
 
+    def expand(self, expand_index):
+        if isinstance(expand_index, int):
+            expand_item = self.menu_items[expand_index]
+            if hasattr(expand_item, 'sub_items'):
+                expand_item.toggle_drop_down()
+                self.menu_items = self.update_menu()
+        return self.menu_items
+
+    def update_menu(self):
+        new_menu = []
+        for item in self.menu_items:
+            if not isinstance(item, SubItem):
+                new_menu.append(item)
+            if hasattr(item, 'sub_items') and item.expand:
+                for sub in item.sub_items:
+                    new_menu.append(sub)
+        return new_menu
+
     def update_pointers(self, first_index, cursor):
         self.first_index = first_index
         self.cursor = cursor
-
-    def find_next_item(self, index):
-        item = self.menu_items[index]
-        while isinstance(item, SubItem):
-            index += 1
-            # if needs to be tested
-            if index >= len(self.menu_items):
-                return None, index
-            item = self.menu_items[index]
-        return self.menu_items[index], index
 
     def draw_item(self, line, col_1, col_2):
         line_colour = _set_colour(line, self.cursor)
@@ -95,7 +85,7 @@ class DisplayContents(Terminal):
             if index_item >= len(self.menu_items):
                 break
 
-            item, index_item = self.find_next_item(index_item)
+            item = self.menu_items[index_item]
             if item and hasattr(item, 'sub_items'):
                 self.draw_item(draw_line,
                                TITLE.format(item.title),
@@ -103,9 +93,12 @@ class DisplayContents(Terminal):
                 if item.expand:
                     for sub in item.sub_items:
                         draw_line += 1
-                        self.draw_item(draw_line,
-                                       SUB_TITLE.format(sub.title),
-                                       EXPANDED.format(sub.desc))
+
+                        if draw_line < self.bottom_line - 1:
+                            index_item += 1
+                            self.draw_item(draw_line,
+                                           SUB_TITLE.format(sub.title),
+                                           EXPANDED.format(sub.desc))
 
             elif item:
                 self.draw_item(draw_line,

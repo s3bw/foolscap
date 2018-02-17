@@ -81,3 +81,21 @@ def test_get_position():
     test_listener.scroll.position = 5
     assert test_listener.get_position() == (0, 5)
 
+
+def test_get_position_small():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 15, 100
+    mock_screen.getch.return_value = 'UP_ARROW'
+
+    fake_note_count = 20
+    tail_index = 19
+    top_note = 8
+    cursor_pos = 12
+    with patch("foolscap.display.key_listener.UP_ARROW", 'UP_ARROW'):
+        test_listener = key_listener.KeyListener(mock_screen, fake_note_count)
+
+        assert test_listener.get_position() == (0, 1)
+        result = test_listener.get_action()
+        assert result == (None, tail_index, None)
+        assert test_listener.get_position() == (top_note, cursor_pos)
+
