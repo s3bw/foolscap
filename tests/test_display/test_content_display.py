@@ -55,16 +55,6 @@ def test_DisplayContents_update_position():
     assert test_DC.first_index == 1
 
 
-def test_DisplayContents_find_next_item():
-    mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 50, 50
-    test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
-    # None would be subheading
-    expected = "another_title"
-    result, index = test_DC.find_next_item(1)
-    assert (result.title, index) == (expected, 1)
-
-
 def test_DisplayContents_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100

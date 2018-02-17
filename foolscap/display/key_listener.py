@@ -44,7 +44,7 @@ class KeyListener:
         # elif key == LEFT_ARROW:
         #     self.drop_down.collapse()
         elif key == RIGHT_ARROW:
-            toggle_expand = self.scroll.position
+            toggle_expand = self.scroll.list_pointer
         # command handles foolscap functions
         # list pointer executes on note at pointer
         # toggle handle functions for display
