@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 setup(
     name='foolscap',
-    version='0.0.1',
+    version='0.1',
     author='GiantsLoveDeathMetal',
     author_email='s.williamswynn.mail@gmail.com',
     packages=find_packages(
