@@ -137,3 +137,56 @@ def test_sort_notes(test_dict, expected):
     result = note_display.sort_notes(test_dict)
     assert result == expected
 
+
+def test_listing_tags():
+    def fake_return(input_param):
+        return input_param
+    
+    with patch('foolscap.note_display.display_list') as mock_display,\
+         patch('foolscap.note_display.load_meta') as mock_meta:
+        mock_meta.return_value = FAKE_MANY_NOTES.copy()
+        mock_display.side_effect = fake_return
+        result = note_display.list_notes(None, 'tags')
+        mock_display.assert_called_once()
+        assert result == [{'title': 'fake_tag', 'description': str(7),
+                           'sub_headings': [('A', 'This is a fake note'), 
+                          ('fake_note_1', 'This is a fake note'), 
+                          ('most_viewed', 'This is a fake note'), 
+                          ('recently_opened', 'This is a fake note'), 
+                          ('second_most', 'This is a fake note'), 
+                          ('third_most', 'This is a fake note'), 
+                          ('Z', 'This is a fake note')]}]
+
+
+def test_count_tags():
+    mock_notes = FAKE_MANY_NOTES.copy()
+    result = note_display.count_tags(mock_notes)
+    assert result.most_common(1)[0] == ('fake_tag', 7)
+
+
+def test_get_by_tag():
+    # Get all notes with tag: 'fake_tag'
+    mock_notes = FAKE_MANY_NOTES.copy()
+    result = note_display.get_by_tag(mock_notes, 'fake_tag')
+    assert result == [('A', 'This is a fake note'), 
+                      ('fake_note_1', 'This is a fake note'), 
+                      ('most_viewed', 'This is a fake note'), 
+                      ('recently_opened', 'This is a fake note'), 
+                      ('second_most', 'This is a fake note'), 
+                      ('third_most', 'This is a fake note'), 
+                      ('Z', 'This is a fake note')]
+
+
+def test_create_tag_display():
+    # Get all notes with tag: 'fake_tag'
+    mock_notes = FAKE_MANY_NOTES.copy()
+    result = note_display.create_tag_display(mock_notes)
+    assert result == [{'title': 'fake_tag', 'description': str(7),
+                       'sub_headings': [('A', 'This is a fake note'), 
+                      ('fake_note_1', 'This is a fake note'), 
+                      ('most_viewed', 'This is a fake note'), 
+                      ('recently_opened', 'This is a fake note'), 
+                      ('second_most', 'This is a fake note'), 
+                      ('third_most', 'This is a fake note'), 
+                      ('Z', 'This is a fake note')]}]
+

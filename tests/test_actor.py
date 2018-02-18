@@ -57,7 +57,7 @@ def test_list_note_command_no_tags():
         # This is tricky, as list calls exit() if it quits in menu object
         # but cause we don't call the menu object, we return None
         # and have to expect the func to be called again...
-        expected = [call(None), call()]
+        expected = [call(None, 'normal'), call()]
 
         # Pass to actor:
         actor.action('list', None)
@@ -72,7 +72,7 @@ def test_list_note_command_tags():
         # List with tags expects:
         # Note: same as last test.
         expected = [
-            call('tag'),
+            call('tag', 'normal'),
             call('tag')
         ]
 
@@ -92,7 +92,7 @@ def test_list_note_command_returning_func():
         # If list function returns a new-action:
         mock_list.return_value = ('view', 'mock_note')
 
-        expected_list = call('tag')
+        expected_list = call('tag', 'normal')
         expected_view = call('mock_note')
 
         actor.action('list', 'tag')
@@ -164,3 +164,13 @@ def test_all_actions():
     assert set(ACTIONS) == set(TESTED_ACTIONS)
 
 
+def test_change_list_type():
+    mock_action = MagicMock()
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'list': mock_action}):
+        mock_action.return_value = None
+        expected = [
+            call(None, 'tags'),
+            call()
+        ]
+        actor.action('list', None, 'tags')
+        assert mock_action.call_args_list == expected

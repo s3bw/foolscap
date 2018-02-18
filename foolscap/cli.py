@@ -15,6 +15,11 @@ FEATURES = [
     'migrate',
 ]
 
+LIST_TYPES = [
+    'tags',
+]
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'command',
@@ -25,12 +30,19 @@ parser.add_argument(
     action='store',
     nargs='?',
 )
+parser.add_argument(
+    '-t',
+    '--list_type',
+    default='normal',
+    choices=LIST_TYPES,
+)
 
 
 def main():
     args = parser.parse_args()
     command = args.command
     note_args = args.positional
+    list_type = args.list_type
 
-    action(command, note_args)
+    action(command, note_args, list_type)
 

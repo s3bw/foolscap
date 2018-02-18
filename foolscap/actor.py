@@ -25,7 +25,7 @@ FUNCTION_MAP = {
 }
 
 
-def action(do_action, arg):
+def action(do_action, arg, list_type='normal'):
     func = FUNCTION_MAP[do_action]
 
     new_action = None
@@ -33,9 +33,9 @@ def action(do_action, arg):
         # Quitting from list calls exit() method.
         # arg is filter in this case
         if arg:
-            new_action = func(arg)
+            new_action = func(arg, list_type)
         else:
-            new_action = func(None)
+            new_action = func(None, list_type)
 
     if new_action:
         new_func, note = new_action
