@@ -1,12 +1,33 @@
 # Foolscap Note Manager
 
-![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
+![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master) 
 
 The foolscap note manager allows a user to track and maintain notes over many topics.
+
+## Install:
+
+To install foolscap do the following:
+
+    git clone git@github.com:GiantsLoveDeathMetal/foolscap.git
+    cd foolscap
+    pip install .
+    
+Then you'll need to set the `FSCAP_PATH` environment variable:
+
+    export FSCAP_PATH=~/.fscap_notes
+    
+Lastly create the following directories:
+
+    mkdir ~/.fscap_notes
+    mkdir ~/.fscap_notes/data
+    mkdir ~/.fscap_notes/notes
+    mkdir ~/.fscap_notes/deleted
 
 ---
 
 ## Note Structure:
+
+Please take care, the following documentation is intentionally outdated while `foolscap` is in Alpha.
 
 There are several key features that should be included into the note in order for it to be parsed into the foolscap data collector.
 
@@ -52,15 +73,13 @@ To save a note that has been written to a `.txt` one can use the following comma
 
     fscap save my_note.txt
 
-save can be substituted for `-s`
-
 Multiple notes in one `.txt` will be separated into different notes.
 
 #### List:
 
 The list function allows the user to view their contained notes. The description is also accompanied to the note title in the list.
 
-    fscap ls
+    fscap list
 
 If you want to filter notes by a specific tag all one has to do is append the tag to the command line:
 
@@ -70,7 +89,7 @@ More options on the list function will be included in up coming features.
 
 #### View:
 
-The `view/-v` command allows the user to view a note in the console. To call function use the following:
+The `view` command allows the user to view a note in the console. To call function use the following:
 
     fscap view <note_title>
 
@@ -78,7 +97,7 @@ The note title should be the second positional argument in this case.
 
 #### Edit:
 
-The `edit/-e` command allows a user to open their notes in the `vim` editor to make changes and foolscap will append the changes after closing.
+The `edit` command allows a user to open their notes in the `vim` editor to make changes and foolscap will append the changes after closing.
 
     fscap edit <note_title>
 
@@ -102,18 +121,6 @@ To create a new note from a default note template, type command:
 
 Foolscap allows you to move lines from one note to another using the `move-to` command:
 
-    fscap move-to <note_title>
+    fscap move_lines <note_title>
 
 Then you will be prompted for the note you want to take the lines from, enter the title of the note you'd like to take lines from. This should open a vim editor, specify the lines you'd like to move with `>` at the beginning of each line.
-
-
----
-
-### Future Changes:
-
-These are the features that planned in the future of foolscap:
-
-    - list options. To allow for a custom functioning of the list output.
-    - multiple descriptions. To allow one note be broken into sections.
-    - export. To allow the output of a note be exported in various ways.
-    - config. To allow a user to change the foolscap-markup of titles and descriptions.
