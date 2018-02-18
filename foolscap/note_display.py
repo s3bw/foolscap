@@ -1,5 +1,7 @@
-from foolscap.display.console import display_list
+from collections import Counter, OrderedDict
+
 from foolscap.meta_data import load_meta
+from foolscap.display.console import display_list
 
 TOP_X_VIEWED = 3
 # This rule is so perfectly subtle,
@@ -9,7 +11,11 @@ TOP_X_VIEWED = 3
 SORT_BY_VIEWS_RULE = 5
 
 
-def list_notes(tags):
+class OrderedCounter(Counter, OrderedDict):
+    pass
+
+
+def list_notes(tags, list_type='normal'):
     """ Presents notes in the terminal.
 
     all_notes = {
@@ -31,6 +37,9 @@ def list_notes(tags):
             for key, values in all_notes.items()
             if 'tags' in values and tags in values['tags']
         }
+    if list_type == 'tags':
+        display_notes = create_tag_display(all_notes)
+        return display_list(display_notes)
 
     if len(all_notes) == 0:
         # Fuzzy here
@@ -40,6 +49,36 @@ def list_notes(tags):
     sorted_titles = sort_notes(all_notes)
     display_notes = display_information(sorted_titles, all_notes)
     return display_list(display_notes)
+
+
+def count_tags(all_notes):
+    list_tags = []
+    for key, values in all_notes.items():
+        list_tags.extend(values['tags'])
+    return OrderedCounter(list_tags)
+
+
+def get_by_tag(all_notes, tag):
+    notes = {key: values
+             for key, values in all_notes.items()
+             if 'tags' in values and tag in values['tags']}
+    notes = [(note, values['description']) for note, values in notes.items()]
+    return sorted(notes, key=lambda x: x[0].lower())
+
+
+def create_tag_display(all_notes):
+    display = []
+    while all_notes:
+        tag_count = count_tags(all_notes)
+        max_tag, count = tag_count.most_common(1)[0]
+        display_tag = {}
+        display_tag['title'] = max_tag
+        display_tag['description'] = str(count)
+        display_tag['sub_headings'] = get_by_tag(all_notes, max_tag)
+        display.append(display_tag)
+        for key, _ in display_tag['sub_headings']:
+            all_notes.pop(key, 0)
+    return display
 
 
 def display_information(sorted_notes, note_dict):

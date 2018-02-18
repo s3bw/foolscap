@@ -22,7 +22,7 @@ def test_valid_command():
     with patch('sys.argv', test_args),\
          patch('foolscap.cli.action') as mock_action:
 
-        expected = call('save', 'mock_note.txt')
+        expected = call('save', 'mock_note.txt', 'normal')
         main()
         assert mock_action.call_args == expected
 
@@ -34,7 +34,7 @@ def test_valid_command_optional():
     with patch('sys.argv', test_args),\
          patch('foolscap.cli.action') as mock_action:
 
-        expected = call('new', None)
+        expected = call('new', None, 'normal')
         main()
         assert mock_action.call_args == expected
 
@@ -52,3 +52,5 @@ def test_invalid_command():
          pytest.raises(SystemExit):
         main()
 
+
+# Add changing list type test
