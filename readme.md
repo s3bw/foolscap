@@ -25,6 +25,10 @@ Lastly create the following directories:
 
 ---
 
+## Preview:
+
+[![asciicast](https://asciinema.org/a/L7HTfOt02pBDvCBxWme9CxBYV.png)](https://asciinema.org/a/L7HTfOt02pBDvCBxWme9CxBYV)
+
 ## Note Structure:
 
 Please take care, the following documentation is intentionally outdated while `foolscap` is in Alpha.
