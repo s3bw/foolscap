@@ -21,11 +21,13 @@ def update_notes():
     upgrade_components()
 
 
+# Possibly two functions?
 def save_note(new_note, temp_file=False):
     """ Convert note.txt to dict components and save.
 
-    :param new_note: (string) name of .txt file.
-    :param saved_notes: (dict) of notes in data.
+    :param new_note: (string) pointing to a note.
+    :param temp_file: (boolean) indicating the note
+        instance needs to be added.
     """
     # Used for parsing '.txt' notes.
     if not temp_file:
@@ -39,6 +41,8 @@ def save_note(new_note, temp_file=False):
 
 
 def export_note(note):
+    """ Write a copy of note in current directory.
+    """
     if note_exists(note):
         note_text = load_text(note)
         with open(note + '.txt', 'w') as write_file:
@@ -50,10 +54,7 @@ def export_note(note):
 
 
 def view_note(note):
-    """ Print the note to console if found.
-
-    :param new_note: (string) name of .txt file.
-    :param saved_notes: (dict) of notes in data.
+    """ Print the note to console.
     """
     if note_exists(note):
         note_text = load_text(note)
@@ -65,9 +66,6 @@ def view_note(note):
 
 def delete_note(note):
     """ Delete a note stored in foolscap
-
-    :param new_note: (string) name of .txt file.
-    :param saved_notes: (dict) of notes in data.
     """
     if note_exists(note):
         folders = NOTE_FOLDERS
@@ -82,10 +80,7 @@ def delete_note(note):
 
 
 def edit_note(note):
-    """ Edit the note from data in vim.
-
-    :param note: (string) name of .txt file.
-    :param stored_data: (dict) of notes in data.
+    """ Edit the note in vim.
     """
     if note_exists(note):
         edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
@@ -96,9 +91,7 @@ def edit_note(note):
 
 
 def new_note():
-    """ Create a new note in vim from template.
-
-    :param stored_notes: (dict) of notes in data.
+    """ Create a new note from template.
     """
     new_text = edit_text()
     # don't write unchanged notes.
@@ -110,9 +103,6 @@ def new_note():
 
 def move_lines(from_note):
     """ Move selected lines from a note to another note.
-
-    :param note: (string) title of note to move lines to.
-    :param stored_data: (dict) of notes in data.
     """
     note = input('Move lines to? ')
 
@@ -121,5 +111,4 @@ def move_lines(from_note):
         edit_text(editing=edited_note)
 
         shift_lines(from_note, note)
-
 
