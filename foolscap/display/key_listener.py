@@ -33,6 +33,8 @@ class KeyListener:
             self.command = 'view'
         if key == ord('e'):
             self.command = 'edit'
+        if key == ord('X'):
+            self.command = 'export'
         if key == ord('q'):
             exit()
         elif key == UP_ARROW:
