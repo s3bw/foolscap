@@ -13,38 +13,48 @@ def test_save_note():
 
 
 def test_export_note():
-    with patch('foolscap.note_content.note_exists') as exists:
-        exists.return_value = False
-        note_content.export_note('test_note')
-        exists.assert_called_once_with('test_note')
+    pass
 
 
 def test_view_note():
-    with patch('foolscap.note_content.note_exists') as exists:
-        exists.return_value = False
-        note_content.view_note('test_note')
-        exists.assert_called_once_with('test_note')
+    pass
 
 
 def test_delete_note():
-    with patch('foolscap.note_content.note_exists') as exists:
-        exists.return_value = False
+    with patch('foolscap.note_content.note_exists') as exists,\
+         patch('foolscap.note_content.os'),\
+         patch('foolscap.note_content.unique_text', side_effect='note_test'),\
+         patch('foolscap.note_content.remove_component') as mock_remove:
+        exists.return_value = True
         note_content.delete_note('test_note')
         exists.assert_called_once_with('test_note')
+        mock_remove.assert_called_once_with('test_note')
 
 
 def test_edit_note():
-    with patch('foolscap.note_content.note_exists') as exists:
-        exists.return_value = False
-        note_content.edit_note('test_note')
-        exists.assert_called_once_with('test_note')
+    pass
 
 
 def test_new_note():
     pass
 
 
-def test_move_lines():
+def test_note_exist_called():
+    with patch('foolscap.note_content.note_exists') as exists:
+        exists.return_value = False
+        note_content.edit_note('test_note')
+        exists.assert_called_once_with('test_note')
+
+    with patch('foolscap.note_content.note_exists') as exists:
+        exists.return_value = False
+        note_content.view_note('test_note')
+        exists.assert_called_once_with('test_note')
+
+    with patch('foolscap.note_content.note_exists') as exists:
+        exists.return_value = False
+        note_content.export_note('test_note')
+        exists.assert_called_once_with('test_note')
+
     with patch('foolscap.note_content.note_exists') as exists,\
          patch('builtins.input') as input_string:
         input_string.return_value = 'second_note'
