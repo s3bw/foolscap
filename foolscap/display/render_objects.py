@@ -27,6 +27,7 @@ class HelpBar(Terminal):
         # while len(help_string) < self.max_x:
         #     help_string = [key for key in help_options]
         self.help_string = " [q]uit --- [e]dit --- [d]elete --- [->]expand "
+        self.help_string += "--- e[X]port "
 
     def draw(self):
         self.screen.addstr(self.bottom_line, 2, self.help_string)

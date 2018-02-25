@@ -29,6 +29,7 @@ def test_KeyListener_setmax():
 @pytest.mark.parametrize("key_press,expected",
     [('ENTER', ('view', 5, None)),
      (ord('e'), ('edit', 5, None)),
+     (ord('X'), ('export', 5, None)),
      ('UP_ARROW', (None, 4, None)),
      ('DOWN_ARROW', (None, 6, None)),
      ('RIGHT_ARROW', (None, 5, 5))])
