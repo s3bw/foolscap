@@ -28,10 +28,8 @@ def test_Frame_update():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     test_frame = Frame(mock_screen)
-    calls = [call(1), call(2)]
     assert mock_screen.getmaxyx.called_once()
     test_frame.update()
-    assert mock_screen.has_calls(calls)
 
 
 def test_HelpBar_init():
@@ -57,10 +55,8 @@ def test_HelpBar_update():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     test_bar = HelpBar(mock_screen)
-    calls = [call(1), call(2)]
     assert mock_screen.getmaxyx.called_once()
     test_bar.update()
-    assert mock_screen.has_calls(calls)
 
 
 def test_TitleBar_init():
@@ -93,11 +89,9 @@ def test_TitleBar_update():
     mock_heading = "HEADER"
     test_title_bar = TitleBar(mock_screen)
     test_title_bar.heading = mock_heading
-    calls = [call(1), call(2)]
     assert mock_screen.getmaxyx.called_once()
     test_title_bar.update()
     assert test_title_bar.centre_header == 22
-    assert mock_screen.has_calls(calls)
 
 
 def test_StatusBar_init():
@@ -125,8 +119,6 @@ def test_StatusBar_update():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     test_status = StatusBar(mock_screen, 10)
-    calls = [call(1), call(2)]
     assert mock_screen.getmaxyx.called_once()
     test_status.update()
-    assert mock_screen.has_calls(calls)
 

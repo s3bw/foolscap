@@ -27,7 +27,6 @@ def test_setup_folio():
     fake_data = FAKE_ITEMS
     with patch('foolscap.display.console.FolioConsole') as mock_folio,\
          patch('foolscap.display.console.curses') as mock_curses:
-        # mock_folio.__enter__.show.side_effect = 'fake_action'
         calls = [call(mock_screen, FAKE_ITEMS),
                  call().__enter__(),
                  call().__enter__().show(),
@@ -36,7 +35,6 @@ def test_setup_folio():
         result = setup_folio(mock_screen, fake_data)
         mock_curses.curs_set.assert_called_with(0)
         assert mock_folio.mock_calls == calls
-        # assert result == 'fake_action'
 
 
 def test_FolioConsole_contextmanager():
