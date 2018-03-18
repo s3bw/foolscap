@@ -31,6 +31,8 @@ def load_text(path, new_note=False):
 
 
 def edit_text(editing=None):
+    """ Opens editor with path 'editing' else opens temp file
+    """
     # Maybe this can be split into two functions in subprocess_utils
     if not editing:
         with NamedTemporaryFile(mode='r+', suffix='.tmp') as editing_text:
@@ -45,6 +47,14 @@ def edit_text(editing=None):
 def replace_text(note, new_name, content):
     remove_text(note)
     save_text(new_name, content)
+
+
+def move_text_to_bin(note):
+    delete_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
+
+    bin_note = unique_text(note, folder='IN_BIN')
+    bin_path = NOTE_FOLDERS['BIN_NOTE'].format(note_name=bin_note)
+    os.rename(delete_note, bin_path)
 
 
 def save_text(note_title, content):
