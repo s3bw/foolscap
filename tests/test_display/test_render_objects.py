@@ -1,5 +1,6 @@
 import pytest
 from mock import call
+from mock import patch
 from mock import MagicMock
 
 from foolscap.display.render_objects import Frame
@@ -39,6 +40,31 @@ def test_HelpBar_init():
     assert isinstance(test_bar, HelpBar)
     assert mock_screen.getmaxyx.called_once()
     assert hasattr(test_bar, 'help_string')
+
+
+def test_HelpBar_build_help():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    mock_help_list = ["HELP", "MORE_HELP"]
+    mock_help_print = '--'.join(mock_help_list)
+    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+        test_bar = HelpBar(mock_screen)
+        test_bar.draw()
+        mock_screen.addstr.assert_called_with(49, 2, mock_help_print)
+
+
+def test_HelpBar_build_help_short_width():
+    """ Test smaller console x displays help strings
+        that can fit in console.
+    """
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 15
+    mock_help_list = ["HELP", "MORE_HELP"]
+    mock_help_print = '--'.join(mock_help_list[:1])
+    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+        test_bar = HelpBar(mock_screen)
+        test_bar.draw()
+        mock_screen.addstr.assert_called_with(49, 2, mock_help_print)
 
 
 def test_HelpBar_draw():
