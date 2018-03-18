@@ -1,11 +1,8 @@
-import os
-
 from foolscap.file_paths import NOTE_FOLDERS
-from foolscap.handle_note_io import (
-    load_text,
-    edit_text,
-    unique_text,
-)
+
+from foolscap.handle_note_io import load_text
+from foolscap.handle_note_io import edit_text
+from foolscap.handle_note_io import move_text_to_bin
 
 from foolscap.meta_data import (
     shift_lines,
@@ -68,13 +65,7 @@ def delete_note(note):
     """ Delete a note stored in foolscap
     """
     if note_exists(note):
-        folders = NOTE_FOLDERS
-        delete_file = folders['GET_NOTE'].format(note_name=note)
-
-        recycle_bin = unique_text(note, folder='IN_BIN')
-        bin_note = folders['BIN_NOTE'].format(note_name=recycle_bin)
-
-        os.rename(delete_file, bin_note)
+        move_text_to_bin(note)
         remove_component(note)
         print("\n\tDeleted: '{}'.\n".format(note))
 

@@ -22,12 +22,12 @@ def test_view_note():
 
 def test_delete_note():
     with patch('foolscap.note_content.note_exists') as exists,\
-         patch('foolscap.note_content.os'),\
-         patch('foolscap.note_content.unique_text', side_effect='note_test'),\
+         patch('foolscap.note_content.move_text_to_bin') as move_bin,\
          patch('foolscap.note_content.remove_component') as mock_remove:
         exists.return_value = True
         note_content.delete_note('test_note')
         exists.assert_called_once_with('test_note')
+        move_bin.assert_called_once_with('test_note')
         mock_remove.assert_called_once_with('test_note')
 
 
