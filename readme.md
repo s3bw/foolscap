@@ -1,6 +1,6 @@
 # Foolscap Note Manager
 
-![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master) 
+![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
 
 The foolscap note manager allows a user to track and maintain notes over many topics.
 
@@ -8,14 +8,12 @@ The foolscap note manager allows a user to track and maintain notes over many to
 
 To install foolscap do the following:
 
-    git clone git@github.com:GiantsLoveDeathMetal/foolscap.git
-    cd foolscap
-    pip install .
-    
+    pip install git+ssh://git@github.com/GiantsLoveDeathMetal/foolscap.git@master
+
 Then you'll need to set the `FSCAP_PATH` environment variable:
 
     export FSCAP_PATH=~/.fscap_notes
-    
+
 Lastly create the following directories:
 
     mkdir ~/.fscap_notes
@@ -45,7 +43,7 @@ A typical note should contain the following:
         - one topics
         - as a check list
         - etc
-    
+
     {checklist} {code} {tags}
     ================
 
