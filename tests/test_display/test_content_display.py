@@ -60,7 +60,7 @@ def test_DisplayContents_draw():
     mock_screen.getmaxyx.return_value = 100, 100
 
     test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
-    # display cursor on note 3.
+    # Display cursor on note 2.
     test_DC.update_pointers(0, 2)
 
     with patch(patch_NORMAL, 'NORMAL'),\
@@ -69,6 +69,7 @@ def test_DisplayContents_draw():
          patch(patch_TITLE, '{}'),\
          patch(patch_DESCRIP, '{}'):
         test_DC.draw()
+
         calls = [call.getmaxyx(),
                  call.addstr(1, 0, "test_title", "NORMAL"),
                  call.addstr(1, 48, "test description", "NORMAL"),
@@ -77,7 +78,40 @@ def test_DisplayContents_draw():
         mock_screen.assert_has_calls(calls)
 
 
-def test_DisplayContents_draw_small():
+def test_DisplayContents_draw_small_height():
+    """ Test that note titles are not printed when
+        the console height is smaller than the amount
+        of notes.
+        Params:
+            screen max y: 4
+            display pointer: 1
+    """
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 4, 100
+
+    test_DC = DisplayContents(mock_screen, FAKE_ITEMS)
+    test_DC.update_pointers(0, 1)
+
+    with patch(patch_NORMAL, 'NORMAL'),\
+         patch(patch_DIM, 'DIM'),\
+         patch(patch_REVERSE, 'REVERSE'),\
+         patch(patch_TITLE, '{}'),\
+         patch(patch_DESCRIP, '{}'):
+        test_DC.draw()
+        calls = [call.getmaxyx(),
+                 call.addstr(1, 0, "test_title", "REVERSE"),
+                 call.addstr(1, 48, "test description", "REVERSE")]
+        mock_screen.assert_has_calls(calls)
+
+
+
+def test_DisplayContents_draw_small_width():
+    """ Test that note descriptions are not printed
+        when the width of the console is too small.
+        Params:
+            screen max x: 50
+            display pointer: 2
+    """
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
 
