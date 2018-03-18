@@ -1,6 +1,15 @@
 import os
 
-from .root_screen import Terminal
+from foolscap.display.root_screen import Terminal
+
+
+HELP_OPTIONS = [
+    ' [q]uit ',
+    ' [e]dit ',
+    ' [d]elete ',
+    ' [->]expand ',
+    ' e[X]port ',
+]
 
 
 class Frame(Terminal):
@@ -17,22 +26,26 @@ class Frame(Terminal):
 class HelpBar(Terminal):
     def __init__(self, screen):
         Terminal.__init__(self, screen)
-        # help_options = [
-        #     ' [q]uit ',
-        #     ' [e]dit ',
-        #     ' [d]elete ',
-        #     ' [->]expand ',
-        # ]
-        # DO I NEED A REFRESH METHOD? (This will be handled in update)
-        # while len(help_string) < self.max_x:
-        #     help_string = [key for key in help_options]
-        self.help_string = " [q]uit --- [e]dit --- [d]elete --- [->]expand "
-        self.help_string += "--- e[X]port "
+        self.build_help()
+
+    def build_help(self):
+        shown = 0
+        adjust_x = self.max_x - 6
+
+        potential_string = '--'.join(HELP_OPTIONS[:shown + 1])
+        while len(potential_string) < adjust_x:
+            shown += 1
+            potential_string = '--'.join(HELP_OPTIONS[:shown + 1])
+            if len(HELP_OPTIONS) <= shown:
+                break
+
+        self.help_string = '--'.join(HELP_OPTIONS[:shown])
 
     def draw(self):
         self.screen.addstr(self.bottom_line, 2, self.help_string)
 
     def update(self):
+        self.build_help()
         Terminal.update(self)
 
 
