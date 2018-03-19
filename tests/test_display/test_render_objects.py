@@ -95,6 +95,27 @@ def test_TitleBar_init():
     assert hasattr(test_title_bar, 'cwd')
 
 
+@pytest.mark.parametrize("max_x, expected", [
+    (100, "| ~/library/music/good_tunes/tricot |"),
+    (90, "| ~/-/music/good_tunes/tricot |"),
+    (80, "| ~/-/-/good_tunes/tricot |"),
+    (70, "| ~/-/-/-/tricot |"),
+    (60, "| tricot |"),
+    (40, ""),
+])
+def test_TitleBar_format_path(max_x, expected):
+    separator = 'foolscap.display.render_objects.os.sep'
+    test_path = "/home/user/library/music/good_tunes/tricot"
+
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, max_x
+
+    title_bar = TitleBar(mock_screen)
+    with patch(separator, '/'):
+        result = title_bar.format_path(test_path)
+        assert result == expected
+
+
 def test_TitleBar_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
