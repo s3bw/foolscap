@@ -10,6 +10,7 @@ HELP_OPTIONS = [
     ' [->]expand ',
     ' e[X]port ',
 ]
+ROOT = ['~']
 
 
 class Frame(Terminal):
@@ -53,22 +54,53 @@ class TitleBar(Terminal):
     def __init__(self, screen):
         Terminal.__init__(self, screen)
         self.heading = "|   FoolScap   |"
+        self.centre_header = int((self.max_x - len(self.heading)) / 2)
+
         path = os.path.normpath(os.getcwd())
         self.cwd = self.format_path(path)
 
     def format_path(self, path):
+        def _path_len(x):
+            return self.centre_header + len(x) + 25
+
         path = path.split(os.sep)
+        current_dir = [path[-1]]
+        path = path[:-1]
+
         if 'home' in path[1]:
-            path = os.sep.join(['~'] + path[3:])
-            return '| ' + path + ' |'
+            path = path[3:]
+
+        index = 0
+        potential_path = os.sep.join(ROOT + path + current_dir)
+        path_edge = _path_len(potential_path)
+        path_parts = len(path)
+
+        while path_edge > self.max_x:
+            if index < path_parts:
+                path[index] = '-'
+                potential_path = os.sep.join(ROOT + path + current_dir)
+                path_edge = _path_len(potential_path)
+                index += 1
+            elif index == path_parts:
+                potential_path = current_dir[0]
+                path_edge = _path_len(potential_path)
+                index += 1
+            elif index > path_parts:
+                return ''
+
+        return '| ' + potential_path + ' |'
 
     def draw(self):
-        self.screen.addstr(self.top_line, self.centre_header, self.heading)
-        self.screen.addstr(self.top_line, self.centre_header + 20, self.cwd)
+        if self.max_x > 15:
+            self.screen.addstr(self.top_line, self.centre_header, self.heading)
+        if self.max_x > 25:
+            self.screen.addstr(self.top_line, self.centre_header + 20, self.cwd)
 
     def update(self):
         Terminal.update(self)
         self.centre_header = int((self.max_x - len(self.heading)) / 2)
+        path = os.path.normpath(os.getcwd())
+        self.cwd = self.format_path(path)
 
 
 class StatusBar(Terminal):
