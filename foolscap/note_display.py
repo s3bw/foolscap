@@ -1,7 +1,9 @@
 from collections import Counter, OrderedDict
 
 from foolscap.meta_data import load_meta
+from foolscap.meta_data import tag_exists
 from foolscap.display.console import display_list
+
 
 TOP_X_VIEWED = 3
 # This rule is so perfectly subtle,
@@ -15,7 +17,7 @@ class OrderedCounter(Counter, OrderedDict):
     pass
 
 
-def list_notes(tags, list_type='normal'):
+def list_notes(tag, list_type='normal'):
     """ Presents notes in the terminal.
 
     all_notes = {
@@ -31,19 +33,17 @@ def list_notes(tags, list_type='normal'):
     :param dict[dict[list]] all_notes: Meta information on notes.
     """
     all_notes = load_meta()
-    if tags:
+    if tag:
         all_notes = {
             key: values
             for key, values in all_notes.items()
-            if 'tags' in values and tags in values['tags']
+            if 'tags' in values and tag in values['tags']
         }
     if list_type == 'tags':
         display_notes = create_tag_display(all_notes)
         return display_list(display_notes)
 
-    if len(all_notes) == 0:
-        # Fuzzy here
-        print("No note tagged with '{tag}'".format(tag=tags))
+    if tag and not tag_exists(tag):
         exit()
 
     sorted_titles = sort_notes(all_notes)
