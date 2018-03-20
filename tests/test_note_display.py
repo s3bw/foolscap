@@ -52,7 +52,8 @@ def test_list_notes(test_dict, expected):
 
 
 def test_list_notes_with_no_tag_matches():
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit),\
+         patch('foolscap.note_display.tag_exists', return_value=False):
         note_display.list_notes('no_match_tag')
 
 
@@ -77,7 +78,7 @@ def test_list_notes_with_no_tag_matches():
         ['most_viewed'],
         FAKE_SINGLE_NOTE_2.copy(),
         [
-            {'title': 'most_viewed', 
+            {'title': 'most_viewed',
              'description': 'This is a fake note',
              'sub_headings': [('First Sub:', ':A sub headings')]},
         ]
@@ -141,7 +142,7 @@ def test_sort_notes(test_dict, expected):
 def test_listing_tags():
     def fake_return(input_param):
         return input_param
-    
+
     with patch('foolscap.note_display.display_list') as mock_display,\
          patch('foolscap.note_display.load_meta') as mock_meta:
         mock_meta.return_value = FAKE_MANY_NOTES.copy()
@@ -149,12 +150,12 @@ def test_listing_tags():
         result = note_display.list_notes(None, 'tags')
         mock_display.assert_called_once()
         assert result == [{'title': 'fake_tag', 'description': str(7),
-                           'sub_headings': [('A', 'This is a fake note'), 
-                          ('fake_note_1', 'This is a fake note'), 
-                          ('most_viewed', 'This is a fake note'), 
-                          ('recently_opened', 'This is a fake note'), 
-                          ('second_most', 'This is a fake note'), 
-                          ('third_most', 'This is a fake note'), 
+                           'sub_headings': [('A', 'This is a fake note'),
+                          ('fake_note_1', 'This is a fake note'),
+                          ('most_viewed', 'This is a fake note'),
+                          ('recently_opened', 'This is a fake note'),
+                          ('second_most', 'This is a fake note'),
+                          ('third_most', 'This is a fake note'),
                           ('Z', 'This is a fake note')]}]
 
 
@@ -168,12 +169,12 @@ def test_get_by_tag():
     # Get all notes with tag: 'fake_tag'
     mock_notes = FAKE_MANY_NOTES.copy()
     result = note_display.get_by_tag(mock_notes, 'fake_tag')
-    assert result == [('A', 'This is a fake note'), 
-                      ('fake_note_1', 'This is a fake note'), 
-                      ('most_viewed', 'This is a fake note'), 
-                      ('recently_opened', 'This is a fake note'), 
-                      ('second_most', 'This is a fake note'), 
-                      ('third_most', 'This is a fake note'), 
+    assert result == [('A', 'This is a fake note'),
+                      ('fake_note_1', 'This is a fake note'),
+                      ('most_viewed', 'This is a fake note'),
+                      ('recently_opened', 'This is a fake note'),
+                      ('second_most', 'This is a fake note'),
+                      ('third_most', 'This is a fake note'),
                       ('Z', 'This is a fake note')]
 
 
@@ -182,11 +183,11 @@ def test_create_tag_display():
     mock_notes = FAKE_MANY_NOTES.copy()
     result = note_display.create_tag_display(mock_notes)
     assert result == [{'title': 'fake_tag', 'description': str(7),
-                       'sub_headings': [('A', 'This is a fake note'), 
-                      ('fake_note_1', 'This is a fake note'), 
-                      ('most_viewed', 'This is a fake note'), 
-                      ('recently_opened', 'This is a fake note'), 
-                      ('second_most', 'This is a fake note'), 
-                      ('third_most', 'This is a fake note'), 
+                       'sub_headings': [('A', 'This is a fake note'),
+                      ('fake_note_1', 'This is a fake note'),
+                      ('most_viewed', 'This is a fake note'),
+                      ('recently_opened', 'This is a fake note'),
+                      ('second_most', 'This is a fake note'),
+                      ('third_most', 'This is a fake note'),
                       ('Z', 'This is a fake note')]}]
 
