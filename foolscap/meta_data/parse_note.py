@@ -75,13 +75,6 @@ def index_pairs(indexes, content):
     return [n for n in paired][1:]
 
 
-def pair_heading_and_index(index_pair, heading_indexs):
-    return [
-        (index, start, end)
-        for index, (start, end) in zip(heading_indexs, index_pair)
-    ]
-
-
 def index_sub_headings(content):
     """ A note with the following, will return [10]
 
@@ -105,12 +98,11 @@ def parse_sub_headings(content):
     if heading_indexs:
         index_pair = index_pairs(heading_indexs, content)
 
-        section_info = pair_heading_and_index(index_pair, heading_indexs)
         return [
-            (content[index], content[index + 1], start, end)
-            if content[index]
-            else ('Content line {}:'.format(index), content[index + 1])
-            for index, start, end in section_info
+            (content[start], content[start + 1], start, end)
+            if content[start]
+            else ('Content line {}:'.format(start), content[start + 1])
+            for start, end in index_pair
         ]
 
 
