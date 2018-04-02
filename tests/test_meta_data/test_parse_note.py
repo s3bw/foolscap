@@ -67,7 +67,7 @@ def test_get_moving_lines():
         ':testing subtitles',
         '',
         '===================='],
-        [('Sub Title:', ':testing subtitles')]),
+        [('Sub Title:', ':testing subtitles', 3, 6)]),
     ([  '====================', 
         ':Description of note', 
         '',
@@ -78,8 +78,8 @@ def test_get_moving_lines():
         ':testing subtitles',
         '',
         '===================='],
-        [('Sub Title:', ':testing subtitles'),
-         ('Sub Title:', ':testing subtitles')]),
+        [('Sub Title:', ':testing subtitles', 3, 6),
+         ('Sub Title:', ':testing subtitles', 6, 9)]),
     ([  '====================', 
         ':Description of note', 
         '',
@@ -87,7 +87,7 @@ def test_get_moving_lines():
         'testing subtitles',
         '',
         '===================='],
-        [])])
+        None)])
 def test_parse_sub_headings(mock_content, expected):
     result = parse_note.parse_sub_headings(mock_content)
     assert result == expected
@@ -100,7 +100,7 @@ def test_parse_sub_headings(mock_content, expected):
         'Sub Title:',
         ':testing subtitles',
         '',
-        '===================='],[2]),
+        '===================='],[3]),
     ([  '====================', 
         ':Description of note', 
         '',
@@ -110,7 +110,7 @@ def test_parse_sub_headings(mock_content, expected):
         'Sub Title:',
         ':testing subtitles',
         '',
-        '===================='],[2,5]),
+        '===================='],[3,6]),
     ([  '====================', 
         ':Description of note', 
         '',

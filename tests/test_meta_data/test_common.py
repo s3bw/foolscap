@@ -234,8 +234,8 @@ def test_subheading_components():
             'description': 'This tests subheadings',
             'tags': ['subheadings', 'test'],
             'sub_headings': [
-                ('First test:', ':this is the first sub'),
-                ('Second test:', ':this is the 2nd sub')],
+                ('First test:', ':this is the first sub', 3, 6),
+                ('Second test:', ':this is the 2nd sub', 6, 10)],
             'num_sub': 2
         }
     }
