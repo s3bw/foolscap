@@ -11,14 +11,14 @@ from data.mock_meta_data import FOUR_FAKE_NOTES
 
 
 # Little reminder on how to use parametrize:
-@pytest.mark.parametrize("expected",[1,2])
+@pytest.mark.parametrize("expected", [1, 2])
 def test_param(expected):
     assert expected / 3 < 1
 
 
-@pytest.mark.parametrize("inp,expected",
-    [(1,2),
-     (2,4)])
+@pytest.mark.parametrize("inp, expected",
+    [(1, 2),
+     (2, 4)])
 def test_param(inp, expected):
     result = inp * 2
     assert result == expected
@@ -191,3 +191,50 @@ def test_create_tag_display():
                       ('third_most', 'This is a fake note'),
                       ('Z', 'This is a fake note')]}]
 
+
+def test_search_notes_with_no_query():
+    with pytest.raises(SystemExit):
+        note_display.search_notes(None)
+
+
+def test_search_notes():
+    test_dict = FAKE_MANY_NOTES.copy()
+    expected = [{'title': 'most_viewed',
+                 'description': 'This is a fake note'}]
+    def fake_return(input_param):
+        return input_param
+
+    with patch('foolscap.note_display.display_list') as mock_display,\
+         patch('foolscap.note_display.load_meta') as mock_meta:
+        mock_meta.return_value = test_dict
+        mock_display.side_effect = fake_return
+        result = note_display.search_notes('most')
+        assert result == expected
+
+
+def test_search_notes_with_no_results():
+    test_dict = FAKE_MANY_NOTES.copy()
+    expected = [{'title': 'most_viewed',
+                 'description': 'This is a fake note'}]
+    def fake_return(input_param):
+        return input_param
+
+    with patch('foolscap.note_display.display_list') as mock_display,\
+         patch('foolscap.note_display.load_meta') as mock_meta,\
+         pytest.raises(SystemExit):
+        mock_meta.return_value = test_dict
+        mock_display.side_effect = fake_return
+        result = note_display.search_notes('none')
+        assert result == expected
+
+
+def test_query_notes():
+    all_notes = {'this' : 1, 'that': 2, 'make': 3}
+    result = note_display.query_notes('th', all_notes)
+    assert result == ['that', 'this']
+
+
+def test_alphabetise():
+    notes = ['bee', 'AYE', 'cee', 'aei']
+    result = note_display.alphabetise(notes)
+    assert result == ['aei', 'AYE', 'bee', 'cee']

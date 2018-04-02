@@ -7,6 +7,7 @@ FEATURES = [
     'save',
     'view',
     'list',
+    'search',
     'delete',
     'edit',
     'new',

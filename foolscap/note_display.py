@@ -51,6 +51,24 @@ def list_notes(tag, list_type='normal'):
     return display_list(display_notes)
 
 
+def search_notes(query, list_type='normal'):
+    if query:
+        all_notes = load_meta()
+        found_notes = query_notes(query, all_notes)
+        display_notes = display_information(found_notes, all_notes)
+        if display_notes:
+            return display_list(display_notes)
+        print("\n\tNo Note Found with '{}'.\n".format(query))
+        exit()
+    print("\n\tNo Query Error!\n")
+    exit()
+
+
+def query_notes(query, all_notes):
+    notes = [key for key, value in all_notes.items() if key.startswith(query)]
+    return alphabetise(notes)
+
+
 def count_tags(all_notes):
     list_tags = []
     for key, values in all_notes.items():
@@ -146,6 +164,10 @@ def pull_top_viewed(note_dict):
     ]
 
 
+def alphabetise(notes):
+    return sorted(notes, key=lambda x: x.lower())
+
+
 def sort_notes(note_data):
     """ Custom sort to display notes.
 
@@ -165,12 +187,11 @@ def sort_notes(note_data):
         organised_notes.insert(0, last_opened)
         data_copy.pop(last_opened)
 
-    remaining_notes = list(data_copy)
-    alphabetise = sorted(remaining_notes, key=lambda x: x.lower())
+    remaining_notes = alphabetise(list(data_copy))
 
     return [
         note_title
-        for note_title in organised_notes + alphabetise
+        for note_title in organised_notes + remaining_notes
         if note_title is not None
     ]
 

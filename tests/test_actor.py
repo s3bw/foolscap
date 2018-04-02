@@ -2,6 +2,8 @@ from mock import call
 from mock import patch
 from mock import MagicMock
 
+import pytest
+
 from foolscap import actor
 
 
@@ -46,6 +48,25 @@ def test_export_note_command():
         actor.action('export', 'mock_note')
         mock_action.assert_called_once()
         assert mock_action.call_args == expected
+
+
+@pytest.mark.parametrize("query, expected",
+    # Test with Query = 'te'
+    [('te', [call('te', 'normal'), call('te')]),
+
+    # Test without query
+     (None, [call(None, 'normal'), call()]),
+    ])
+def test_search_note(query, expected):
+    TESTED_ACTIONS.append('search')
+    mock_action = MagicMock()
+    with  patch.dict('foolscap.actor.FUNCTION_MAP', {'search': mock_action}):
+        mock_action.return_value = None
+        expected = expected
+
+        # Pass to actor:
+        actor.action('search', query)
+        assert mock_action.call_args_list == expected
 
 
 def test_list_note_command_no_tags():
