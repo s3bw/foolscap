@@ -89,7 +89,9 @@ def display_information(sorted_notes, note_dict):
         display_dict['title'] = title
         display_dict['description'] = note_dict[title]['description']
         if 'sub_headings' in note_dict[title]:
-            display_dict['sub_headings'] = note_dict[title]['sub_headings']
+            # Work Around.for titles only.
+            sub_h = [(n[0], n[1]) for n in note_dict[title]['sub_headings']]
+            display_dict['sub_headings'] = sub_h
         display_notes.append(display_dict)
 
     return display_notes

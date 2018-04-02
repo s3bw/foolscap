@@ -59,50 +59,41 @@ def test_get_moving_lines():
     assert moving_lines == ['>Move content.']
 
 
-@pytest.mark.parametrize("mock_content, expected",
-    [([ '====================', 
-        ':Description of note', 
+def test_double_items():
+    iterable = [1, 2, 3]
+    expected = [1, 1, 2, 2, 3, 3]
+    result = parse_note.double_items(iterable)
+    assert result == expected
+
+@pytest.mark.parametrize("mock_content, indexes, expected",
+    [([  '====================',
+        ':Description of note',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
         '',
         'Sub Title:',
         ':testing subtitles',
         '',
         '===================='],
-        [('Sub Title:', ':testing subtitles')]),
-    ([  '====================', 
-        ':Description of note', 
-        '',
-        'Sub Title:',
-        ':testing subtitles',
-        '',
-        'Sub Title:',
-        ':testing subtitles',
-        '',
-        '===================='],
-        [('Sub Title:', ':testing subtitles'),
-         ('Sub Title:', ':testing subtitles')]),
-    ([  '====================', 
-        ':Description of note', 
-        '',
-        'Sub Title:',
-        'testing subtitles',
-        '',
-        '===================='],
-        [])])
-def test_parse_sub_headings(mock_content, expected):
-    result = parse_note.parse_sub_headings(mock_content)
+        [3, 6],
+        [(3, 6), (6, 9)],
+    )])
+def test_index_pairs(indexes, mock_content, expected):
+    result = parse_note.index_pairs(indexes, mock_content)
     assert result == expected
 
 
 @pytest.mark.parametrize("mock_content, expected",
-    [([ '====================', 
-        ':Description of note', 
+    [([ '====================',
+        ':Description of note',
         '',
         'Sub Title:',
         ':testing subtitles',
         '',
-        '===================='],[2]),
-    ([  '====================', 
-        ':Description of note', 
+        '===================='],[3]),
+    ([  '====================',
+        ':Description of note',
         '',
         'Sub Title:',
         ':testing subtitles',
@@ -110,9 +101,9 @@ def test_parse_sub_headings(mock_content, expected):
         'Sub Title:',
         ':testing subtitles',
         '',
-        '===================='],[2,5]),
-    ([  '====================', 
-        ':Description of note', 
+        '===================='],[3,6]),
+    ([  '====================',
+        ':Description of note',
         '',
         'Sub Title:',
         'testing subtitles',
@@ -123,17 +114,51 @@ def test_index_sub_headings(mock_content, expected):
     assert result == expected
 
 
+@pytest.mark.parametrize("mock_content, expected",
+    [([ '====================',
+        ':Description of note',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],
+        [('Sub Title:', ':testing subtitles', 3, 6)]),
+    ([  '====================',
+        ':Description of note',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        'Sub Title:',
+        ':testing subtitles',
+        '',
+        '===================='],
+        [('Sub Title:', ':testing subtitles', 3, 6),
+         ('Sub Title:', ':testing subtitles', 6, 9)]),
+    ([  '====================',
+        ':Description of note',
+        '',
+        'Sub Title:',
+        'testing subtitles',
+        '',
+        '===================='],
+        None)])
+def test_parse_sub_headings(mock_content, expected):
+    result = parse_note.parse_sub_headings(mock_content)
+    assert result == expected
+
+
 def test_get_contents():
     note = EXPECTED_NOTE.split('\n')
     content = parse_note.get_contents(note)
     expected_content = [[
-        '====================', 
-        ':Description of note', 
-        '', 
-        'Some content.', 
-        '>Move content.', 
-        '', 
-        '{test} {unit}', 
+        '====================',
+        ':Description of note',
+        '',
+        'Some content.',
+        '>Move content.',
+        '',
+        '{test} {unit}',
         '===================='
     ]]
     assert content == expected_content

@@ -88,6 +88,11 @@ def migrate_meta():
         if 'updated' in meta_fields:
             value.pop('updated', None)
 
+        if 'sub_headings' in meta_fields:
+            # Sub heading indexes given a dummy value on migration.
+            sh = meta_data[key]['sub_headings']
+            meta_data[key]['sub_headings'] = [(n[0], n[1], 1, 1) for n in sh]
+
     save_meta(meta_data)
     print('All meta data has been migrated.')
 

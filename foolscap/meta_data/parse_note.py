@@ -50,20 +50,60 @@ def get_moving_lines(note):
     return _lines
 
 
-def parse_sub_headings(content):
-    sub_headings_indexs = index_sub_headings(content)
-    return [
-        (content[index + 1], content[index + 2])
-        if content[index + 1]
-        else ('Content line {}:'.format(index + 1), content[index + 2])
-        for index in sub_headings_indexs
-    ]
+def double_items(iterable):
+    """ Given [1, 2, 3]
+
+    Returns [1, 1, 2, 2, 3, 3]
+    """
+    return [item for tup in zip(iterable, iterable) for item in tup]
+
+
+def index_pairs(indexes, content):
+    """ We extract the generator contents and remove
+        the first pair.
+
+    The first pair won't have a title as it's
+       between the start and first section the
+       content here should likely be an introduction
+       for the entire note.
+    """
+    start = [1]
+    end = [len(content) - 1]
+
+    indexes = start + double_items(indexes) + end
+    paired = pairwise(indexes)
+    return [n for n in paired][1:]
 
 
 def index_sub_headings(content):
-    return [index
+    """ A note with the following, will return [10]
+
+        10.. Section 1:
+        11.. :A new section
+    """
+    return [index + 1
             for index, line in enumerate(content[2:])
             if line and line[0] == ':']
+
+
+def parse_sub_headings(content):
+    """ Index such as [10]
+    will return [("section title", "section description", 10, int:[end])]
+
+    From note:
+        10.. Section 1:
+        11.. :A new section
+    """
+    heading_indexs = index_sub_headings(content)
+    if heading_indexs:
+        index_pair = index_pairs(heading_indexs, content)
+
+        return [
+            (content[start], content[start + 1], start, end)
+            if content[start]
+            else ('Content line {}:'.format(start), content[start + 1])
+            for start, end in index_pair
+        ]
 
 
 def get_contents(note):
