@@ -1,4 +1,5 @@
 from foolscap.note_display import list_notes
+from foolscap.note_display import search_notes
 from foolscap.note_content import (
     save_note,
     view_note,
@@ -16,6 +17,7 @@ FUNCTION_MAP = {
     'save': save_note,
     'view': view_note,
     'list': list_notes,
+    'search': search_notes,
     'delete': delete_note,
     'edit': edit_note,
     'new': new_note,
@@ -25,11 +27,17 @@ FUNCTION_MAP = {
 }
 
 
+DISPLAY_ACTIONS = [
+    'list',
+    'search',
+]
+
+
 def action(do_action, arg, list_type='normal'):
     func = FUNCTION_MAP[do_action]
 
     new_action = None
-    if do_action == 'list':
+    if do_action in DISPLAY_ACTIONS:
         # Quitting from list calls exit() method.
         # arg is filter in this case
         if arg:
