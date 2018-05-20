@@ -1,12 +1,15 @@
 import os
 
 
-foolscap_location = os.environ.get('FSCAP_PATH')
-if not foolscap_location:
-    print("Please set FSCAP_PATH variable")
+FSCAP_DIR_ERROR = "FSCAP_DIR variable has not been set!"
 
 
-SCRIPT_DIR = os.path.join(os.path.expanduser('~'), foolscap_location)
+__FSCAP_DIR__ = os.environ.get('FSCAP_DIR')
+if not __FSCAP_DIR__:
+    raise KeyError(FSCAP_DIR_ERROR)
+
+SCRIPT_DIR = os.path.join(os.path.expanduser('~'), __FSCAP_DIR__)
+
 
 # data/note_data.pkl.
 DATA_STORAGE = os.path.join('data', 'note_data.pkl')
