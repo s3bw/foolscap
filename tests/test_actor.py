@@ -1,4 +1,5 @@
 from mock import call
+from mock import Mock
 from mock import patch
 from mock import MagicMock
 
@@ -9,6 +10,20 @@ from foolscap import actor
 
 ACTIONS = actor.FUNCTION_MAP.keys()
 TESTED_ACTIONS = []
+
+
+class MockCtrl:
+    def __init__(self, model_type):
+        self.model_type = model_type
+
+    def basic_output(self):
+        return  'view', 'note'
+
+    def query_output(self, query):
+        return  'view', 'note'
+
+    def search_output(self, query):
+        return  'view', 'note'
 
 
 def test_save_note_command():
@@ -52,72 +67,50 @@ def test_export_note_command():
 
 @pytest.mark.parametrize("query, expected",
     # Test with Query = 'te'
-    [('te', [call('te', 'normal'), call('te')]),
-
-    # Test without query
-     (None, [call(None, 'normal'), call()]),
-    ])
+    [('te', [call('te')])])
 def test_search_note(query, expected):
     TESTED_ACTIONS.append('search')
-    mock_action = MagicMock()
-    with  patch.dict('foolscap.actor.FUNCTION_MAP', {'search': mock_action}):
-        mock_action.return_value = None
-        expected = expected
+    mock_view = MagicMock()
+    mock_ctrl = MagicMock()
+    # Have to return view so that we can exit
+    mock_ctrl.return_value.search_output.return_value = ('view', 'mock_note')
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
+         patch('foolscap.actor.Controller', mock_ctrl):
 
         # Pass to actor:
         actor.action('search', query)
-        assert mock_action.call_args_list == expected
+        assert mock_ctrl.call_args_list == [call('notes')]
+        assert mock_ctrl.return_value.search_output.call_args_list == expected
 
 
 def test_list_note_command_no_tags():
     TESTED_ACTIONS.append('list')
-    mock_action = MagicMock()
-    with  patch.dict('foolscap.actor.FUNCTION_MAP', {'list': mock_action}):
-        mock_action.return_value = None
-        # List with no tags expects:
-        # This is tricky, as list calls exit() if it quits in menu object
-        # but cause we don't call the menu object, we return None
-        # and have to expect the func to be called again...
-        expected = [call(None, 'normal'), call()]
+    mock_view = MagicMock()
+    mock_ctrl = MagicMock()
+    # Have to return view so that we can exit
+    mock_ctrl.return_value.basic_output.return_value = ('view', 'mock_note')
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
+         patch('foolscap.actor.Controller', mock_ctrl):
 
         # Pass to actor:
         actor.action('list', None)
-        assert mock_action.call_args_list == expected
+        mock_ctrl.return_value.basic_output.assert_called()
 
-
-def test_list_note_command_tags():
-    TESTED_ACTIONS.append('list')
-    mock_action = MagicMock()
-    with patch.dict('foolscap.actor.FUNCTION_MAP', {'list': mock_action}):
-        mock_action.return_value = None
-        # List with tags expects:
-        # Note: same as last test.
-        expected = [
-            call('tag', 'normal'),
-            call('tag')
-        ]
-
-        # Pass to actor:
-        actor.action('list', 'tag')
-        assert mock_action.call_args_list == expected
 
 
 def test_list_note_command_returning_func():
-    mock_list = MagicMock()
     mock_view = MagicMock()
-    mock_function_map = {
-        'list': mock_list,
-        'view': mock_view
-    }
-    with patch.dict('foolscap.actor.FUNCTION_MAP', mock_function_map):
-        # If list function returns a new-action:
-        mock_list.return_value = ('view', 'mock_note')
+    mock_ctrl = MagicMock()
+    # Have to return view so that we can exit
+    mock_ctrl.return_value.query_output.return_value = ('view', 'mock_note')
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
+         patch('foolscap.actor.Controller', mock_ctrl):
 
-        expected_list = call('tag', 'normal')
         expected_view = call('mock_note')
 
         actor.action('list', 'tag')
-        assert mock_list.call_args == expected_list
+        # If list function returns a new-action:
+        # this case view
         assert mock_view.call_args == expected_view
         mock_view.assert_called_once()
 
@@ -186,12 +179,13 @@ def test_all_actions():
 
 
 def test_change_list_type():
-    mock_action = MagicMock()
-    with patch.dict('foolscap.actor.FUNCTION_MAP', {'list': mock_action}):
-        mock_action.return_value = None
-        expected = [
-            call(None, 'tags'),
-            call()
-        ]
+    mock_view = MagicMock()
+    mock_ctrl = MagicMock()
+    # Have to return view so that we can exit
+    mock_ctrl.return_value.basic_output.return_value = ('view', 'note')
+    with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
+         patch('foolscap.actor.Controller', mock_ctrl):
+
         actor.action('list', None, 'tags')
-        assert mock_action.call_args_list == expected
+        mock_ctrl.assert_called_with('tags')
+        mock_ctrl.return_value.basic_output.assert_called()
