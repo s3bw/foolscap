@@ -81,15 +81,16 @@ class TagsModel(Model):
             )
             for tag, count in tags
         ]
-        tags = {
+        self.tags = {
             tag: {
                 'title': tag,
                 'description': count,
-                'sub_headings': titles
+                # Title are sorted alphabetically
+                'sub_headings': sorted(titles,
+                                       key=lambda x: x[0].lower())
             }
             for tag, count, titles in tags
         }
-        self.tags = tags
 
     def __iter__(self):
         for item in self.tags:

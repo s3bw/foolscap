@@ -57,17 +57,16 @@ def test_controller__init__(note_model_init):
 
 
 @pytest.mark.parametrize("note_model, model_type, expected", [
-    # Failing Cause its not alphabetising the subheading
-    # (FAKE_MANY_NOTES, 'tags', [
-    #     {'title': 'fake_tag', 'description': str(7),
-    #     'sub_headings': [('A', 'This is a fake note'),
-    #     ('fake_note_1', 'This is a fake note'),
-    #     ('most_viewed', 'This is a fake note'),
-    #     ('recently_opened', 'This is a fake note'),
-    #     ('second_most', 'This is a fake note'),
-    #     ('third_most', 'This is a fake note'),
-    #     ('Z', 'This is a fake note')]}
-    # ]),
+    (FAKE_MANY_NOTES, 'tags', [
+        {'title': 'fake_tag', 'description': str(7),
+        'sub_headings': [('A', 'This is a fake note'),
+        ('fake_note_1', 'This is a fake note'),
+        ('most_viewed', 'This is a fake note'),
+        ('recently_opened', 'This is a fake note'),
+        ('second_most', 'This is a fake note'),
+        ('third_most', 'This is a fake note'),
+        ('Z', 'This is a fake note')]}
+    ]),
     (FAKE_MANY_NOTES, 'notes', [
         {'title': 'recently_opened', 'description': 'This is a fake note'},
         {'title': 'most_viewed', 'description': 'This is a fake note'},
@@ -102,17 +101,16 @@ def test_ctrl_basic_out(note_model, model_type, expected):
 
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
-    # Failing Cause its not alphabetising the subheading
-    # (FAKE_MANY_NOTES, 'tags', 'fake_tag', [
-    #     {'title': 'fake_tag', 'description': str(7),
-    #     'sub_headings': [('A', 'This is a fake note'),
-    #     ('fake_note_1', 'This is a fake note'),
-    #     ('most_viewed', 'This is a fake note'),
-    #     ('recently_opened', 'This is a fake note'),
-    #     ('second_most', 'This is a fake note'),
-    #     ('third_most', 'This is a fake note'),
-    #     ('Z', 'This is a fake note')]}
-    # ]),
+    (FAKE_MANY_NOTES, 'tags', 'fake_tag', [
+        {'title': 'fake_tag', 'description': str(7),
+        'sub_headings': [('A', 'This is a fake note'),
+        ('fake_note_1', 'This is a fake note'),
+        ('most_viewed', 'This is a fake note'),
+        ('recently_opened', 'This is a fake note'),
+        ('second_most', 'This is a fake note'),
+        ('third_most', 'This is a fake note'),
+        ('Z', 'This is a fake note')]}
+    ]),
     (FAKE_MANY_NOTES, 'notes', 'fake_tag', [
         {'title': 'recently_opened', 'description': 'This is a fake note'},
         {'title': 'most_viewed', 'description': 'This is a fake note'},
@@ -161,17 +159,16 @@ def test_ctrl_with_no_tag_matches(note_model, model_type):
 
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
-    # Ordering again
-    # (FAKE_MANY_NOTES, 'tags', 'fake', [
-    #     {'title': 'fake_tag', 'description': str(7),
-    #     'sub_headings': [('A', 'This is a fake note'),
-    #     ('fake_note_1', 'This is a fake note'),
-    #     ('most_viewed', 'This is a fake note'),
-    #     ('recently_opened', 'This is a fake note'),
-    #     ('second_most', 'This is a fake note'),
-    #     ('third_most', 'This is a fake note'),
-    #     ('Z', 'This is a fake note')]}
-    # ]),
+    (FAKE_MANY_NOTES, 'tags', 'fake', [
+        {'title': 'fake_tag', 'description': str(7),
+        'sub_headings': [('A', 'This is a fake note'),
+        ('fake_note_1', 'This is a fake note'),
+        ('most_viewed', 'This is a fake note'),
+        ('recently_opened', 'This is a fake note'),
+        ('second_most', 'This is a fake note'),
+        ('third_most', 'This is a fake note'),
+        ('Z', 'This is a fake note')]}
+    ]),
     (FAKE_MANY_NOTES, 'notes', 'most', [
         {'title': 'most_viewed', 'description': 'This is a fake note'},
     ])],
@@ -193,7 +190,6 @@ def test_search_notes(note_model, model_type, query, expected):
     (FAKE_SINGLE_NOTE, 'tags'),
     ], indirect=['note_model_init'])
 def test_ctrl_search_output_with_no_results(note_model_init, model_type):
-    # Controller.search_output no results
     ctrl = Controller(model_type)
     with patch('foolscap.meta_data.models.fuzzy_guess') as _fuzz,\
          pytest.raises(SystemExit):
@@ -262,9 +258,8 @@ def test_servicerules_order(note_model):
     (FOUR_FAKE_NOTES, FOUR_FAKE_NOTES.keys(),
      ['C', 'B', 'A', 'recently_opened']),
 
-    # FAILING CASE !!!
-    #(FAKE_NOTES_EDGE_CASE, FAKE_NOTES_EDGE_CASE.keys(),
-    # ['G', 'A', 'B', 'C', 'D', 'E', 'F']),
+    (FAKE_NOTES_EDGE_CASE, FAKE_NOTES_EDGE_CASE.keys(),
+     ['G', 'A', 'B', 'C', 'D', 'E', 'F']),
 
     (FAKE_SINGLE_NOTE, FAKE_SINGLE_NOTE.keys(),
      ['most_viewed']),

@@ -53,7 +53,6 @@ def action(do_action, arg, list_type='notes'):
         if not new_action:
             exit()
 
-    print(new_action)
     if new_action:
         new_func, note = new_action
         action(new_func, note)

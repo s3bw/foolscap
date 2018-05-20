@@ -85,11 +85,12 @@ class ServiceRules:
                       reverse=True)
 
     def by_views(self, iterable):
+        """ Sorts by views then sorts alphabetically.
+        """
         def sort_key(x):
-            return self.model.get_value(x, 'views')
+            return (-self.model.get_value(x, 'views'), x.lower())
         return sorted(iterable,
-                      key=sort_key,
-                      reverse=True)
+                      key=sort_key)
 
     def by_count(self, iterable):
         def sort_key(x):
