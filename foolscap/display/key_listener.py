@@ -37,6 +37,7 @@ class KeyListener:
             self.command = 'export'
         if key == ord('q'):
             exit()
+            # self.command = 'quit'
         elif key == UP_ARROW:
             self.scroll.move_up()
         elif key == DOWN_ARROW:

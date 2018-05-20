@@ -1,13 +1,13 @@
 import datetime
 
 
-def mock_data(views, year=2000, tag='fake_tag'):
+def mock_data(views, year=2000):
     modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
     return {
         'description': 'This is a fake note',
         'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
         'modified': modified,
-        'tags': [tag],
+        'tags': ['fake_tag'],
         'views': views
     }
 
@@ -51,14 +51,6 @@ FOUR_FAKE_NOTES = {
     'B': mock_data(3),
     'A': mock_data(2),
     'recently_opened': mock_data(1, year=2018),
-}
-
-
-FOUR_FAKE_NOTES_TAGS = {
-    'C': mock_data(2, tag='one'),
-    'B': mock_data(2, tag='two'),
-    'A': mock_data(2, tag='three'),
-    'D': mock_data(2, tag='one'),
 }
 
 

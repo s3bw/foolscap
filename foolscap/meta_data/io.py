@@ -32,6 +32,7 @@ def load_meta():
         with open(NOTE_DATA, 'rb') as _input:
             return pickle.load(_input)
 
+    # I need to handle this error better
     except EOFError and IOError:
         return {}
 

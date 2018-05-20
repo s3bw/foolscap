@@ -25,6 +25,7 @@ class MenuItem:
 
 class SubItem:
     def __init__(self, unpack):
-        title, desc = unpack
+        # This is where the fix for index lives
+        title, desc = unpack[:2]
         self.title = title
         self.desc = desc
