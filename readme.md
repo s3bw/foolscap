@@ -10,9 +10,9 @@ To install foolscap do the following:
 
     pip install git+ssh://git@github.com/GiantsLoveDeathMetal/foolscap.git@master
 
-Then you'll need to set the `FSCAP_PATH` environment variable:
+Then you'll need to set the `FSCAP_DIR` environment variable:
 
-    export FSCAP_PATH=~/.fscap_notes
+    export FSCAP_DIR=~/.fscap_notes
 
 Lastly create the following directories:
 
