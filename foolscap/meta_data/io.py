@@ -76,7 +76,7 @@ def migrate_meta():
             meta_data[key]['created'] = meta_data[key]['create']
             value.pop('create', None)
         elif 'create' not in meta_fields and 'created' not in meta_fields:
-            meta_data[key]['create'] = time_now
+            meta_data[key]['created'] = time_now
 
         if 'views' not in meta_fields:
             meta_data[key]['views'] = 1
@@ -93,6 +93,9 @@ def migrate_meta():
             # Sub heading indexes given a dummy value on migration.
             sh = meta_data[key]['sub_headings']
             meta_data[key]['sub_headings'] = [(n[0], n[1], 1, 1) for n in sh]
+            meta_data[key]['num_sub'] = len(
+                meta_data[key]['sub_headings']
+            )
 
     save_meta(meta_data)
     print('All meta data has been migrated.')

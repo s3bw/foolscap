@@ -20,7 +20,7 @@ def mock_w_subheadings(views, year=2000):
         'modified': modified,
         'tags': ['fake_tag'],
         'views': views,
-        'sub_headings': [('First Sub:', ':A sub headings')],
+        'sub_headings': [('First Sub:', ':A sub headings', 1, 1)],
         'num_sub': 1
     }
 
