@@ -50,9 +50,6 @@ def action(do_action, arg, list_type='notes'):
         else:
             new_action = display_ctrl.basic_output()
 
-        if not new_action:
-            exit()
-
     if new_action:
         new_func, note = new_action
         action(new_func, note)
