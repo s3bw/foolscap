@@ -18,6 +18,9 @@ class Model:
     def get(self, item):
         raise NotImplementedError
 
+    def filter_by_value(self, items, key, value):
+        return items
+
 
 class NotesModel(Model):
 
@@ -25,9 +28,11 @@ class NotesModel(Model):
 
     def __init__(self):
         self.notes = load_meta()
-        # raise KeyError(notes)
+
         self.tags = [values['tags'] for _, values in self.notes.items()]
         self.tags = [n for x in self.tags for n in x]
+
+        self.books = [values['book'] for _, values in self.notes.items()]
 
     def __iter__(self):
         for item in self.notes:
@@ -44,6 +49,11 @@ class NotesModel(Model):
 
     def get_value(self, item, value_key):
         return self.notes[item].get(value_key, None)
+
+    def filter_by_value(self, items, key, value):
+        return [item
+                for item in items
+                if self.get_value(item, key) == value]
 
     def query_tags(self, tag):
         titles = [title

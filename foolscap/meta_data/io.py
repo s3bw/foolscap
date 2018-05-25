@@ -82,6 +82,8 @@ def migrate_meta():
             meta_data[key]['views'] = 1
         if 'modified' not in meta_fields:
             meta_data[key]['modified'] = time_now
+        if 'book' not in meta_fields:
+            meta_data[key]['book'] = 'general'
 
         # Removing outdated data
         if 'timestamp' in meta_fields:

@@ -3,8 +3,9 @@ from datetime import datetime
 import pytest
 from mock import patch
 
-from data.mock_meta_data import FAKE_SINGLE_NOTE
-from data.mock_meta_data import FAKE_MANY_NOTES
+from tests.data.mock_meta_data import FAKE_SINGLE_NOTE
+from tests.data.mock_meta_data import FAKE_MANY_NOTES
+from tests.data.mock_meta_data import FAKE_DIFF_BOOKS
 
 from foolscap.meta_data import TagsModel
 
@@ -46,6 +47,7 @@ def test_notemodel_get(note_model, query):
     result = note_model.get(query)
     assert result == {'created': datetime(2000, 12, 10, 15, 25, 19, 11262),
                       'views': 4,
+                      'book': 'general',
                       'description': 'This is a fake note',
                       'modified': datetime(2000, 12, 10, 15, 25, 19, 11262),
                       'tags': ['fake_tag']}
@@ -68,6 +70,15 @@ def test_notemodel_get_no_result(note_model, query):
 def test_notemodel_get_value(note_model, query, value, expected):
     result = note_model.get_value(query, value)
     assert result == expected
+
+
+@pytest.mark.parametrize("note_model, query, expected", [
+    (FAKE_DIFF_BOOKS, 'work', 5),
+    (FAKE_DIFF_BOOKS, 'general', 9),
+], indirect=['note_model'])
+def test_notemodel_filter_by_value(note_model, query, expected):
+    result = note_model.filter_by_value(FAKE_DIFF_BOOKS.keys(), 'book', query)
+    assert len(result) == expected
 
 
 @pytest.mark.parametrize("note_model, query, expected", [

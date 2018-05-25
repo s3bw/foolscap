@@ -33,7 +33,7 @@ DISPLAY_ACTIONS = [
 ]
 
 
-def action(do_action, arg, list_type='notes'):
+def action(do_action, arg, list_type='notes', book='general'):
     func = FUNCTION_MAP[do_action]
 
     new_action = None
@@ -48,7 +48,7 @@ def action(do_action, arg, list_type='notes'):
             else:
                 new_action = display_ctrl.query_output(arg)
         else:
-            new_action = display_ctrl.basic_output()
+            new_action = display_ctrl.basic_output(book)
 
     if new_action:
         new_func, note = new_action

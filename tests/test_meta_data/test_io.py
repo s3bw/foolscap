@@ -6,7 +6,7 @@ from mock import call
 
 from foolscap.meta_data.io import migrate_meta
 
-from mock_meta_data import mock_w_subheadings
+from tests.data.mock_meta_data import mock_w_subheadings
 
 
 FAKE_TIME = datetime(2000, 12, 10, 15, 25, 19, 11262)

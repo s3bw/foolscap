@@ -22,7 +22,7 @@ def test_valid_command():
     with patch('sys.argv', test_args),\
          patch('foolscap.cli.action') as mock_action:
 
-        expected = call('save', 'mock_note.txt', 'normal')
+        expected = call('save', 'mock_note.txt', 'notes', 'general')
         main()
         assert mock_action.call_args == expected
 
@@ -34,7 +34,7 @@ def test_valid_command_optional():
     with patch('sys.argv', test_args),\
          patch('foolscap.cli.action') as mock_action:
 
-        expected = call('new', None, 'normal')
+        expected = call('new', None, 'notes', 'general')
         main()
         assert mock_action.call_args == expected
 
