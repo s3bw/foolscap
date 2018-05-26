@@ -34,8 +34,13 @@ parser.add_argument(
 parser.add_argument(
     '-t',
     '--list_type',
-    default='normal',
+    default='notes',
     choices=LIST_TYPES,
+)
+parser.add_argument(
+    '-b',
+    '--book',
+    default='general',
 )
 
 
@@ -44,6 +49,7 @@ def main():
     command = args.command
     note_args = args.positional
     list_type = args.list_type
+    book = args.book
 
-    action(command, note_args, list_type)
+    action(command, note_args, list_type, book)
 

@@ -14,6 +14,7 @@ from foolscap.meta_data.transformations import load_tags
 from foolscap.meta_data.parse_note import (
     restrict_title,
     get_title,
+    get_bookmacro,
     get_contents,
     get_moving_lines,
     note_tags,
@@ -125,6 +126,10 @@ def update_component(note):
     if tags:
         stored_data[new_name]['tags'] = tags
 
+    book = get_bookmacro(content)
+    if book:
+        stored_data[new_name]['book'] = book
+
     sub_headings = parse_sub_headings(content)
     if sub_headings:
         stored_data[new_name]['sub_headings'] = sub_headings
@@ -165,6 +170,10 @@ def new_component(text):
         tags = note_tags(content)
         if tags:
             note_component[title]['tags'] = tags
+
+        book = get_bookmacro(content)
+        if book:
+            note_component[title]['book'] = book
 
         sub_headings = parse_sub_headings(content)
         if sub_headings:

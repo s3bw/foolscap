@@ -44,6 +44,7 @@ EXPECTED_NOTE = """
 Some content.
 >Move content.
 
+{book:work}
 {test} {unit}
 ===================="""
 def test_get_titles():
@@ -51,6 +52,28 @@ def test_get_titles():
     section = parse_note.get_title(note)
     assert section == ['test_note']
     assert len(section) == 1
+
+
+def test_get_bookmacro():
+    note = EXPECTED_NOTE.split('\n')
+    result = parse_note.get_bookmacro(note)
+    assert result == 'work'
+
+
+def test_default_book():
+    expected_note = """
+# test_note
+====================
+:Description of note
+
+Some content.
+>Move content.
+
+{test} {unit}
+===================="""
+    note = expected_note.split('\n')
+    result = parse_note.get_bookmacro(note)
+    assert result == 'general'
 
 
 def test_get_moving_lines():
@@ -158,6 +181,7 @@ def test_get_contents():
         'Some content.',
         '>Move content.',
         '',
+        '{book:work}',
         '{test} {unit}',
         '===================='
     ]]

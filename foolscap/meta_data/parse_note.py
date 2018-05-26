@@ -1,3 +1,4 @@
+import re
 
 
 MAX_TITLE_LEN = 32
@@ -142,6 +143,16 @@ def note_tags(contents):
     if tag_line and '{' in tag_line:
         tags = [tag[1:-1] for tag in tag_line.split(' ') if tag]
         return tags
+
+
+def get_bookmacro(contents):
+    bookline = contents[-3]
+    book_pattern = re.compile("\{book:([a-z]*)\}")
+    book = book_pattern.findall(bookline)
+    if book:
+        return book[0]
+    else:
+        return 'general'
 
 
 def pairwise(iterable):

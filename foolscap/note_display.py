@@ -1,5 +1,6 @@
 from foolscap.meta_data import TagsModel
 from foolscap.meta_data import NotesModel
+from foolscap.meta_data.utils import fuzzy_guess
 from foolscap.display.console import display_list
 
 
@@ -16,8 +17,9 @@ class Controller:
         structure = self.service_rules.structure(items)
         return display_list(structure)
 
-    def basic_output(self):
-        self.items = list(self.model)
+    def basic_output(self, book):
+        items = list(self.model)
+        self.items = self.service_rules.filter_items(items, book)
         return self.__service_rules(self.items)
 
     def query_output(self, query):
@@ -39,6 +41,7 @@ class Controller:
 class ServiceRules:
 
     ORDER_RULE = 5
+    FILTER_RULE = 8
     TOP_N_VIEWED = 3
 
     def __init__(self, model):
@@ -48,6 +51,21 @@ class ServiceRules:
         if self.model.model_type == 'tags':
             return self.by_count(items)
         return self.order_notes(items)
+
+    def filter_items(self, items, book):
+        if len(items) > self.FILTER_RULE:
+            books = self.model.books
+            try:
+                books.index(book)
+                return self.model.filter_by_value(
+                    items,
+                    'book',
+                    book,
+                )
+            except ValueError:
+                fuzzy_guess(book, books)
+                exit()
+        return items
 
     def order_notes(self, items):
         if len(items) > self.ORDER_RULE:
@@ -68,11 +86,6 @@ class ServiceRules:
         recent, items = (recent[:1], recent[1:])
 
         return recent + viewed + self.alphabetise(items)
-
-    def random(self, items):
-        """ Returning items will result in random order.
-        """
-        return items
 
     def alphabetise(self, iterable):
         return sorted(iterable, key=lambda x: x.lower())

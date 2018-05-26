@@ -1,26 +1,28 @@
 import datetime
 
 
-def mock_data(views, year=2000, tag='fake_tag'):
+def mock_data(views, year=2000, tag='fake_tag', book='general'):
     modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
     return {
         'description': 'This is a fake note',
         'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
         'modified': modified,
         'tags': [tag],
+        'book': book,
         'views': views
     }
 
 
-def mock_w_subheadings(views, year=2000):
+def mock_w_subheadings(views, year=2000, book='general'):
     modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
     return {
         'description': 'This is a fake note',
         'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
         'modified': modified,
         'tags': ['fake_tag'],
+        'book': book,
         'views': views,
-        'sub_headings': [('First Sub:', ':A sub headings')],
+        'sub_headings': [('First Sub:', ':A sub headings', 1, 1)],
         'num_sub': 1
     }
 
@@ -32,6 +34,23 @@ FAKE_SINGLE_NOTE_2 = {
 
 FAKE_SINGLE_NOTE = {
     'most_viewed': mock_data(4)
+}
+
+FAKE_DIFF_BOOKS = {
+    'note_01': mock_data(4, book='work'),
+    'note_02': mock_data(4, book='work'),
+    'note_03': mock_data(4, book='work'),
+    'note_04': mock_data(4, book='work'),
+    'note_05': mock_data(4, book='work'),
+    'note_06': mock_data(4),
+    'note_07': mock_data(4),
+    'note_08': mock_data(4),
+    'note_09': mock_data(4),
+    'note_10': mock_data(4),
+    'note_11': mock_data(4),
+    'note_12': mock_data(4),
+    'note_13': mock_data(4),
+    'note_14': mock_data(4),
 }
 
 
@@ -80,6 +99,7 @@ def mock_component(views, year=2000, modified='no_change'):
         'created': 'created_date',
         'modified': modified,
         'tags': ['fake_tag'],
+        'book': 'general',
         'views': views
     }
 

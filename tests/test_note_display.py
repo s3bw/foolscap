@@ -11,6 +11,7 @@ from data.mock_meta_data import FAKE_SINGLE_NOTE
 from data.mock_meta_data import FAKE_SINGLE_NOTE_2
 from data.mock_meta_data import FAKE_MANY_NOTES
 from data.mock_meta_data import FAKE_NOTES_EDGE_CASE
+from data.mock_meta_data import FAKE_DIFF_BOOKS
 from data.mock_meta_data import FOUR_FAKE_NOTES
 from data.mock_meta_data import FOUR_FAKE_NOTES_TAGS
 
@@ -78,7 +79,7 @@ def test_controller__init__(note_model_init):
     ]),
     (FAKE_SINGLE_NOTE_2, 'notes', [
         {'title': 'most_viewed', 'description': 'This is a fake note',
-             'sub_headings': [('First Sub:', ':A sub headings')]
+             'sub_headings': [('First Sub:', ':A sub headings', 1, 1)]
         },
     ]),
     (FAKE_SINGLE_NOTE, 'tags', [
@@ -96,7 +97,7 @@ def test_ctrl_basic_out(note_model, model_type, expected):
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
         ctrl.service_rules = ServiceRules(ctrl.model)
-        ctrl.basic_output()
+        ctrl.basic_output('general')
         _mock.assert_called_with(expected)
 
 
@@ -270,6 +271,26 @@ def test_servicerules_order_notes(note_model, notes, expected):
     assert result == expected
 
 
+@pytest.mark.parametrize("note_model, query, expected", [
+    (FAKE_DIFF_BOOKS, 'work', 5),
+    (FAKE_DIFF_BOOKS, 'general', 9),
+], indirect=['note_model'])
+def test_servicerules_filter_items(note_model, query, expected):
+    service = ServiceRules(note_model)
+    result = service.filter_items(FAKE_DIFF_BOOKS.keys(), query)
+    assert len(result) == expected
+
+
+@pytest.mark.parametrize("note_model, query", [
+    (FAKE_DIFF_BOOKS, 'typo'),
+], indirect=['note_model'])
+def test_servicerules_filter_items_notfound(note_model, query):
+    with patch('foolscap.meta_data.models.fuzzy_guess') as _fuzz,\
+         pytest.raises(SystemExit):
+        service = ServiceRules(note_model)
+        result = service.filter_items(FAKE_DIFF_BOOKS.keys(), query)
+
+
 @pytest.mark.parametrize("note_model, notes, expected",[
     (FAKE_MANY_NOTES, FAKE_MANY_NOTES.keys(),
      ['A', 'fake_note_1', 'most_viewed', 'recently_opened', 'second_most',
@@ -326,7 +347,7 @@ def test_servicerule_structure(note_model, notes, tags):
       {
         'sub_headings': [
           ('First Sub:',
-          ':A sub headings')
+          ':A sub headings', 1, 1)
         ],
         'title': 'most_viewed',
         'description': 'This is a fake note'
