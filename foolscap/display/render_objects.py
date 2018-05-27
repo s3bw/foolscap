@@ -4,11 +4,12 @@ from foolscap.display.root_screen import Terminal
 
 
 HELP_OPTIONS = [
-    ' [q]uit ',
-    ' [e]dit ',
-    ' [d]elete ',
-    ' [->]expand ',
-    ' e[X]port ',
+    '| 0/5    [H]elp   |',
+    '| 1/5   e[X]port  |',
+    '| 2/5  [->]expand |',
+    '| 3/5   [d]elete  |',
+    '| 4/5    [e]dit   |',
+    '| 5/5    [q]uit   |',
 ]
 ROOT = ['~']
 
@@ -27,20 +28,21 @@ class Frame(Terminal):
 class HelpBar(Terminal):
     def __init__(self, screen):
         Terminal.__init__(self, screen)
+        self.help_options = HELP_OPTIONS
+        self.shown = 0
         self.build_help()
 
+    def next_hint(self):
+        self.shown += 1
+        if self.shown == len(self.help_options):
+            self.shown = 0
+
     def build_help(self):
-        shown = 0
         adjust_x = self.max_x - 6
-
-        potential_string = '--'.join(HELP_OPTIONS[:shown + 1])
-        while len(potential_string) < adjust_x:
-            shown += 1
-            potential_string = '--'.join(HELP_OPTIONS[:shown + 1])
-            if len(HELP_OPTIONS) <= shown:
-                break
-
-        self.help_string = '--'.join(HELP_OPTIONS[:shown])
+        if adjust_x < len(self.help_options[0]):
+            self.help_string = ''
+        else:
+            self.help_string = self.help_options[self.shown]
 
     def draw(self):
         self.screen.addstr(self.bottom_line, 2, self.help_string)

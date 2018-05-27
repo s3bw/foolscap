@@ -30,6 +30,7 @@ def test_KeyListener_setmax():
     [('ENTER', ('view', 5, None)),
      (ord('e'), ('edit', 5, None)),
      (ord('X'), ('export', 5, None)),
+     (ord('H'), ('help', 5, None)),
      (ord('g'), (None, 1, None)),
      (ord('G'), (None, 9, None)),
      ('UP_ARROW', (None, 4, None)),

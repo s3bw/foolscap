@@ -66,8 +66,8 @@ class FolioConsole:
         title_bar = TitleBar(self.screen)
         self.add_child(title_bar)
 
-        help_bar = HelpBar(self.screen)
-        self.add_child(help_bar)
+        self.help_bar = HelpBar(self.screen)
+        self.add_child(self.help_bar)
 
         self.list_content = DisplayContents(self.screen, self.items)
         self.add_child(self.list_content)
@@ -98,6 +98,11 @@ class FolioConsole:
             (selected_action,
              action_note,
              expand_index) = self.key_listener.get_action()
+
+            if selected_action == 'help':
+                self.help_bar.next_hint()
+                selected_action = None
+
         return selected_action, self.menu_items[action_note].title
 
         # What happens if the expansion happens to the
