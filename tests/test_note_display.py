@@ -172,6 +172,8 @@ def test_ctrl_with_no_tag_matches(note_model, model_type):
     ]),
     (FAKE_MANY_NOTES, 'notes', 'most', [
         {'title': 'most_viewed', 'description': 'This is a fake note'},
+        {'title': 'third_most', 'description': 'This is a fake note'},
+        {'title': 'second_most', 'description': 'This is a fake note'},
     ])],
     indirect=['note_model'])
 def test_search_notes(note_model, model_type, query, expected):

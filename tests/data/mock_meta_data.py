@@ -36,6 +36,15 @@ FAKE_SINGLE_NOTE = {
     'most_viewed': mock_data(4)
 }
 
+FAKE_SEARCH = {
+    '__note': mock_data(4),
+    '_note': mock_data(4),
+    'not_found': mock_data(4),
+    '___note': mock_data(4),
+    'note': mock_data(4),
+    '____note': mock_data(4),
+}
+
 FAKE_DIFF_BOOKS = {
     'note_01': mock_data(4, book='work'),
     'note_02': mock_data(4, book='work'),
