@@ -42,11 +42,34 @@ def test_HelpBar_init():
     assert hasattr(test_bar, 'help_string')
 
 
+def test_HelpBar_next_hint():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    mock_help_list = ["HELP", "MORE_HELP"]
+    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+        test_bar = HelpBar(mock_screen)
+        test_bar.draw()
+        test_bar.next_hint()
+        test_bar.update()
+        test_bar.draw()
+        test_bar.next_hint()
+        test_bar.update()
+        test_bar.draw()
+
+        calls = [
+            call(49, 2, "HELP"),
+            call(49, 2, "MORE_HELP"),
+            # Test it loops back to 0th item
+            call(49, 2, "HELP"),
+        ]
+        mock_screen.addstr.assert_has_calls(calls)
+
+
 def test_HelpBar_build_help():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     mock_help_list = ["HELP", "MORE_HELP"]
-    mock_help_print = '--'.join(mock_help_list)
+    mock_help_print = "HELP"
     with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
         test_bar = HelpBar(mock_screen)
         test_bar.draw()
@@ -54,17 +77,16 @@ def test_HelpBar_build_help():
 
 
 def test_HelpBar_build_help_short_width():
-    """ Test smaller console x displays help strings
-        that can fit in console.
+    """ Test smaller console where no string can fit in console.
     """
     mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 50, 15
+    mock_screen.getmaxyx.return_value = 50, 6
     mock_help_list = ["HELP", "MORE_HELP"]
     mock_help_print = '--'.join(mock_help_list[:1])
     with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
         test_bar = HelpBar(mock_screen)
         test_bar.draw()
-        mock_screen.addstr.assert_called_with(49, 2, mock_help_print)
+        mock_screen.addstr.assert_called_with(49, 2, '')
 
 
 def test_HelpBar_draw():

@@ -44,14 +44,14 @@ def test_FolioConsole_contextmanager():
     with patch('foolscap.display.console.panel') as mock_panel,\
          patch('foolscap.display.console.curses') as mock_curses:
         with FolioConsole(mock_screen, FAKE_ITEMS) as folio_console:
-            mock_screen.subwin().keypad.assert_called_once() 
-            mock_screen.subwin().clear.assert_called_once() 
+            mock_screen.subwin().keypad.assert_called_once()
+            mock_screen.subwin().clear.assert_called_once()
 
-            mock_panel.update_panels.assert_called_once() 
-            mock_panel.new_panel().hide.assert_called_once() 
-            mock_panel.new_panel().top.assert_called_once() 
-            mock_panel.new_panel().show.assert_called_once() 
-        
+            mock_panel.update_panels.assert_called_once()
+            mock_panel.new_panel().hide.assert_called_once()
+            mock_panel.new_panel().top.assert_called_once()
+            mock_panel.new_panel().show.assert_called_once()
+
         assert mock_screen.subwin().clear.mock_calls == two_calls
         assert mock_panel.new_panel().hide.mock_calls == two_calls
         assert mock_panel.update_panels.mock_calls == two_calls

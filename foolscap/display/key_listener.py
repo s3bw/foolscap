@@ -34,6 +34,7 @@ class KeyListener:
     def get_action(self):
         self._update()
         toggle_expand = None
+        self.command = None
         key = self.screen.getch()
         if key in ENTER_KEY:
             self.command = 'view'
@@ -54,6 +55,9 @@ class KeyListener:
         elif key == ord('G'):
             # Move to bottom note
             self.scroll.move_to_position(self.max_cur_pos)
+        elif key == ord('H'):
+            # rotate the help bar
+            self.command = 'help'
         # For a sense of power, left should collapse
         # and right should expand
         # elif key == LEFT_ARROW:
