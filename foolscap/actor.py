@@ -1,3 +1,8 @@
+import sys
+from socket import socket
+from socket import AF_UNIX
+from socket import SOCK_DGRAM
+
 from foolscap.note_display import Controller
 from foolscap.note_content import (
     save_note,
@@ -33,7 +38,24 @@ DISPLAY_ACTIONS = [
 ]
 
 
+def grab_attention(process_name):
+    """ Binds foolscap to an abstract port on Linux, will
+        interrupt foolscap if it tries to bind to the port
+        whilst another instance of foolscap is active.
+    """
+    grab_attention._lock = socket(AF_UNIX, SOCK_DGRAM)
+    try:
+        grab_attention._lock.bind("\0" + process_name)
+    except OSError:
+        print("\n\tFoolscap is operating elsewhere!\n")
+        sys.exit()
+
+
 def action(do_action, arg, list_type='notes', book='general'):
+    if sys.platform.startswith("linux"):
+        # Linux specific abstract namespace domain socket
+        grab_attention("foolscap_actor")
+
     func = FUNCTION_MAP[do_action]
 
     new_action = None
