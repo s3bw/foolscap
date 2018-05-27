@@ -35,7 +35,8 @@ class Controller:
         items = self.model.query_titles(query)
         if not items:
             exit()
-        return self.__service_rules(items)
+        structure = self.service_rules.structure(items)
+        return display_list(structure)
 
 
 class ServiceRules:

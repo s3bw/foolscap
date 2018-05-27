@@ -6,6 +6,7 @@ from mock import patch
 from tests.data.mock_meta_data import FAKE_SINGLE_NOTE
 from tests.data.mock_meta_data import FAKE_MANY_NOTES
 from tests.data.mock_meta_data import FAKE_DIFF_BOOKS
+from tests.data.mock_meta_data import FAKE_SEARCH
 
 from foolscap.meta_data import TagsModel
 
@@ -100,6 +101,12 @@ def test_notemodel_query_tags_no_result(note_model, query):
 
 @pytest.mark.parametrize("note_model, query, expected", [
     (FAKE_MANY_NOTES, 'th', ['third_most']),
+    (FAKE_SEARCH, 'note', [
+        'note',
+        '_note',
+        '__note',
+        '___note',
+        '____note']),
 ], indirect=['note_model'])
 def test_notemodel_query_title(note_model, query, expected):
     result = note_model.query_titles(query)

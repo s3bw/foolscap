@@ -66,9 +66,13 @@ class NotesModel(Model):
 
     def query_titles(self, query):
         try:
-            titles = [title
+            search = [title
                       for title, values in self.notes.items()
-                      if title.startswith(query)]
+                      if query in title]
+
+            # Sort by the position the query appears in the title
+            titles = sorted(search, key=lambda title: title.index(query))
+
         except TypeError:
             raise TypeError("Invalid Query")
         if titles:
