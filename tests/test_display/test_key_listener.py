@@ -26,10 +26,12 @@ def test_KeyListener_setmax():
     assert test_listener.max_pos == 20
 
 
-@pytest.mark.parametrize("key_press,expected",
+@pytest.mark.parametrize("key_press, expected",
     [('ENTER', ('view', 5, None)),
      (ord('e'), ('edit', 5, None)),
      (ord('X'), ('export', 5, None)),
+     (ord('g'), (None, 1, None)),
+     (ord('G'), (None, 9, None)),
      ('UP_ARROW', (None, 4, None)),
      ('DOWN_ARROW', (None, 6, None)),
      ('RIGHT_ARROW', (None, 5, 5))])
@@ -56,6 +58,10 @@ def test_key_listener(key_press, expected):
             assert test_listener.scroll.position == 4
         if key_press == 'DOWN_ARROW':
             assert test_listener.scroll.position == 6
+        if key_press == ord('g'):
+            assert test_listener.scroll.position == 1
+        if key_press == ord('G'):
+            assert test_listener.scroll.position == 10
 
 
 def test_key_exit():

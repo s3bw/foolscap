@@ -14,6 +14,13 @@ class Scrollable(Terminal):
         if new_max != self.max_pos:
             self.max_pos = new_max
 
+    def move_to_position(self, position):
+        while self.position != position:
+            if self.position > position:
+                self.move_up()
+            else:
+                self.move_down()
+
     def move_up(self):
         """
         :param list_pointer: (int) note being actioned upon
