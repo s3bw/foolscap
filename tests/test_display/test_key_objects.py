@@ -121,3 +121,26 @@ def test_scroll_down_movement_small_term(max_len, test_with, expected):
     assert test_scroll.list_pointer == expected_list_pos
     assert test_scroll.list_top == expected_list_top
 
+
+@pytest.mark.parametrize("max_len, test_with, expected",
+    [(10, (1, 0, 0), (1, 0, 0)),
+     (10, (3, 2, 2), (1, 0, 2)),
+     (10, (2, 3, 2), (1, 2, 2)),
+     (10, (3, 9, 7), (1, 7, 7))])
+def test_scroll_to_position_small_term(max_len, test_with, expected):
+    pos, list_pos, list_top = test_with
+    expected_pos, expected_list_pos, expected_list_top = expected
+
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 6, 20
+
+    fake_note_count = 10
+    test_scroll = key_objects.Scrollable(mock_screen, fake_note_count)
+    test_scroll.position = pos
+    test_scroll.list_pointer = list_pos
+    test_scroll.list_top = list_top
+    test_scroll.move_to_position(1)
+
+    assert test_scroll.position == expected_pos
+    assert test_scroll.list_pointer == expected_list_pos
+    assert test_scroll.list_top == expected_list_top

@@ -22,6 +22,12 @@ class KeyListener:
     def _update(self):
         self.scroll.update(self.max_pos)
 
+        # Calculate max cursor position.
+        if self.scroll.bottom_line - 2 > self.max_pos:
+            self.max_cur_pos = self.max_pos
+        else:
+            self.max_cur_pos = self.scroll.bottom_line - 2
+
     def set_max(self, count_notes):
         self.max_pos = count_notes
 
@@ -42,6 +48,12 @@ class KeyListener:
             self.scroll.move_up()
         elif key == DOWN_ARROW:
             self.scroll.move_down()
+        elif key == ord('g'):
+            # Move to top note
+            self.scroll.move_to_position(1)
+        elif key == ord('G'):
+            # Move to bottom note
+            self.scroll.move_to_position(self.max_cur_pos)
         # For a sense of power, left should collapse
         # and right should expand
         # elif key == LEFT_ARROW:
