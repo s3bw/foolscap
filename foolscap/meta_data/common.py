@@ -49,10 +49,13 @@ def shift_lines(path_from, name_to_note):
 
     # load text, return note, apply new, delete old, save new
     apply_to_note = load_text(name_to_note)
-    # Get contents with be tricky to refactor
+    # Get contents will be tricky to refactor
     apply_to_note = get_contents(apply_to_note)[0]
 
-    line_index = len(apply_to_note) - 2
+    # This is not tested. Need a more robust pattern
+    # - check if a macro exists (macro book tag) and insert above that
+    #   if it exists.
+    line_index = len(apply_to_note) - 3
     # Insert moved lines into other note.
     apply_to_note[line_index:line_index] = get_moving_lines(from_note)
     replace_text(name_to_note, name_to_note, apply_to_note)
