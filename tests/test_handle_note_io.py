@@ -48,7 +48,7 @@ def test_save_text():
 
 def test_unique_heading():
     with patch('foolscap.handle_note_io.os.listdir') as mock_saved,\
-         patch('foolscap.handle_note_io.NOTE_FOLDERS'): 
+         patch('foolscap.handle_note_io.NOTE_FOLDERS'):
         mock_saved.return_value = ['test_note.txt', 'mock_note.txt']
         # return note name if it's not in list:
         assert handle_note_io.unique_text('not_here') == 'not_here'
