@@ -9,7 +9,6 @@ from foolscap.meta_data.io import load_meta
 from foolscap.meta_data.io import save_meta
 from foolscap.meta_data.io import migrate_meta
 from foolscap.meta_data.utils import fuzzy_guess
-from foolscap.meta_data.transformations import load_tags
 
 from foolscap.meta_data.parse_note import (
     restrict_title,
@@ -25,14 +24,6 @@ from foolscap.meta_data.parse_note import (
 
 def upgrade_components():
     migrate_meta()
-
-
-def tag_exists(tag):
-    stored_tags = load_tags()
-    if tag in stored_tags:
-        return True
-    else:
-        fuzzy_guess(tag, stored_tags)
 
 
 def note_exists(note):

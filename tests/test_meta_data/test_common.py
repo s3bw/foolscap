@@ -20,24 +20,6 @@ def test_upgrade_components():
     mock_migrate.assert_called_once()
 
 
-def test_tag_exists_true():
-    with patch('foolscap.meta_data.common.load_tags') as mock_load:
-        mock_load.return_value = {'note', 'note_2'}
-        result = common.tag_exists('note')
-
-    assert result == True
-
-
-def test_tag_exists_false():
-    with patch('foolscap.meta_data.common.load_tags') as mock_load,\
-         patch('foolscap.meta_data.common.fuzzy_guess') as mock_fuzz:
-        mock_tags = {'notes', 'note_2'}
-        mock_load.return_value = mock_tags
-        result = common.tag_exists('note')
-
-    mock_fuzz.assert_called_once_with('note', mock_tags)
-
-
 def test_note_exists_true():
     with patch('foolscap.meta_data.common.load_meta') as mock_load:
         mock_load.return_value = {'note': 1, 'note_2': 2}
