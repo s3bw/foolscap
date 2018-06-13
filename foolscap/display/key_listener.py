@@ -17,7 +17,6 @@ class KeyListener:
         self.command = None
 
         self.scroll = Scrollable(self.screen, self.max_pos)
-        # add more key bindings here.
 
     def _update(self):
         self.scroll.update(self.max_pos)
@@ -33,7 +32,6 @@ class KeyListener:
 
     def get_action(self):
         self._update()
-        toggle_expand = None
         self.command = None
         key = self.screen.getch()
         if key in ENTER_KEY:
@@ -58,16 +56,9 @@ class KeyListener:
         elif key == ord('H'):
             # rotate the help bar
             self.command = 'help'
-        # For a sense of power, left should collapse
-        # and right should expand
-        # elif key == LEFT_ARROW:
-        #     self.drop_down.collapse()
         elif key == RIGHT_ARROW:
-            toggle_expand = self.scroll.list_pointer
-        # command handles foolscap functions
-        # list pointer executes on note at pointer
-        # toggle handle functions for display
-        return self.command, self.scroll.list_pointer, toggle_expand
+            self.command = 'expand'
+        return self.command, self.scroll.list_pointer
 
     def get_position(self):
         return self.scroll.list_top, self.scroll.position
