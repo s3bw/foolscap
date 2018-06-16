@@ -59,35 +59,25 @@ def test_controller__init__(note_model_init):
 
 @pytest.mark.parametrize("note_model, model_type, expected", [
     (FAKE_MANY_NOTES, 'tags', [
-        {'title': 'fake_tag', 'description': str(7),
-        'sub_headings': [('A', 'This is a fake note'),
-        ('fake_note_1', 'This is a fake note'),
-        ('most_viewed', 'This is a fake note'),
-        ('recently_opened', 'This is a fake note'),
-        ('second_most', 'This is a fake note'),
-        ('third_most', 'This is a fake note'),
-        ('Z', 'This is a fake note')]}
+        {'title': 'fake_tag'},
     ]),
     (FAKE_MANY_NOTES, 'notes', [
-        {'title': 'recently_opened', 'description': 'This is a fake note'},
-        {'title': 'most_viewed', 'description': 'This is a fake note'},
-        {'title': 'second_most', 'description': 'This is a fake note'},
-        {'title': 'third_most', 'description': 'This is a fake note'},
-        {'title': 'A', 'description': 'This is a fake note'},
-        {'title': 'fake_note_1', 'description': 'This is a fake note'},
-        {'title': 'Z', 'description': 'This is a fake note'},
+        {'title': 'recently_opened'},
+        {'title': 'most_viewed'},
+        {'title': 'second_most'},
+        {'title': 'third_most'},
+        {'title': 'A'},
+        {'title': 'fake_note_1'},
+        {'title': 'Z'},
     ]),
     (FAKE_SINGLE_NOTE_2, 'notes', [
-        {'title': 'most_viewed', 'description': 'This is a fake note',
-             'sub_headings': [('First Sub:', ':A sub headings', 1, 1)]
-        },
+        {'title': 'most_viewed'}
     ]),
     (FAKE_SINGLE_NOTE, 'tags', [
-        {'title': 'fake_tag', 'description': str(1),
-        'sub_headings': [('most_viewed', 'This is a fake note')]}
+        {'title': 'fake_tag'}
     ]),
     (FAKE_SINGLE_NOTE, 'notes', [
-        {'title': 'most_viewed', 'description': 'This is a fake note'},
+        {'title': 'most_viewed'},
     ])],
     indirect=['note_model'])
 def test_ctrl_basic_out(note_model, model_type, expected):
@@ -96,6 +86,10 @@ def test_ctrl_basic_out(note_model, model_type, expected):
         ctrl.model = note_model
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
+
+        for item in expected:
+            item['model'] = ctrl.model
+
         ctrl.service_rules = ServiceRules(ctrl.model)
         ctrl.basic_output('general')
         _mock.assert_called_with(expected)
@@ -103,32 +97,24 @@ def test_ctrl_basic_out(note_model, model_type, expected):
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
     (FAKE_MANY_NOTES, 'tags', 'fake_tag', [
-        {'title': 'fake_tag', 'description': str(7),
-        'sub_headings': [('A', 'This is a fake note'),
-        ('fake_note_1', 'This is a fake note'),
-        ('most_viewed', 'This is a fake note'),
-        ('recently_opened', 'This is a fake note'),
-        ('second_most', 'This is a fake note'),
-        ('third_most', 'This is a fake note'),
-        ('Z', 'This is a fake note')]}
+        {'title': 'fake_tag'},
     ]),
     (FAKE_MANY_NOTES, 'notes', 'fake_tag', [
-        {'title': 'recently_opened', 'description': 'This is a fake note'},
-        {'title': 'most_viewed', 'description': 'This is a fake note'},
-        {'title': 'second_most', 'description': 'This is a fake note'},
-        {'title': 'third_most', 'description': 'This is a fake note'},
-        {'title': 'A', 'description': 'This is a fake note'},
-        {'title': 'fake_note_1', 'description': 'This is a fake note'},
-        {'title': 'Z', 'description': 'This is a fake note'},
+        {'title': 'recently_opened'},
+        {'title': 'most_viewed'},
+        {'title': 'second_most'},
+        {'title': 'third_most'},
+        {'title': 'A'},
+        {'title': 'fake_note_1'},
+        {'title': 'Z'},
     ]),
     # None passed to query - should not happen. This is controlled by
     # Actor
     (FAKE_SINGLE_NOTE, 'tags', 'fake_tag', [
-        {'title': 'fake_tag', 'description': str(1),
-        'sub_headings': [('most_viewed', 'This is a fake note')]}
+        {'title': 'fake_tag'}
     ]),
     (FAKE_SINGLE_NOTE, 'notes', 'fake_tag', [
-        {'title': 'most_viewed', 'description': 'This is a fake note'},
+        {'title': 'most_viewed'},
     ])],
     indirect=['note_model'])
 def test_ctrl_query_out(note_model, model_type, query, expected):
@@ -138,6 +124,9 @@ def test_ctrl_query_out(note_model, model_type, query, expected):
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
         ctrl.service_rules = ServiceRules(ctrl.model)
+
+        for item in expected:
+            item['model'] = ctrl.model
 
         ctrl.query_output(query)
         _mock.assert_called_with(expected)
@@ -161,19 +150,12 @@ def test_ctrl_with_no_tag_matches(note_model, model_type):
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
     (FAKE_MANY_NOTES, 'tags', 'fake', [
-        {'title': 'fake_tag', 'description': str(7),
-        'sub_headings': [('A', 'This is a fake note'),
-        ('fake_note_1', 'This is a fake note'),
-        ('most_viewed', 'This is a fake note'),
-        ('recently_opened', 'This is a fake note'),
-        ('second_most', 'This is a fake note'),
-        ('third_most', 'This is a fake note'),
-        ('Z', 'This is a fake note')]}
+        {'title': 'fake_tag'}
     ]),
     (FAKE_MANY_NOTES, 'notes', 'most', [
-        {'title': 'most_viewed', 'description': 'This is a fake note'},
-        {'title': 'third_most', 'description': 'This is a fake note'},
-        {'title': 'second_most', 'description': 'This is a fake note'},
+        {'title': 'most_viewed'},
+        {'title': 'third_most'},
+        {'title': 'second_most'},
     ])],
     indirect=['note_model'])
 def test_search_notes(note_model, model_type, query, expected):
@@ -182,6 +164,10 @@ def test_search_notes(note_model, model_type, query, expected):
         ctrl.model = note_model
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
+
+        for item in expected:
+            item['model'] = ctrl.model
+
         ctrl.service_rules = ServiceRules(ctrl.model)
 
         ctrl.search_output(query)
@@ -347,12 +333,8 @@ def test_servicerule_structure(note_model, notes, tags):
     result = service.structure(notes)
     assert result == [
       {
-        'sub_headings': [
-          ('First Sub:',
-          ':A sub headings', 1, 1)
-        ],
         'title': 'most_viewed',
-        'description': 'This is a fake note'
+        'model': note_model,
       }
     ]
 
@@ -363,10 +345,6 @@ def test_servicerule_structure(note_model, notes, tags):
     assert result == [
       {
         'title': 'fake_tag',
-        'description': '1',
-        'sub_headings': [
-          ('most_viewed',
-          'This is a fake note')
-        ]
+        'model': tag_model
       }
     ]

@@ -3,6 +3,14 @@ from abc import ABC
 from abc import abstractmethod
 
 
+HELP_OPTIONS = [
+    '| 0/5    [H]elp   |',
+    '| 1/5   e[X]port  |',
+    '| 2/5  [->]expand |',
+    '| 3/5   [d]elete  |',
+    '| 4/5    [e]dit   |',
+    '| 5/5    [q]uit   |',
+]
 ROOT = ['~']
 
 
@@ -50,18 +58,9 @@ class StatusBar(Widget):
 class HelpBar(Widget):
     """Constructs the help bar"""
 
-    HELP_OPTIONS = [
-        '| 0/5    [H]elp   |',
-        '| 1/5   e[X]port  |',
-        '| 2/5  [->]expand |',
-        '| 3/5   [d]elete  |',
-        '| 4/5    [e]dit   |',
-        '| 5/5    [q]uit   |',
-    ]
-
     def __init__(self, screen):
         self.attach_screen(screen)
-        self.help_options = self.HELP_OPTIONS
+        self.help_options = HELP_OPTIONS
         self.shown = 0
         self.build_help()
 
