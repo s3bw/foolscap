@@ -31,6 +31,12 @@ FAKE_SINGLE_NOTE_2 = {
     'most_viewed': mock_w_subheadings(4)
 }
 
+FAKE_FOUR_NOTES_W_SUB = {
+    'B': mock_w_subheadings(4),
+    'A': mock_w_subheadings(3),
+    'D': mock_w_subheadings(2),
+    'C': mock_w_subheadings(1),
+}
 
 FAKE_SINGLE_NOTE = {
     'most_viewed': mock_data(4)

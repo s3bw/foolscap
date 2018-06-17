@@ -16,37 +16,46 @@ class FakeWidget(Widget):
     def draw(self):
         pass
 
-# Test Widget NotImplementedError
-# Rewrite the test vocab
+
+class FailWidget(Widget):
+    def __init__(self):
+        pass
+
+
+def test_fail_Widget():
+    with pytest.raises(TypeError):
+        widget = FailWidget()
+
+
 def test_Widget_init():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 90, 110
-    test_dis = FakeWidget()
-    test_dis.attach_screen(mock_screen)
-    assert isinstance(test_dis, Widget)
-    assert test_dis.screen == mock_screen
-    assert test_dis.top_line == 0
-    assert test_dis.max_y == 90
-    assert test_dis.max_x == 110
-    assert test_dis.bottom_line == 89
-    assert test_dis.centre_x == 55
+    widget = FakeWidget()
+    widget.attach_screen(mock_screen)
+    assert isinstance(widget, Widget)
+    assert widget.screen == mock_screen
+    assert widget.top_line == 0
+    assert widget.max_y == 90
+    assert widget.max_x == 110
+    assert widget.bottom_line == 89
+    assert widget.centre_x == 55
 
 
 def test_Widget_update():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 90, 110
-    test_dis = FakeWidget()
-    test_dis.attach_screen(mock_screen)
-    assert test_dis.max_y == 90
-    assert test_dis.max_x == 110
-    assert test_dis.bottom_line == 89
-    assert test_dis.centre_x == 55
+    widget = FakeWidget()
+    widget.attach_screen(mock_screen)
+    assert widget.max_y == 90
+    assert widget.max_x == 110
+    assert widget.bottom_line == 89
+    assert widget.centre_x == 55
     mock_screen.getmaxyx.return_value = 60, 80
-    test_dis.update()
-    assert test_dis.max_y == 60
-    assert test_dis.max_x == 80
-    assert test_dis.bottom_line == 59
-    assert test_dis.centre_x == 40
+    widget.update()
+    assert widget.max_y == 60
+    assert widget.max_x == 80
+    assert widget.bottom_line == 59
+    assert widget.centre_x == 40
 
 
 def test_Frame_init():

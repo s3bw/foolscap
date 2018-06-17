@@ -4,7 +4,7 @@ from collections import OrderedDict
 from foolscap.display.render_composite import Widget
 
 
-default_settings = {
+DEFAULT_SETTINGS = {
     'title': {
         'name': 'title',
         'size': 20,
@@ -20,6 +20,11 @@ default_settings = {
         'size': 10,
         'align': 'centre'
     },
+    'modified': {
+        'name': 'created',
+        'size': 10,
+        'align': 'centre'
+    },
     'views': {
         'name': 'views',
         'size': 4,
@@ -29,10 +34,20 @@ default_settings = {
         'name': 'more',
         'size': 2,
         'align': 'centre'
+    },
+    'num_sub': {
+        'name': 'num_sub',
+        'size': 4,
+        'align': 'centre'
+    },
+    'book': {
+        'name': 'book',
+        'size': 8,
+        'align': 'centre'
     }
 }
 
-tag_settings = {
+TAG_SETTINGS = {
     'title': {
         'name': 'title',
         'size': 32,
@@ -67,11 +82,11 @@ class ColumnRegistry:
     def __init__(self):
         self._objects = OrderedDict()
 
-    def get_type(self, name):
+    def get_object(self, name):
         """Get a single item from the registry."""
         return self._objects[name]
 
-    def get_column_names(self):
+    def get_objects(self):
         """Get all objects."""
         for obj in self._objects:
             yield obj
@@ -93,18 +108,23 @@ def display_text(x):
         return str(x)
 
 
+# Book will be really useful to show when searching.
+NOTE_CONFIG = ['more', 'title', 'description', 'created']
+# 'num_sub', 'views', 'book', 'modified']
+DEFAULT_DISPLAY = '-'
+
+
 class Columns(Widget):
     """ Responsible for drawing the information available for each note.
     """
-    configuration = ['more', 'title', 'description', 'created']
-    default_display = '-'
 
-    def __init__(self, menu_type, menu):
+    def __init__(self, menu_type):
         if menu_type == 'tags':
-            self.settings = tag_settings
+            self.settings = TAG_SETTINGS
             self.configuration = ['more', 'title', 'description']
         else:
-            self.settings = default_settings
+            self.settings = DEFAULT_SETTINGS
+            self.configuration = NOTE_CONFIG
         self.construct_columns(self.settings)
 
     def construct_columns(self, settings):
@@ -138,22 +158,23 @@ class Columns(Widget):
                  'centre': self.centre_align}
 
         left_x = 2
-        for column in self.registry.get_column_names():
-            cln_setting = self.registry.get_type(column)
+        for column in self.registry.get_objects():
+            cln_setting = self.registry.get_object(column)
             size = cln_setting.size
-            if left_x + size + 5 < self.max_x:
+            if left_x + size + 2 < self.max_x:
                 if hasattr(item, column):
                     pline = getattr(item, column)
                     pline = display_text(pline)
                 else:
-                    pline = self.default_display
+                    pline = DEFAULT_DISPLAY
 
                 alignment = cln_setting.align
                 pline = align[alignment](pline, size)
                 self.screen.addstr(line, left_x, pline, line_colour)
                 left_x += size + 2
-                self.screen.addstr(line, left_x, '|', line_colour)
-                left_x += 2
+                if left_x < self.max_x:
+                    self.screen.addstr(line, left_x, '|', line_colour)
+                    left_x += 2
             else:
                 break
 

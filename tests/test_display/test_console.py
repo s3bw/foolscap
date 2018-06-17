@@ -94,6 +94,7 @@ def test_FolioConsole_init(mock_keys, mock_display_menu, mock_titlebar,
         assert hasattr(test_console, 'panel')
         assert hasattr(test_console, 'count_notes')
 
+        assert hasattr(test_console, 'help_bar')
         assert hasattr(test_console, 'menu')
         assert hasattr(test_console, 'key_listener')
 
@@ -161,7 +162,68 @@ def test_FolioConsole_show(mock_listener, mock_display_menu, mock_titlebar,
             mock_position = (0, 1)
             mocked_listener.get_position.return_value = mock_position
             mocked_listener.get_action.return_value = ('action', 1)
+            mock_display_menu().select_item.return_value = 'selected_note'
 
             result = test_console.show()
             mock_display_menu().update_pointers.assert_called_with(mock_position[0], mock_position[1])
+            assert result == ('action', 'selected_note')
 
+
+@patch('foolscap.display.console.Frame')
+@patch('foolscap.display.console.HelpBar')
+@patch('foolscap.display.console.StatusBar')
+@patch('foolscap.display.console.TitleBar')
+@patch('foolscap.display.console.DisplayMenu')
+@patch('foolscap.display.console.KeyListener')
+def test_FolioConsole_expand_item(mock_listener, mock_display_menu, mock_titlebar,
+                           mock_statusbar, mock_helpbar, mock_frame):
+    mock_screen = MagicMock()
+    with patch('foolscap.display.console.panel') as mock_panel,\
+         patch('foolscap.display.console.curses') as mock_curses:
+        mocked_render_objects = [
+            mock_frame(),
+            mock_statusbar(),
+            mock_titlebar(),
+            mock_helpbar(),
+            mock_display_menu(),
+        ]
+        test_console = FolioConsole(mock_screen, FAKE_ITEMS)
+        with patch.object(test_console, 'key_listener') as mocked_listener:
+            mock_position = (0, 1)
+            mocked_listener.get_position.return_value = mock_position
+            mocked_listener.get_action.side_effect = [('expand', 1), ('action', 1)]
+            mock_display_menu().select_item.return_value = 'selected_note'
+
+            result = test_console.show()
+            assert test_console.menu.expand_item.call_args_list == [call(1)]
+            test_console.menu.expand_item.assert_called_once()
+
+
+@patch('foolscap.display.console.Frame')
+@patch('foolscap.display.console.HelpBar')
+@patch('foolscap.display.console.StatusBar')
+@patch('foolscap.display.console.TitleBar')
+@patch('foolscap.display.console.DisplayMenu')
+@patch('foolscap.display.console.KeyListener')
+def test_FolioConsole_show_help(mock_listener, mock_display_menu, mock_titlebar,
+                           mock_statusbar, mock_helpbar, mock_frame):
+    mock_screen = MagicMock()
+    with patch('foolscap.display.console.panel') as mock_panel,\
+         patch('foolscap.display.console.curses') as mock_curses:
+        mocked_render_objects = [
+            mock_frame(),
+            mock_statusbar(),
+            mock_titlebar(),
+            mock_helpbar(),
+            mock_display_menu(),
+        ]
+        test_console = FolioConsole(mock_screen, FAKE_ITEMS)
+        with patch.object(test_console, 'key_listener') as mocked_listener:
+            mock_position = (0, 1)
+            mocked_listener.get_position.return_value = mock_position
+            mocked_listener.get_action.side_effect = [('help', 1), ('action', 1)]
+            mock_display_menu().select_item.return_value = 'selected_note'
+
+            result = test_console.show()
+            assert test_console.help_bar.next_hint.call_args_list == [call()]
+            test_console.help_bar.next_hint.assert_called_once()

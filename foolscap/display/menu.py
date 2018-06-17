@@ -60,7 +60,7 @@ class DisplayMenu(Widget):
         model_type = items[0]['model'].model_type
         self.menu = MenuAdapter(items)
         #: available columns
-        self.columns = Columns(model_type, self.menu)
+        self.columns = Columns(model_type)
         self.columns.attach_screen(screen)
         self.attach_screen(screen)
 
