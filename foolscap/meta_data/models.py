@@ -44,7 +44,7 @@ class NotesModel(Model):
     def get(self, item):
         try:
             return self.notes[item]
-        except KeyError as e:
+        except KeyError:
             fuzzy_guess(item, self.notes.keys())
 
     def get_value(self, item, value_key):
@@ -105,6 +105,7 @@ class TagsModel(Model):
             }
             for tag, count, titles in tags
         }
+        self.books = notes.books
 
     def __iter__(self):
         for item in self.tags:

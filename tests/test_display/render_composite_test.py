@@ -3,10 +3,59 @@ from mock import call
 from mock import patch
 from mock import MagicMock
 
-from foolscap.display.render_objects import Frame
-from foolscap.display.render_objects import HelpBar
-from foolscap.display.render_objects import TitleBar
-from foolscap.display.render_objects import StatusBar
+from foolscap.display.render_composite import Widget
+from foolscap.display.render_composite import Frame
+from foolscap.display.render_composite import HelpBar
+from foolscap.display.render_composite import TitleBar
+from foolscap.display.render_composite import StatusBar
+
+
+class FakeWidget(Widget):
+    def __init__(self):
+        pass
+    def draw(self):
+        pass
+
+
+class FailWidget(Widget):
+    def __init__(self):
+        pass
+
+
+def test_fail_Widget():
+    with pytest.raises(TypeError):
+        widget = FailWidget()
+
+
+def test_Widget_init():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 90, 110
+    widget = FakeWidget()
+    widget.attach_screen(mock_screen)
+    assert isinstance(widget, Widget)
+    assert widget.screen == mock_screen
+    assert widget.top_line == 0
+    assert widget.max_y == 90
+    assert widget.max_x == 110
+    assert widget.bottom_line == 89
+    assert widget.centre_x == 55
+
+
+def test_Widget_update():
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 90, 110
+    widget = FakeWidget()
+    widget.attach_screen(mock_screen)
+    assert widget.max_y == 90
+    assert widget.max_x == 110
+    assert widget.bottom_line == 89
+    assert widget.centre_x == 55
+    mock_screen.getmaxyx.return_value = 60, 80
+    widget.update()
+    assert widget.max_y == 60
+    assert widget.max_x == 80
+    assert widget.bottom_line == 59
+    assert widget.centre_x == 40
 
 
 def test_Frame_init():
@@ -46,7 +95,7 @@ def test_HelpBar_next_hint():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
     mock_help_list = ["HELP", "MORE_HELP"]
-    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+    with patch('foolscap.display.render_composite.HELP_OPTIONS', mock_help_list):
         test_bar = HelpBar(mock_screen)
         test_bar.draw()
         test_bar.next_hint()
@@ -70,7 +119,7 @@ def test_HelpBar_build_help():
     mock_screen.getmaxyx.return_value = 50, 50
     mock_help_list = ["HELP", "MORE_HELP"]
     mock_help_print = "HELP"
-    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+    with patch('foolscap.display.render_composite.HELP_OPTIONS', mock_help_list):
         test_bar = HelpBar(mock_screen)
         test_bar.draw()
         mock_screen.addstr.assert_called_with(49, 2, mock_help_print)
@@ -83,7 +132,7 @@ def test_HelpBar_build_help_short_width():
     mock_screen.getmaxyx.return_value = 50, 6
     mock_help_list = ["HELP", "MORE_HELP"]
     mock_help_print = '--'.join(mock_help_list[:1])
-    with patch('foolscap.display.render_objects.HELP_OPTIONS', mock_help_list):
+    with patch('foolscap.display.render_composite.HELP_OPTIONS', mock_help_list):
         test_bar = HelpBar(mock_screen)
         test_bar.draw()
         mock_screen.addstr.assert_called_with(49, 2, '')
@@ -126,7 +175,7 @@ def test_TitleBar_init():
     (40, ""),
 ])
 def test_TitleBar_format_path(max_x, expected):
-    separator = 'foolscap.display.render_objects.os.sep'
+    separator = 'foolscap.display.render_composite.os.sep'
     test_path = "/home/user/library/music/good_tunes/tricot"
 
     mock_screen = MagicMock()

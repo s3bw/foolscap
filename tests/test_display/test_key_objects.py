@@ -24,6 +24,9 @@ def test_Scrollable_init():
     assert test_scroll.bottom_line == 99
     assert test_scroll.centre_x == 50
 
+    assert hasattr(test_scroll, 'bottom_line')
+    assert hasattr(test_scroll, 'centre_x')
+
 
 def test_Scrollable_update():
     mock_screen = MagicMock()

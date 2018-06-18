@@ -1,16 +1,20 @@
-from .root_screen import Terminal
+class Scrollable:
 
+    position = 1
+    list_top = 0
+    top_line = 0
+    list_pointer = 0
 
-class Scrollable(Terminal):
     def __init__(self, screen, max_pos):
-        Terminal.__init__(self, screen)
-        self.position = 1
-        self.list_top = 0
-        self.list_pointer = 0
+        self.screen = screen
         self.max_pos = max_pos
+        self.update(max_pos)
 
     def update(self, new_max):
-        Terminal.update(self)
+        self.max_y, self.max_x = self.screen.getmaxyx()
+        self.bottom_line = self.max_y - 1
+        self.centre_x = int(self.max_x / 2)
+
         if new_max != self.max_pos:
             self.max_pos = new_max
 

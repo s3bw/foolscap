@@ -117,12 +117,7 @@ class ServiceRules:
         return [
             {
                 'title': item,
-                'description': self.model.get_value(item, 'description'),
-                'sub_headings': self.model.get_value(item, 'sub_headings')
-            } if self.model.get_value(item, 'sub_headings') else {
-                'title': item,
-                'description': self.model.get_value(item, 'description'),
+                'model': self.model,
             }
             for item in iterable
         ]
-

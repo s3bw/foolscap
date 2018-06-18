@@ -27,17 +27,17 @@ def test_KeyListener_setmax():
 
 
 @pytest.mark.parametrize("key_press, expected",
-    [('ENTER', ('view', 5, None)),
-     (ord('e'), ('edit', 5, None)),
-     (ord('X'), ('export', 5, None)),
-     (ord('H'), ('help', 5, None)),
-     (ord('g'), (None, 1, None)),
-     (ord('G'), (None, 9, None)),
-     ('UP_ARROW', (None, 4, None)),
-     ('DOWN_ARROW', (None, 6, None)),
-     ('RIGHT_ARROW', (None, 5, 5))])
+    [('ENTER', ('view', 5)),
+     (ord('e'), ('edit', 5)),
+     (ord('X'), ('export', 5)),
+     (ord('H'), ('help', 5)),
+     (ord('g'), (None, 1)),
+     (ord('G'), (None, 9)),
+     ('UP_ARROW', (None, 4)),
+     ('DOWN_ARROW', (None, 6)),
+     ('RIGHT_ARROW', ('expand', 5))])
 def test_key_listener(key_press, expected):
-    expected_command, expected_pointer, expected_expand = expected
+    expected_command, expected_pointer = expected
 
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
@@ -104,6 +104,6 @@ def test_get_position_small():
 
         assert test_listener.get_position() == (0, 1)
         result = test_listener.get_action()
-        assert result == (None, tail_index, None)
+        assert result == (None, tail_index)
         assert test_listener.get_position() == (top_note, cursor_pos)
 
