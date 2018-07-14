@@ -40,6 +40,13 @@ def version_diff(from_version, to_version="HEAD"):
 
 
 def classify(log):
+    """Classifies each commit into the type of change, if commit isn't
+    classified it is added to 'Unknown'.
+
+    :param list[str] log: a log of all the commits
+    :return: classified changes.
+    :rtype: dict
+    """
     groups = {}
     for commit in log:
         try:
@@ -53,14 +60,34 @@ def classify(log):
 
 
 def sub_section(changes, prefixs, template):
-    section = '\n'.join(changes.pop(prefixs))
+    """Creates the groupings of classified changes.
+
+    :param dict changes: Classified changes.
+    :param str|dict prefixs: Changes to group into template.
+    :param str template: The template to present the changes in.
+    :return: Presentable grouped changes.
+    :rtype: str
+    """
+    if isinstance(prefixs, list):
+        chnge = []
+        for prefix in prefixs:
+            chnge.append(changes.pop(prefix))
+        section = '\n'.join(chnge)
+    else:
+        section = '\n'.join(changes.pop(prefixs))
     return template.format(section)
 
 
 def patch_notes(changes):
+    """Passes grouped changes into presentable templates.
+
+    :param dict changes: Containing the classified changes.
+    :return: the final patch note.
+    :rtype: str
+    """
     whole_note = ""
-    if "FEA" in changes:
-        whole_note += sub_section(changes, "FEA", FEATURES)
+    if "FEA" in changes or "ENH" in changes:
+        whole_note += sub_section(changes, ["FEA", "ENH"], FEATURES)
     if "FIX" in changes:
         whole_note += sub_section(changes, "FIX", FIXS)
     if "TST" in changes:
