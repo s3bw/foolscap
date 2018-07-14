@@ -71,7 +71,7 @@ def sub_section(changes, prefixs, template):
     if isinstance(prefixs, list):
         chnge = []
         for prefix in prefixs:
-            chnge.append(changes.pop(prefix))
+            chnge.extend(changes.pop(prefix))
         section = '\n'.join(chnge)
     else:
         section = '\n'.join(changes.pop(prefixs))
@@ -86,8 +86,12 @@ def patch_notes(changes):
     :rtype: str
     """
     whole_note = ""
-    if "FEA" in changes or "ENH" in changes:
+    if "FEA" in changes and "ENH" in changes:
         whole_note += sub_section(changes, ["FEA", "ENH"], FEATURES)
+    if "FEA" in changes and not "ENH" in changes:
+        whole_note += sub_section(changes, "FEA", FEATURES)
+    if not "FEA" in changes and "ENH" in changes:
+        whole_note += sub_section(changes, "ENH", FEATURES)
     if "FIX" in changes:
         whole_note += sub_section(changes, "FIX", FIXS)
     if "TST" in changes:
