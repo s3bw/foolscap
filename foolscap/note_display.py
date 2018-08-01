@@ -42,7 +42,7 @@ class Controller:
 class ServiceRules:
 
     ORDER_RULE = 5
-    FILTER_RULE = 8
+    FILTER_RULE = 10
     TOP_N_VIEWED = 3
 
     def __init__(self, model):
