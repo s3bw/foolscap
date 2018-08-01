@@ -19,6 +19,9 @@ class KeyListener:
         self.scroll = Scrollable(self.screen, self.max_pos)
 
     def _update(self):
+        """Update Scrollable objects' max position and the max
+            position for the cursor on the list.
+        """
         self.scroll.update(self.max_pos)
 
         # Calculate max cursor position.
@@ -28,9 +31,15 @@ class KeyListener:
             self.max_cur_pos = self.scroll.bottom_line - 2
 
     def set_max(self, count_notes):
+        """Set the max position by the number of notes.
+
+        :param int count_notes: number of notes in the list.
+        """
         self.max_pos = count_notes
 
     def get_action(self):
+        """Return action dictated by the pressed key.
+        """
         self._update()
         self.command = None
         key = self.screen.getch()
@@ -61,5 +70,8 @@ class KeyListener:
         return self.command, self.scroll.list_pointer
 
     def get_position(self):
+        """Return the note at the top of the list and the cursor
+            position.
+        """
         return self.scroll.list_top, self.scroll.position
 

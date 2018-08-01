@@ -1,3 +1,7 @@
+# Ensure that foolscap doesn't loop when notes < 4
+LOOP_RULE = 4
+
+
 class Scrollable:
 
     position = 1
@@ -34,18 +38,19 @@ class Scrollable:
         """
         # list pointer at 0 and up is pressed
         if self.list_pointer <= 0:
-            self.list_pointer = self.max_pos - 1
-            # position for small/large terminal max_y
-            if self.max_pos < self.bottom_line - 1:
-                self.position = self.max_pos
-            else:
-                self.position = self.bottom_line - 2
-            # top note pointer for small/large terminal max_y
-            if self.max_pos < self.bottom_line - 1:
-                self.list_top = 0
-            else:
-                dy = (self.bottom_line - 1 - self.top_line - 1)
-                self.list_top = self.max_pos - dy
+            if not self.max_pos - 1 < LOOP_RULE:
+                self.list_pointer = self.max_pos - 1
+                # position for small/large terminal max_y
+                if self.max_pos < self.bottom_line - 1:
+                    self.position = self.max_pos
+                else:
+                    self.position = self.bottom_line - 2
+                # top note pointer for small/large terminal max_y
+                if self.max_pos < self.bottom_line - 1:
+                    self.list_top = 0
+                else:
+                    dy = (self.bottom_line - 1 - self.top_line - 1)
+                    self.list_top = self.max_pos - dy
         # position at top line and when list_pointer hasn't reached 0
         elif self.position == self.top_line + 1:
             self.list_pointer -= 1
@@ -59,9 +64,10 @@ class Scrollable:
     def move_down(self):
         # reached last note
         if self.list_pointer == self.max_pos - 1:
-            self.list_pointer = 0
-            self.position = 1
-            self.list_top = 0
+            if not self.max_pos - 1 < LOOP_RULE:
+                self.list_pointer = 0
+                self.position = 1
+                self.list_top = 0
         # reached bottom line
         elif self.position == self.bottom_line - 2:
             self.list_pointer += 1
