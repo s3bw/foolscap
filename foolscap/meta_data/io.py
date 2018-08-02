@@ -1,8 +1,42 @@
+import os
 import pickle
 from datetime import datetime
 
 from foolscap.file_paths import NOTE_DATA
 from foolscap.file_paths import BACKUP_DATA
+from foolscap.file_paths import TAG_DATA
+
+
+TAG_HISTORY = 50
+RECORD_DELETION = "{{{tag}}} -remove-from- {note} {date}"
+RECORD_ADDITION = "{{{tag}}} +added+to+ {note} {date}"
+
+
+def record_tags(note, deleted, added):
+    if not os.path.isfile(TAG_DATA):
+        open(TAG_DATA, 'a').close()
+
+    now = datetime.now().strftime("%Y-%m-%d")
+
+    changes = len(deleted | added)
+    history_len = sum(1 for line in open(TAG_DATA))
+    remove_lines = 0
+    if history_len + changes > TAG_HISTORY:
+        remove_lines = history_len + changes - TAG_HISTORY
+
+    deletions = [
+        RECORD_DELETION.format(tag=delete, note=note, date=now)
+        for delete in deleted
+    ]
+    additions = [
+        RECORD_ADDITION.format(tag=add, note=note, date=now)
+        for add in added
+    ]
+    with open(TAG_DATA, 'r') as _file_in:
+        data = _file_in.read().splitlines()
+    data += deletions + additions
+    with open(TAG_DATA, 'w') as _file_out:
+        _file_out.write('\n'.join(data[remove_lines:]))
 
 
 def save_meta(data, backup=False):

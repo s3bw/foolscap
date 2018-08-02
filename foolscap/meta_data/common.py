@@ -7,6 +7,7 @@ from foolscap.handle_note_io import unique_text
 
 from foolscap.meta_data.io import load_meta
 from foolscap.meta_data.io import save_meta
+from foolscap.meta_data.io import record_tags
 from foolscap.meta_data.io import migrate_meta
 from foolscap.meta_data.utils import fuzzy_guess
 
@@ -23,10 +24,17 @@ from foolscap.meta_data.parse_note import (
 
 
 def upgrade_components():
+    """Applies changes to old versions of meta data.
+    """
     migrate_meta()
 
 
 def note_exists(note):
+    """Check if a note exists in the saved data.
+
+    :param str note: title of the note to search for.
+    :return: True if it exists else run fuzzy guess.
+    """
     stored_notes = load_meta().keys()
     if note in stored_notes:
         return True
@@ -104,6 +112,13 @@ def update_note_hooks(note, stored_data):
     return new_name, new_content
 
 
+def diff_tags(new_tags, new_name, stored_data):
+    old_tags = stored_data[new_name]['tags']
+    deleted = set(old_tags) - set(new_tags)
+    added = set(new_tags) - set(old_tags)
+    record_tags(new_name, deleted, added)
+
+
 def update_component(note):
     stored_data = load_meta()
 
@@ -118,6 +133,7 @@ def update_component(note):
 
     tags = note_tags(content)
     if tags:
+        diff_tags(tags, new_name, stored_data)
         stored_data[new_name]['tags'] = tags
 
     book = get_bookmacro(content)
