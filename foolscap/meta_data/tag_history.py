@@ -21,7 +21,7 @@ class TagsHistory(list):
             lines = len(self) + delta - TAG_HISTORY
         return lines
 
-    def deprecate(self, delta):
+    def check_deprecation(self, delta):
         """Set number of lines in history to deprecate."""
         self.deprecate_lines = self._deprecate_lines(delta)
 
@@ -57,7 +57,7 @@ def record_tags(note, deleted, added):
 
     n_changes = len(deleted | added)
 
-    history.deprecate(n_changes)
+    history.check_deprecation(n_changes)
     history += deletions + additions
     history.save()
 

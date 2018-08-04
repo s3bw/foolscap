@@ -26,20 +26,20 @@ def test_TagsHistory_init(history_object):
 
 def test_TagsHistory_deprecate_less_than(history_object):
     with patch('foolscap.meta_data.tag_history.TAG_HISTORY', 1):
-        history_object.deprecate(0)
+        history_object.check_deprecation(0)
         assert history_object.deprecate_lines == 1
 
 
 def test_TagsHistory_deprecate_greater_than(history_object):
     with patch('foolscap.meta_data.tag_history.TAG_HISTORY', 1):
-        history_object.deprecate(2)
+        history_object.check_deprecation(2)
         assert history_object.deprecate_lines == 3
 
 
 def test_TagsHistory_save(history_object):
     patch_save = 'foolscap.meta_data.tag_history.save_tag_history'
     with patch(patch_save) as mock_save:
-        history_object.deprecate(0)
+        history_object.check_deprecation(0)
         history_object.save()
 
         mock_save.assert_called_with(['tag line 1', 'tag line 2'], 0)
