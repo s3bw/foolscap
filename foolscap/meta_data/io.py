@@ -7,36 +7,25 @@ from foolscap.file_paths import BACKUP_DATA
 from foolscap.file_paths import TAG_DATA
 
 
-TAG_HISTORY = 50
-RECORD_DELETION = "{{{tag}}} -remove-from- {note} {date}"
-RECORD_ADDITION = "{{{tag}}} +added+to+ {note} {date}"
-
-
-def record_tags(note, deleted, added):
+def load_tag_history():
+    """Load | Create file containing tag history.
+    """
     if not os.path.isfile(TAG_DATA):
-        open(TAG_DATA, 'a').close()
+        open(TAG_DATA, 'w+').close()
 
-    now = datetime.now().strftime("%Y-%m-%d")
-
-    changes = len(deleted | added)
-    history_len = sum(1 for line in open(TAG_DATA))
-    remove_lines = 0
-    if history_len + changes > TAG_HISTORY:
-        remove_lines = history_len + changes - TAG_HISTORY
-
-    deletions = [
-        RECORD_DELETION.format(tag=delete, note=note, date=now)
-        for delete in deleted
-    ]
-    additions = [
-        RECORD_ADDITION.format(tag=add, note=note, date=now)
-        for add in added
-    ]
     with open(TAG_DATA, 'r') as _file_in:
         data = _file_in.read().splitlines()
-    data += deletions + additions
+    return data
+
+
+def save_tag_history(hist, n_lines):
+    """Save tag history to file.
+
+    :param list[str] hist: lines to write to the file.
+    :param int n_lines: number of lines to write.
+    """
     with open(TAG_DATA, 'w') as _file_out:
-        _file_out.write('\n'.join(data[remove_lines:]))
+        _file_out.write('\n'.join(hist[n_lines:]))
 
 
 def save_meta(data, backup=False):

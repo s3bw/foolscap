@@ -7,10 +7,10 @@ from foolscap.handle_note_io import unique_text
 
 from foolscap.meta_data.io import load_meta
 from foolscap.meta_data.io import save_meta
-from foolscap.meta_data.io import record_tags
 from foolscap.meta_data.io import migrate_meta
 from foolscap.meta_data.utils import fuzzy_guess
 
+from foolscap.meta_data.tag_history import diff_tags
 from foolscap.meta_data.parse_note import (
     restrict_title,
     get_title,
@@ -112,13 +112,6 @@ def update_note_hooks(note, stored_data):
     return new_name, new_content
 
 
-def diff_tags(new_tags, new_name, stored_data):
-    old_tags = stored_data[new_name]['tags']
-    deleted = set(old_tags) - set(new_tags)
-    added = set(new_tags) - set(old_tags)
-    record_tags(new_name, deleted, added)
-
-
 def update_component(note):
     stored_data = load_meta()
 
@@ -133,8 +126,9 @@ def update_component(note):
 
     tags = note_tags(content)
     if tags:
-        diff_tags(tags, new_name, stored_data)
+        prev_tags = stored_data[new_name]['tags']
         stored_data[new_name]['tags'] = tags
+        diff_tags(tags, prev_tags, new_name)
 
     book = get_bookmacro(content)
     if book:

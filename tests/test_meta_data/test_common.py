@@ -1,10 +1,7 @@
 import pkg_resources
 
 import pytest
-from mock import Mock
 from mock import patch
-from mock import MagicMock
-from mock import mock_open
 from mock import call
 
 from tests.data.mock_meta_data import MOCK_COMPONENT
@@ -25,7 +22,7 @@ def test_note_exists_true():
         mock_load.return_value = {'note': 1, 'note_2': 2}
         result = common.note_exists('note')
 
-    assert result == True
+    assert result
 
 
 def test_note_exists_false():
@@ -33,7 +30,7 @@ def test_note_exists_false():
     with patch('foolscap.meta_data.common.load_meta') as mock_load,\
          patch('foolscap.meta_data.common.fuzzy_guess') as mock_fuzz:
         mock_load.return_value = mock_meta_data
-        result = common.note_exists('note')
+        common.note_exists('note')
 
     mock_fuzz.assert_called_once_with('note', mock_meta_data.keys())
 
@@ -163,7 +160,7 @@ def test_multiple_new_components():
         '{fake_tag}',
         '====================',
     ]
-    with patch('foolscap.meta_data.common.save_text') as mock_save_text,\
+    with patch('foolscap.meta_data.common.save_text'),\
          patch('foolscap.meta_data.common.unique_text') as mock_unique_heading,\
          patch('foolscap.meta_data.common.add_component') as mock_add,\
          patch('foolscap.meta_data.common.datetime') as fake_time:
@@ -188,6 +185,8 @@ Some content.
 
 {test} {unit}
 ===================="""
+
+
 def test_remove_moving_lines():
     note = EXPECTED_NOTE.split('\n')
     expected_content = [
