@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import date
 
 from foolscap.meta_data.io import load_tag_history
 from foolscap.meta_data.io import save_tag_history
 
 
 TAG_HISTORY = 50
-RECORD_DELETION = "{{{tag}}} -remove-from- {note} {date}"
-RECORD_ADDITION = "{{{tag}}} +added+to+ {note} {date}"
+DELETION_STYLE = "{{{tag}}} -remove-from- {note} {date}"
+ADDITION_STYLE = "{{{tag}}} +added+to+ {note} {date}"
 
 
 class TagsHistory(list):
@@ -25,18 +25,18 @@ class TagsHistory(list):
         """Set number of lines in history to deprecate."""
         self.deprecate_lines = self._deprecate_lines(delta)
 
-    def save(self, lines):
+    def save(self):
         save_tag_history(self, self.deprecate_lines)
 
 
-def format_new_history(note, new_history, style):
+def format_new_history(style, note, new_history):
     """Style the format of each tag history entry.
 
-    :param list[str] new_history: entries to be added to log.
-    :param str note: name of note being changed.
     :param str style: format string for history entries.
+    :param str note: name of note being changed.
+    :param list[str] new_history: entries to be added to log.
     """
-    now = datetime.now().strftime("%Y-%m-%d")
+    now = date.today().strftime("%Y-%m-%d")
     return [
         style.format(tag=new, note=note, date=now)
         for new in new_history
@@ -52,8 +52,8 @@ def record_tags(note, deleted, added):
     """
     history = TagsHistory()
 
-    deletions = format_new_history(note, deleted, RECORD_DELETION)
-    additions = format_new_history(note, added, RECORD_ADDITION)
+    deletions = format_new_history(DELETION_STYLE, note, deleted)
+    additions = format_new_history(ADDITION_STYLE, note, added)
 
     n_changes = len(deleted | added)
 

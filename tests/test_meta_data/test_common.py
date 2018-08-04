@@ -92,6 +92,7 @@ def test_update_note_hooks(old_name, edited_name):
 
 
 def test_update_component():
+    # Sub heading isn't tested
     component = MOCK_COMPONENT(2, 'no_change').copy()
     with patch('foolscap.meta_data.common.load_meta') as mock_data,\
          patch('foolscap.meta_data.common.update_note_hooks') as mock_hook,\
@@ -99,18 +100,23 @@ def test_update_component():
          patch('foolscap.meta_data.common.note_tags') as mock_tags,\
          patch('foolscap.meta_data.common.get_bookmacro') as mock_book,\
          patch('foolscap.meta_data.common.datetime') as time,\
+         patch('foolscap.meta_data.common.diff_tags') as mock_diff,\
          patch('foolscap.meta_data.common.save_meta'):
         mock_data.return_value = component
+        new_tags = ['fake_tag', 'new_tag']
+        mock_tags.return_value = new_tags
         mock_hook.return_value = ('note', ['note content'])
         mock_desc.return_value = 'This is a fake note'
-        mock_tags.return_value = ['fake_tag']
         mock_book.return_value = 'general'
         time.now.return_value = 'new_datetime'
 
         # These are different from fake component as not has been changed.
-        expected = MOCK_COMPONENT(3, 'new_datetime').copy()
+        expected = MOCK_COMPONENT(3, 'new_datetime', tags=new_tags).copy()
         common.update_component('note')
         assert component == expected
+
+        calls = [call(new_tags, ['fake_tag'], 'note')]
+        mock_diff.assert_has_calls(calls=calls)
 
 
 def test_new_component():
