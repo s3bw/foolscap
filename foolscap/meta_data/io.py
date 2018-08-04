@@ -1,8 +1,31 @@
+import os
 import pickle
 from datetime import datetime
 
 from foolscap.file_paths import NOTE_DATA
 from foolscap.file_paths import BACKUP_DATA
+from foolscap.file_paths import TAG_DATA
+
+
+def load_tag_history():
+    """Load | Create file containing tag history.
+    """
+    if not os.path.isfile(TAG_DATA):
+        open(TAG_DATA, 'w+').close()
+
+    with open(TAG_DATA, 'r') as _file_in:
+        data = _file_in.read().splitlines()
+    return data
+
+
+def save_tag_history(hist, n_lines):
+    """Save tag history to file.
+
+    :param list[str] hist: lines to write to the file.
+    :param int n_lines: number of lines to write.
+    """
+    with open(TAG_DATA, 'w') as _file_out:
+        _file_out.write('\n'.join(hist[n_lines:]))
 
 
 def save_meta(data, backup=False):

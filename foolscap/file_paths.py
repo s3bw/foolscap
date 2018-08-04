@@ -18,6 +18,9 @@ NOTE_DATA = os.path.join(SCRIPT_DIR, DATA_STORAGE)
 DATA_STORAGE = os.path.join('data', 'backup_data.pkl')
 BACKUP_DATA = os.path.join(SCRIPT_DIR, DATA_STORAGE)
 
+TAG_STORAGE = os.path.join('data', 'tag_data.txt')
+TAG_DATA = os.path.join(SCRIPT_DIR, TAG_STORAGE)
+
 NOTE_STORAGE = os.path.join('notes', '{note_name}.txt')
 NOTES = os.path.join(SCRIPT_DIR, NOTE_STORAGE)
 

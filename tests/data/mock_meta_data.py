@@ -2,7 +2,7 @@ import datetime
 
 
 def mock_data(views, year=2000, tag='fake_tag', book='general'):
-    modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
+    modified = datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
     return {
         'description': 'This is a fake note',
         'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
@@ -14,7 +14,7 @@ def mock_data(views, year=2000, tag='fake_tag', book='general'):
 
 
 def mock_w_subheadings(views, year=2000, book='general'):
-    modified = modified=datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
+    modified = datetime.datetime(year, 12, 10, 15, 25, 19, 11262)
     return {
         'description': 'This is a fake note',
         'created': datetime.datetime(2000, 12, 10, 15, 25, 19, 11262),
@@ -108,17 +108,18 @@ FAKE_NOTES_EDGE_CASE = {
 }
 
 
-def mock_component(views, year=2000, modified='no_change'):
+def mock_component(views, year=2000, modified='no_change', tags=['fake_tag']):
     return {
         'description': 'This is a fake note',
         'created': 'created_date',
         'modified': modified,
-        'tags': ['fake_tag'],
+        'tags': tags,
         'book': 'general',
         'views': views
     }
 
-def MOCK_COMPONENT(x, y, name='note'):
+
+def MOCK_COMPONENT(views, date, tags=['fake_tag'], name='note'):
     return {
-        name: mock_component(x, modified=y)
+        name: mock_component(views, modified=date, tags=tags)
     }
