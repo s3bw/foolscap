@@ -98,7 +98,7 @@ class DisplayMenu(Widget):
                         item.end_index
                     )
                 else:
-                    return item.title
+                    return item.raw_title
 
     def draw_item(self, item):
         """Draw an item in the menu."""

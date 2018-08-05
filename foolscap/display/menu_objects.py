@@ -51,12 +51,12 @@ TAG_SETTINGS = {
     'title': {
         'name': 'title',
         'size': 32,
-        'align': 'centre'
+        'align': 'left'
     },
     'description': {
         'name': 'description',
         'size': 32,
-        'align': 'centre'
+        'align': 'left'
     },
     'more': {
         'name': 'more',
@@ -183,7 +183,10 @@ class MenuItem:
 
     def __init__(self, **config):
 
-        self.title = config.get('title')
+        self.raw_title = config.get('title')
+        self.title = self.raw_title
+
+        # Setup the list according to the type of model
         try:
             if isinstance(config['model'].tags, dict):
                 data = config['model'].tags[self.title]
@@ -191,6 +194,8 @@ class MenuItem:
                 data = config['model'].notes[self.title]
         except AttributeError:
             data = config['model']
+
+        # All other items in dict become attributes
         for key in data:
             setattr(self, key, data[key])
 
@@ -199,7 +204,7 @@ class MenuItem:
         if sub_headings:
             self.expand = False
             self.more = '(+)'
-            self.create_sub_items(self.title, sub_headings)
+            self.create_sub_items(self.raw_title, sub_headings)
 
     def toggle_drop_down(self):
         if self.sub_items:
@@ -220,11 +225,12 @@ class MenuItem:
                 'title': item[0],
                 'model': {'description': item[1]},
             }
-            sub_item['model']['start_index'] = item[2]
-            sub_item['model']['end_index'] = item[3]
+            if len(item) > 3:
+                sub_item['model']['start_index'] = item[2]
+                sub_item['model']['end_index'] = item[3]
             sub_item = MenuItem(**sub_item)
             sub_item.parent_title = parent
-            sub_item.title = '──{}'.format(sub_item.title)
+            sub_item.title = '──{}'.format(sub_item.raw_title)
             if index == len(items) - 1:
                 sub_item.more = ' └─'
                 sub_item.description = '└─{}'.format(sub_item.description)
