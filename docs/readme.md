@@ -46,6 +46,8 @@ The following commands are available in the user interface
 
 Most command line features have been implemented in the tui.
 
+![tui_example](foolscap_screenshot.png)
+
 ---
 
 ## Using Foolscap from the command line
