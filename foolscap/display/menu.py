@@ -88,10 +88,17 @@ class DisplayMenu(Widget):
                     item.toggle_drop_down()
 
     def select_item(self, select_index):
-        """Select and item in the menu."""
+        """Select an item in the menu."""
         for index, item in enumerate(self.menu.iter_viewable()):
             if index == select_index:
-                return item.title
+                if hasattr(item, 'start_index'):
+                    return "{}@{}:{}".format(
+                        item.parent_title,
+                        item.start_index,
+                        item.end_index
+                    )
+                else:
+                    return item.raw_title
 
     def draw_item(self, item):
         """Draw an item in the menu."""

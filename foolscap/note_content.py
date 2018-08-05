@@ -12,6 +12,7 @@ from foolscap.meta_data import (
     update_component,
     upgrade_components,
 )
+from foolscap.meta_data import parse_note
 
 
 def update_notes():
@@ -52,10 +53,22 @@ def export_note(note):
 
 def view_note(note):
     """ Print the note to console.
+
+    :param str note: the name of the note to print.
+
+    Snippets of notes can be printed by prefixing start and end line
+        in the following format: <note_name>@<start>:<end>
+        E.g: note_name@3:6
+    Otherwise the whole note will be printed when note provided is
+        just the note name: <note_name>
     """
+    note, _min, _max = parse_note.name(note)
     if note_exists(note):
         note_text = load_text(note)
-        for line in note_text:
+        if _max == 0:
+            _max = len(note_text)
+
+        for line in note_text[_min:_max]:
             print(line)
 
         update_component(note)

@@ -3,13 +3,20 @@ from io import StringIO
 
 import pytest
 
-# from foolscap.handle_note_io import load_text
 import foolscap.meta_data.parse_note as parse_note
 
 
-def test_replace_spaces():
-    result = parse_note.replace_spaces('note title')
-    assert result == 'note_title'
+
+@pytest.mark.parametrize("invalid_title, expected",
+    [
+        ('note title', 'note_title'),
+        ('note@title', 'note_title'),
+        ('note:title', 'note_title'),
+    ]
+)
+def test_replace_illegal_characters(invalid_title, expected):
+    result = parse_note.replace_illegal_characters(invalid_title)
+    assert result == expected
 
 
 def test_max_title_len():
@@ -36,6 +43,25 @@ def test_restict_title():
     assert result == 'note_title'
 
 
+@pytest.mark.parametrize("passed_title, expected",
+    [
+        ("note@1:15", ('note', 3, 16)),
+        ("note", ('note', 0, 0)),
+    ]
+)
+def test_name_parsing(passed_title, expected):
+    result = parse_note.name(passed_title)
+    assert result == expected
+
+
+def test_name_parsing_invalid_title():
+    invalid = 'note@@1:15'
+    expected = "Name 'note@@1:15' not valid!"
+    with pytest.raises(ValueError) as excinfo:
+        parse_note.name(invalid)
+    assert expected in str(excinfo.value)
+
+
 EXPECTED_NOTE = """
 # test_note
 ====================
@@ -47,6 +73,8 @@ Some content.
 {book:work}
 {test} {unit}
 ===================="""
+
+
 def test_get_titles():
     note = EXPECTED_NOTE.split('\n')
     section = parse_note.get_title(note)
@@ -165,7 +193,16 @@ def test_index_sub_headings(mock_content, expected):
         'testing subtitles',
         '',
         '===================='],
-        None)])
+        None),
+    ([  '====================',
+        ':Description of note',
+        '',
+        ':Sub Title',
+        'testing subtitles',
+        '',
+        '===================='],
+        [('Content line 2:', ':Sub Title', 2, 6)])
+    ])
 def test_parse_sub_headings(mock_content, expected):
     result = parse_note.parse_sub_headings(mock_content)
     assert result == expected
