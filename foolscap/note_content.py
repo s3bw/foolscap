@@ -12,6 +12,7 @@ from foolscap.meta_data import (
     update_component,
     upgrade_components,
 )
+from foolscap.meta_data import parse_note
 
 
 def update_notes():
@@ -61,19 +62,13 @@ def view_note(note):
     Otherwise the whole note will be printed when provide just the
         note name: <note_name>
     """
-    _min, _max = None, None
-    if '@' in note:
-        note, minmax = note.split('@')
-        _min, _max = minmax.split(':')
-        _min = int(_min) + 2
-        _max = int(_max) + 1
+    note, _min, _max = parse_note.name(note)
     if note_exists(note):
         note_text = load_text(note)
-        if not _max:
-            _min = 0
+        if _max == 0:
             _max = len(note_text)
 
-        for line in note_text[_min:int(_max)]:
+        for line in note_text[_min:_max]:
             print(line)
 
         update_component(note)

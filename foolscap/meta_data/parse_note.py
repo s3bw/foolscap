@@ -1,19 +1,26 @@
 import re
+from string import ascii_uppercase
 
 
 MAX_TITLE_LEN = 32
+INVALID_CHARS = "\nTitle can not contain these characters: '{}'"
+INVALID_LENGTH = "\nTitle must be less than {} characters."
+INVALID_CASE = "\nTitle made lowercase: {}"
 
 
-def replace_spaces(title):
-    """ Replaces spaces contained in a title."""
-    if ' ' in title:
-        return title.replace(' ', '_')
+def replace_illegal_characters(title):
+    """ Replaces illegal characters contained in a title."""
+    illegal_characters = ' @:'
+    if any(char in title for char in illegal_characters):
+        print(INVALID_CHARS.format(illegal_characters))
+        for char in illegal_characters:
+            title = title.replace(char, '_')
     return title
 
 
 def max_title_len(title):
     if len(title) > MAX_TITLE_LEN:
-        print('\nTitle must be less than {} characters.'.format(MAX_TITLE_LEN))
+        print(INVALID_LENGTH.format(MAX_TITLE_LEN))
         return title[:MAX_TITLE_LEN]
     return title
 
@@ -21,11 +28,10 @@ def max_title_len(title):
 def lower_case(title):
     """ They should expect the title to be low case next time.
     """
-    alphabet_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    contains_upper = any(char in title for char in alphabet_upper)
+    contains_upper = any(char in title for char in ascii_uppercase)
     if contains_upper:
         title = title.lower()
-        print('\nTitle made lowercase: {}'.format(title))
+        print(INVALID_CASE.format(title))
     return title
 
 
@@ -36,9 +42,28 @@ def restrict_title(title):
         - update_component
     """
     title = max_title_len(title)
-    title = replace_spaces(title)
+    title = replace_illegal_characters(title)
     title = lower_case(title)
     return title
+
+
+def name(name):
+    """Breakdown components of title.
+
+    Notes can contain '@' followed by start and end indices.
+        This determines the snippet of note to display.
+    """
+    _min, _max = 0, 0
+    if '@' in name:
+        try:
+            note_name, minmax = name.split('@')
+            _min, _max = minmax.split(':')
+            _min = int(_min) + 2
+            _max = int(_max) + 1
+        except ValueError:
+            raise ValueError("Name '{}' not valid!".format(name))
+        return note_name, _min, _max
+    return name, _min, _max
 
 
 def get_title(note):
@@ -98,11 +123,12 @@ def parse_sub_headings(content):
     heading_indexs = index_sub_headings(content)
     if heading_indexs:
         index_pair = index_pairs(heading_indexs, content)
+        content_title = "Content line {}:"
 
         return [
             (content[start], content[start + 1], start, end)
             if content[start]
-            else ('Content line {}:'.format(start), content[start + 1], start, end)
+            else (content_title.format(start), content[start + 1], start, end)
             for start, end in index_pair
         ]
 

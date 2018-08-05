@@ -65,4 +65,4 @@ def test_note_exist_called():
 
         note_content.move_lines('test_note')
         exists.assert_has_calls(expected_calls)
-    
+

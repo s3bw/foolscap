@@ -143,6 +143,18 @@ def test_DisplayMenu_select_item(model_items):
     assert result == 'B'
 
 
+def test_DisplayMenu_select_sub_item(model_items):
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    test_dm = DisplayMenu(mock_screen, model_items)
+
+    test_dm.expand_item(1)
+    title_result = test_dm.select_item(1)
+    subtitle_result = test_dm.select_item(2)
+    assert title_result == 'B'
+    assert subtitle_result == 'B@1:1'
+
+
 def test_DisplayMenu_update(model_items):
     """Test that columns are also updated."""
     mock_screen = MagicMock()

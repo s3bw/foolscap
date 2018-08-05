@@ -171,6 +171,7 @@ def test_MenuItem_init():
     mock_item = {'title': 'This', 'model': mock_model}
     item = MenuItem(**mock_item)
     assert item.title == 'This'
+    assert item.raw_title == 'This'
     assert item.description == 'that'
     assert not hasattr(item, 'sub_headings')
     assert not hasattr(item, 'expand')
@@ -184,6 +185,7 @@ def test_MenuItem_NotesModel_init(model_items):
 def test_MenuItem_TagModel_init(tag_items):
     item = MenuItem(**tag_items[0])
     assert item.title == 'fake_tag'
+    assert item.raw_title == 'fake_tag'
 
 
 def test_MenuItem_init_sub():
@@ -199,7 +201,9 @@ def test_MenuItem_init_sub():
     for result, expected in zip(item.sub_items, mock_sub):
         assert isinstance(result, MenuItem)
         assert expected[0] in result.title
+        assert expected[0] in result.raw_title
         assert expected[1] in result.description
+        assert result.parent_title == item.title
 
 
 def test_MenuItem_toggle():
