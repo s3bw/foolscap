@@ -157,6 +157,8 @@ A typical note will contain the following:
     {checklist} {code} {tags}
     ================
 
+![example_structure](note_structure.png)
+
 ### title_of_note:
 
 Titles begin with `#` and have a limit to the number of characters. They can not contain space, `@` or `:`.
