@@ -1,8 +1,13 @@
 # Foolscap Note Manager
 
 ![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
+![latest](https://img.shields.io/badge/latest-0.3-ff69b4.svg)
+![last-commit](https://img.shields.io/github/last-commit/GiantsLoveDeathMetal/foolscap.svg)
+![stars](https://img.shields.io/github/stars/GiantsLoveDeathMetal/foolscap.svg?style=social&label=Stars)
+![closed-issues](https://img.shields.io/github/issues-closed/GiantsLoveDeathMetal/foolscap.svg)
 
-The foolscap note manager allows a user to track and maintain notes over many topics.
+The foolscap note manager centralises note **storage**, allows **access** from any directory and
+aims to make notes easy to **maintain**, **find** and **reuse**.
 
 ## Install:
 
@@ -45,7 +50,7 @@ Below is a breakdown of the features:
 
 ### Create a new note
 
-To create a new note, type command, this will open the default note template:
+This will open the default note template:
 
     fscap new
 
@@ -171,12 +176,16 @@ Macro tags are useful feature of foolscap.
 
 The following macro tags have been implemented
 
-- book, stores notes in a different list, by default all notes are assigned to `general`
+- book; stores notes in a different list, by default all notes are assigned to `general`
 
-    {book:meetings}
+```
+{book:meetings}
+```
 
-- textwidth, this sets the text width in vim when opening the note
+- textwidth; this sets the text width in vim when opening the note
 
-    {textwidth:40}
+```
+{textwidth:40}
+```
 
 ---
