@@ -59,8 +59,8 @@ def view_note(note):
     Snippets of notes can be printed by prefixing start and end line
         in the following format: <note_name>@<start>:<end>
         E.g: note_name@3:6
-    Otherwise the whole note will be printed when provide just the
-        note name: <note_name>
+    Otherwise the whole note will be printed when note provided is
+        just the note name: <note_name>
     """
     note, _min, _max = parse_note.name(note)
     if note_exists(note):
