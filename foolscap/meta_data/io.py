@@ -6,6 +6,9 @@ from foolscap.file_paths import NOTE_DATA
 from foolscap.file_paths import BACKUP_DATA
 from foolscap.file_paths import TAG_DATA
 
+from foolscap.handle_note_io import load_text
+from foolscap.meta_data.parse_note import get_contents
+
 
 def load_tag_history():
     """Load | Create file containing tag history.
@@ -88,6 +91,9 @@ def migrate_meta():
     # Backup data before migrating
     save_meta(meta_data, backup=True)
     for key, value in meta_data.items():
+        text = load_text(key)
+        content = get_contents(text)[0]
+
         print('Migrating: {}.'.format(key))
         # Adding new meta data
 
@@ -100,6 +106,9 @@ def migrate_meta():
             value.pop('create', None)
         elif 'create' not in meta_fields and 'created' not in meta_fields:
             meta_data[key]['created'] = time_now
+
+        if 'length' not in meta_fields:
+            meta_data[key]['length'] = len(content)
 
         if 'views' not in meta_fields:
             meta_data[key]['views'] = 1

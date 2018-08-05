@@ -119,7 +119,7 @@ def test_get_cmds(mock_meta, expected):
 
 def test_update_component():
     # Sub heading isn't tested
-    component = MOCK_COMPONENT(2, 'no_change').copy()
+    component = MOCK_COMPONENT(2, 'no_change', length=1).copy()
     with patch('foolscap.meta_data.common.load_meta') as mock_data,\
          patch('foolscap.meta_data.common.update_note_hooks') as mock_hook,\
          patch('foolscap.meta_data.common.note_description') as mock_desc,\
@@ -137,7 +137,12 @@ def test_update_component():
         time.now.return_value = 'new_datetime'
 
         # These are different from fake component as not has been changed.
-        expected = MOCK_COMPONENT(3, 'new_datetime', tags=new_tags).copy()
+        expected = MOCK_COMPONENT(
+            3,
+            'new_datetime',
+            tags=new_tags,
+            length=1,
+        ).copy()
         common.update_component('note')
         assert component == expected
 
@@ -166,7 +171,7 @@ def test_new_component():
         mock_unique_heading.return_value = 'note'
 
         common.new_component(mock_note)
-        expected_component = MOCK_COMPONENT(1, 'created_date').copy()
+        expected_component = MOCK_COMPONENT(1, 'created_date', length=8).copy()
 
     mock_add.assert_called_once_with(expected_component)
     mock_save_text.assert_called_once()
@@ -246,6 +251,7 @@ def test_subheading_components():
         'note': {
             'created': 'created_date',
             'views': 1,
+            'length': 11,
             'modified': 'created_date',
             'description': 'This tests subheadings',
             'tags': ['subheadings', 'test'],

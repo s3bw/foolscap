@@ -22,6 +22,7 @@ def mock_w_subheadings(views, year=2000, book='general'):
         'tags': ['fake_tag'],
         'book': book,
         'views': views,
+        'length': 7,
         'sub_headings': [('First Sub:', ':A sub headings', 1, 1)],
         'num_sub': 1
     }
@@ -108,7 +109,8 @@ FAKE_NOTES_EDGE_CASE = {
 }
 
 
-def mock_component(views, year=2000, modified='no_change', tags=['fake_tag']):
+def mock_component(views, year=2000, modified='no_change',
+                   tags=['fake_tag'], length=1):
     return {
         'description': 'This is a fake note',
         'created': 'created_date',
@@ -116,11 +118,12 @@ def mock_component(views, year=2000, modified='no_change', tags=['fake_tag']):
         'tags': tags,
         'book': 'general',
         'views': views,
+        'length': length,
         'vim_cmds': [':set textwidth=60'],
     }
 
 
-def MOCK_COMPONENT(views, date, tags=['fake_tag'], name='note'):
+def MOCK_COMPONENT(views, date, length=1, tags=['fake_tag'], name='note'):
     return {
-        name: mock_component(views, modified=date, tags=tags)
+        name: mock_component(views, modified=date, tags=tags, length=length)
     }
