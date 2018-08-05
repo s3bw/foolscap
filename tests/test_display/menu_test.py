@@ -15,6 +15,9 @@ patch_NORMAL = 'foolscap.display.menu.NORMAL_LINE_COLOUR'
 patch_DIM = 'foolscap.display.menu.DIM_LINE_COLOUR'
 patch_REVERSE = 'foolscap.display.menu.REVERSE_LINE_COLOUR'
 
+PATCH_COLUMNS = 'foolscap.display.menu_objects.NOTE_CONFIG'
+DEFAULT_CONFIG = ['more', 'title', 'description', 'created']
+
 
 @pytest.mark.parametrize("line,cursor,expected",
     [(3,4,'NORMAL'),
@@ -199,13 +202,14 @@ def test_DisplayMenu_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
 
-    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
-    # Display cursor on note 2.
-    test_dm.update_pointers(0, 2)
-
     with patch(patch_NORMAL, 'NORMAL'),\
          patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+         patch(patch_REVERSE, 'REVERSE'),\
+         patch(PATCH_COLUMNS, DEFAULT_CONFIG):
+
+        test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+        # Display cursor on note 2.
+        test_dm.update_pointers(0, 2)
         test_dm.draw()
 
         calls = [

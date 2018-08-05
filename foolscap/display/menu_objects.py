@@ -44,6 +44,11 @@ DEFAULT_SETTINGS = {
         'name': 'book',
         'size': 8,
         'align': 'centre'
+    },
+    'length': {
+        'name': 'length',
+        'size': 3,
+        'align': 'right'
     }
 }
 
@@ -109,7 +114,7 @@ def display_text(x):
 
 
 # Book will be really useful to show when searching.
-NOTE_CONFIG = ['more', 'title', 'description', 'created']
+NOTE_CONFIG = ['more', 'title', 'description', 'created', 'length']
 # 'num_sub', 'views', 'book', 'modified']
 DEFAULT_DISPLAY = '-'
 
@@ -153,8 +158,18 @@ class Columns(Widget):
 
         return column_buffer + text + column_buffer
 
+    def right_align(self, text, size):
+        """Left align the column contents."""
+        text_size = len(text)
+        if text_size > size:
+            text = text[:size]
+            text_size = len(text)
+        text = (' ' * (size - text_size + 1)) + text
+        return text
+
     def draw(self, item, line, line_colour):
         align = {'left': self.left_align,
+                 'right': self.right_align,
                  'centre': self.centre_align}
 
         left_x = 2

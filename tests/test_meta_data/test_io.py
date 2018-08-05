@@ -37,18 +37,30 @@ FAKE_DATA = {
         'create': 'no time',
     }
 }
+TEST_NOTE_TEMPLATE = """\
+# title
+==========
+: description
+Make sure you change the title!
+
+
+{tag}
+=========="""
 
 
 def test_migrate_meta_old_to_new():
     patch_load = 'foolscap.meta_data.io.load_meta'
+    patch_load_text = 'foolscap.meta_data.io.load_text'
     patch_save = 'foolscap.meta_data.io.save_meta'
     patch_time = 'foolscap.meta_data.io.datetime'
 
     with patch(patch_load, return_value=FAKE_DATA),\
+         patch(patch_load_text) as mock_load_text,\
          patch(patch_save) as save_mock,\
          patch(patch_time) as time_mock:
 
         time_mock.now.return_value = FAKE_TIME
+        mock_load_text.return_value = TEST_NOTE_TEMPLATE.split('\n')
 
         # Both Calls end up being the same due to mutating the dict
         expected_data = {

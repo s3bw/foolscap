@@ -133,6 +133,7 @@ def update_component(note):
 
     stored_data[new_name]['modified'] = datetime.now()
     stored_data[new_name]['views'] += 1
+    stored_data[new_name]['length'] = len(content)
 
     description = note_description(content)
     if description:
@@ -187,6 +188,7 @@ def new_component(text):
         note_component[title] = {'created': datetime.now()}
         note_component[title]['views'] = 1
         note_component[title]['modified'] = datetime.now()
+        note_component[title]['length'] = len(content)
 
         description = note_description(content)
         if description:
