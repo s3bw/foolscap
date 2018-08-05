@@ -199,7 +199,7 @@ class MenuItem:
         if sub_headings:
             self.expand = False
             self.more = '(+)'
-            self.create_sub_items(sub_headings)
+            self.create_sub_items(self.title, sub_headings)
 
     def toggle_drop_down(self):
         if self.sub_items:
@@ -213,14 +213,17 @@ class MenuItem:
             self.expand = True
             self.more = '<->'
 
-    def create_sub_items(self, items):
+    def create_sub_items(self, parent, items):
         self.sub_items = []
         for index, item in enumerate(items):
-            sub_item = {'title': item[0], 'model': {'description': item[1]}}
-            if len(item) > 3:
-                sub_item['model']['start_index'] = item[2]
-                sub_item['model']['end_index'] = item[3]
+            sub_item = {
+                'title': item[0],
+                'model': {'description': item[1]},
+            }
+            sub_item['model']['start_index'] = item[2]
+            sub_item['model']['end_index'] = item[3]
             sub_item = MenuItem(**sub_item)
+            sub_item.parent_title = parent
             sub_item.title = '──{}'.format(sub_item.title)
             if index == len(items) - 1:
                 sub_item.more = ' └─'

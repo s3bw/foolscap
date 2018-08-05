@@ -102,7 +102,7 @@ def parse_sub_headings(content):
         return [
             (content[start], content[start + 1], start, end)
             if content[start]
-            else ('Content line {}:'.format(start), content[start + 1])
+            else ('Content line {}:'.format(start), content[start + 1], start, end)
             for start, end in index_pair
         ]
 

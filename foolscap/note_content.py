@@ -52,10 +52,28 @@ def export_note(note):
 
 def view_note(note):
     """ Print the note to console.
+
+    :param str note: the name of the note to print.
+
+    Snippets of notes can be printed by prefixing start and end line
+        in the following format: <note_name>@<start>:<end>
+        E.g: note_name@3:6
+    Otherwise the whole note will be printed when provide just the
+        note name: <note_name>
     """
+    _min, _max = None, None
+    if '@' in note:
+        note, minmax = note.split('@')
+        _min, _max = minmax.split(':')
+        _min = int(_min) + 2
+        _max = int(_max) + 1
     if note_exists(note):
         note_text = load_text(note)
-        for line in note_text:
+        if not _max:
+            _min = 0
+            _max = len(note_text)
+
+        for line in note_text[_min:int(_max)]:
             print(line)
 
         update_component(note)
