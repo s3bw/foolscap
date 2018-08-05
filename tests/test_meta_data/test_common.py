@@ -91,6 +91,32 @@ def test_update_note_hooks(old_name, edited_name):
     assert mock_meta_data == {edited_name: 1, 'note_2': 2}
 
 
+@pytest.mark.parametrize("passed_input, expected",
+    [
+        (['one cmd'], 'one cmd'),
+        (['two cmd', 'two cmd'], 'two cmd | two cmd'),
+        ([], ''),
+    ]
+)
+def test_format_cmds(passed_input, expected):
+    result = common.format_cmds(passed_input)
+    assert result == expected
+
+
+@pytest.mark.parametrize("mock_meta, expected",
+    [
+        ({'note': {'vim_cmds': ['test']}}, 'test'),
+        ({'note': {'vim_cmds': ['test', 'test']}}, 'test | test'),
+        ({'note': {}}, None),
+    ]
+)
+def test_get_cmds(mock_meta, expected):
+    with patch('foolscap.meta_data.common.load_meta') as mock_data:
+        mock_data.return_value = mock_meta
+        result = common.get_cmds('note')
+        assert result == expected
+
+
 def test_update_component():
     # Sub heading isn't tested
     component = MOCK_COMPONENT(2, 'no_change').copy()
@@ -128,6 +154,7 @@ def test_new_component():
         '',
         'Some content.',
         '',
+        '{textwidth:60}',
         '{fake_tag}',
         '====================',
     ]

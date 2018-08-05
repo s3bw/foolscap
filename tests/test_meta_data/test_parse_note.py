@@ -62,7 +62,7 @@ def test_name_parsing_invalid_title():
     assert expected in str(excinfo.value)
 
 
-EXPECTED_NOTE = """
+NOTE_WITH_MACRO = """
 # test_note
 ====================
 :Description of note
@@ -70,42 +70,45 @@ EXPECTED_NOTE = """
 Some content.
 >Move content.
 
-{book:work}
+{book:work} {textwidth:40}
+{test} {unit}
+===================="""
+
+NOTE_WITHOUT_MACRO = """
+# test_note
+====================
+:Description of note
+
+Some content.
+>Move content.
+
 {test} {unit}
 ===================="""
 
 
 def test_get_titles():
-    note = EXPECTED_NOTE.split('\n')
+    note = NOTE_WITH_MACRO.split('\n')
     section = parse_note.get_title(note)
     assert section == ['test_note']
     assert len(section) == 1
 
 
-def test_get_bookmacro():
-    note = EXPECTED_NOTE.split('\n')
-    result = parse_note.get_macro('book', note)
-    assert result == 'work'
-
-
-def test_default_book():
-    expected_note = """
-# test_note
-====================
-:Description of note
-
-Some content.
->Move content.
-
-{test} {unit}
-===================="""
-    note = expected_note.split('\n')
-    result = parse_note.get_macro('book', note)
-    assert result == None
+@pytest.mark.parametrize("content, macro, expected",
+    [
+        (NOTE_WITH_MACRO, 'book', 'work'),
+        (NOTE_WITH_MACRO, 'textwidth', '40'),
+        (NOTE_WITHOUT_MACRO, 'book', None),
+        (NOTE_WITHOUT_MACRO, 'textwidth', None),
+    ]
+)
+def test_get_macro(content, macro, expected):
+    note = content.split('\n')
+    result = parse_note.get_macro(macro, note)
+    assert result == expected
 
 
 def test_get_moving_lines():
-    note = EXPECTED_NOTE.split('\n')
+    note = NOTE_WITH_MACRO.split('\n')
     moving_lines = parse_note.get_moving_lines(note)
     assert moving_lines == ['>Move content.']
 
@@ -209,7 +212,7 @@ def test_parse_sub_headings(mock_content, expected):
 
 
 def test_get_contents():
-    note = EXPECTED_NOTE.split('\n')
+    note = NOTE_WITH_MACRO.split('\n')
     content = parse_note.get_contents(note)
     expected_content = [[
         '====================',
@@ -218,7 +221,7 @@ def test_get_contents():
         'Some content.',
         '>Move content.',
         '',
-        '{book:work}',
+        '{book:work} {textwidth:40}',
         '{test} {unit}',
         '===================='
     ]]
@@ -236,7 +239,7 @@ def test_note_description():
 
 
 def test_note_tags():
-    note = EXPECTED_NOTE.split('\n')
+    note = NOTE_WITH_MACRO.split('\n')
     content = parse_note.get_contents(note)[0]
     tags = parse_note.note_tags(content)
     expected_tags = ['test', 'unit']

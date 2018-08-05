@@ -115,7 +115,8 @@ def mock_component(views, year=2000, modified='no_change', tags=['fake_tag']):
         'modified': modified,
         'tags': tags,
         'book': 'general',
-        'views': views
+        'views': views,
+        'vim_cmds': [':set textwidth=60'],
     }
 
 
