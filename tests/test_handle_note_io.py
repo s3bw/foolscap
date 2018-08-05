@@ -1,5 +1,6 @@
 import pkg_resources
 
+from mock import MagicMock
 from mock import patch
 from mock import mock_open
 
@@ -59,12 +60,45 @@ def test_unique_heading():
 
 
 def test_edit_text():
-    with patch('foolscap.handle_note_io.NamedTemporaryFile'),\
-         patch('foolscap.handle_note_io.edit_in_vim'),\
+    mock_get_cmd = 'foolscap.handle_note_io.meta_data.get_cmds'
+
+    test_folder = {'GET_NOTE': TEST_NOTE}
+    with patch.dict('foolscap.handle_note_io.NOTE_FOLDERS', test_folder),\
+         patch('foolscap.handle_note_io.NamedTemporaryFile'),\
+         patch('foolscap.handle_note_io.edit_in_vim') as edit_mock,\
+         patch(mock_get_cmd, return_value=None),\
          patch('builtins.open', mock_open()) as mock_file:
-        note = handle_note_io.edit_text('test_note.txt')
+        note = handle_note_io.edit_text('test_note')
+
+        file_name = TEST_NOTE.format(note_name='test_note')
         assert note == None
-        mock_file.assert_called_with('test_note.txt', 'r')
+        mock_file.assert_called_with(
+            file_name,
+            'r'
+        )
+        edit_mock.assert_called_with(mock_file())
+
+
+def test_edit_text_with_commands():
+    """Case when 'get_cmds' returns commands.
+    """
+    mock_get_cmd = 'foolscap.handle_note_io.meta_data.get_cmds'
+
+    test_folder = {'GET_NOTE': TEST_NOTE}
+    with patch.dict('foolscap.handle_note_io.NOTE_FOLDERS', test_folder),\
+         patch('foolscap.handle_note_io.NamedTemporaryFile'),\
+         patch('foolscap.handle_note_io.edit_in_vim') as edit_mock,\
+         patch(mock_get_cmd, return_value=['cmds']),\
+         patch('builtins.open', mock_open()) as mock_file:
+        note = handle_note_io.edit_text('test_note')
+
+        file_name = TEST_NOTE.format(note_name='test_note')
+        assert note == None
+        mock_file.assert_called_with(
+            file_name,
+            'r'
+        )
+        edit_mock.assert_called_with(mock_file(), ['cmds'])
 
 
 TEST_NOTE_TEMPLATE = """\
@@ -76,6 +110,8 @@ Make sure you change the title!
 
 {tag}
 =========="""
+
+
 def test_edit_temp_text():
     temp_note = handle_note_io.NEW_NOTE_TEMPLATE
     with patch('foolscap.handle_note_io.NamedTemporaryFile', mock_open(read_data=temp_note)),\

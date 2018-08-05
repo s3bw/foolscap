@@ -14,7 +14,7 @@ from foolscap.meta_data.tag_history import diff_tags
 from foolscap.meta_data.parse_note import (
     restrict_title,
     get_title,
-    get_bookmacro,
+    get_macro,
     get_contents,
     get_moving_lines,
     note_tags,
@@ -112,6 +112,20 @@ def update_note_hooks(note, stored_data):
     return new_name, new_content
 
 
+def format_cmds(cmds):
+    return ' | '.join(cmds)
+
+
+def get_cmds(note):
+    """Returns a formatted list of vim commands.
+    """
+    stored_data = load_meta()
+    if 'vim_cmds' in stored_data[note]:
+        return format_cmds(stored_data[note]['vim_cmds'])
+    else:
+        return None
+
+
 def update_component(note):
     stored_data = load_meta()
 
@@ -130,9 +144,16 @@ def update_component(note):
         stored_data[new_name]['tags'] = tags
         diff_tags(tags, prev_tags, new_name)
 
-    book = get_bookmacro(content)
+    book = get_macro('book', content)
     if book:
         stored_data[new_name]['book'] = book
+    else:
+        stored_data[new_name]['book'] = 'general'
+
+    textwidth = get_macro('textwidth', content)
+    if textwidth:
+        set_width = ":set textwidth={}"
+        stored_data[new_name]['vim_cmds'] = [set_width.format(textwidth)]
 
     sub_headings = parse_sub_headings(content)
     if sub_headings:
@@ -175,9 +196,16 @@ def new_component(text):
         if tags:
             note_component[title]['tags'] = tags
 
-        book = get_bookmacro(content)
+        book = get_macro('book', content)
         if book:
             note_component[title]['book'] = book
+        else:
+            note_component[title]['book'] = 'general'
+
+        textwidth = get_macro('textwidth', content)
+        if textwidth:
+            set_width = ":set textwidth={}"
+            note_component[title]['vim_cmds'] = [set_width.format(textwidth)]
 
         sub_headings = parse_sub_headings(content)
         if sub_headings:

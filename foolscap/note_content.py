@@ -87,8 +87,7 @@ def edit_note(note):
     """ Edit the note in vim.
     """
     if note_exists(note):
-        edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=note)
-        edit_text(editing=edited_note)
+        edit_text(editing=note)
 
         update_component(note)
         print("\n\tUpdated: '{}'.\n".format(note))

@@ -13,3 +13,4 @@ from foolscap.meta_data.common import remove_component
 from foolscap.meta_data.common import update_component
 from foolscap.meta_data.common import upgrade_components
 
+from foolscap.meta_data.common import get_cmds

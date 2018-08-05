@@ -91,6 +91,32 @@ def test_update_note_hooks(old_name, edited_name):
     assert mock_meta_data == {edited_name: 1, 'note_2': 2}
 
 
+@pytest.mark.parametrize("passed_input, expected",
+    [
+        (['one cmd'], 'one cmd'),
+        (['two cmd', 'two cmd'], 'two cmd | two cmd'),
+        ([], ''),
+    ]
+)
+def test_format_cmds(passed_input, expected):
+    result = common.format_cmds(passed_input)
+    assert result == expected
+
+
+@pytest.mark.parametrize("mock_meta, expected",
+    [
+        ({'note': {'vim_cmds': ['test']}}, 'test'),
+        ({'note': {'vim_cmds': ['test', 'test']}}, 'test | test'),
+        ({'note': {}}, None),
+    ]
+)
+def test_get_cmds(mock_meta, expected):
+    with patch('foolscap.meta_data.common.load_meta') as mock_data:
+        mock_data.return_value = mock_meta
+        result = common.get_cmds('note')
+        assert result == expected
+
+
 def test_update_component():
     # Sub heading isn't tested
     component = MOCK_COMPONENT(2, 'no_change').copy()
@@ -98,7 +124,7 @@ def test_update_component():
          patch('foolscap.meta_data.common.update_note_hooks') as mock_hook,\
          patch('foolscap.meta_data.common.note_description') as mock_desc,\
          patch('foolscap.meta_data.common.note_tags') as mock_tags,\
-         patch('foolscap.meta_data.common.get_bookmacro') as mock_book,\
+         patch('foolscap.meta_data.common.get_macro') as mock_macro,\
          patch('foolscap.meta_data.common.datetime') as time,\
          patch('foolscap.meta_data.common.diff_tags') as mock_diff,\
          patch('foolscap.meta_data.common.save_meta'):
@@ -107,7 +133,7 @@ def test_update_component():
         mock_tags.return_value = new_tags
         mock_hook.return_value = ('note', ['note content'])
         mock_desc.return_value = 'This is a fake note'
-        mock_book.return_value = 'general'
+        mock_macro.return_value = None
         time.now.return_value = 'new_datetime'
 
         # These are different from fake component as not has been changed.
@@ -128,6 +154,7 @@ def test_new_component():
         '',
         'Some content.',
         '',
+        '{textwidth:60}',
         '{fake_tag}',
         '====================',
     ]

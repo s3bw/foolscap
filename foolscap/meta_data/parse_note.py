@@ -171,14 +171,14 @@ def note_tags(contents):
         return tags
 
 
-def get_bookmacro(contents):
-    bookline = contents[-3]
-    book_pattern = re.compile("\{book:([a-z]*)\}")
-    book = book_pattern.findall(bookline)
-    if book:
-        return book[0]
+def get_macro(macro, contents):
+    macroline = contents[-3]
+    macro_pattern = re.compile("\{" + macro + ":([a-zA-Z0-9]*)\}")
+    setting = macro_pattern.findall(macroline)
+    if setting:
+        return setting[0]
     else:
-        return 'general'
+        return None
 
 
 def pairwise(iterable):
