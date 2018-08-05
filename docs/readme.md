@@ -181,7 +181,7 @@ Macro tags are my **favourite** features of foolscap.
 The following macro tags have been implemented
 
 - book; stores notes in a different list, by default all notes are assigned to `general`
-see [list notes](docs/readme.md#list-notes) to access these other notes.
+see [list notes](readme.md#list-notes) to access these other notes.
 
 ```
 {book:meetings}
