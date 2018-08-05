@@ -1,6 +1,7 @@
 import os
 from tempfile import NamedTemporaryFile
 
+from foolscap import meta_data
 from foolscap.file_paths import NOTE_FOLDERS
 from foolscap.subprocess_utils import edit_in_vim
 
@@ -40,8 +41,15 @@ def edit_text(editing=None):
             edit_in_vim(editing_text)
             editing_text.seek(0)
             return editing_text.read().split('\n')
-    with open(editing, 'r') as editing_text:
-        edit_in_vim(editing_text)
+
+    edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=editing)
+
+    cmds = meta_data.get_cmds(editing)
+    with open(edited_note, 'r') as editing_text:
+        if cmds:
+            edit_in_vim(editing_text, cmds)
+        else:
+            edit_in_vim(editing_text)
 
 
 def replace_text(note, new_name, content):

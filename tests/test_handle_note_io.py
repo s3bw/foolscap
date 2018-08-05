@@ -59,12 +59,18 @@ def test_unique_heading():
 
 
 def test_edit_text():
-    with patch('foolscap.handle_note_io.NamedTemporaryFile'),\
+    test_folder = {'GET_NOTE': TEST_NOTE}
+    with patch.dict('foolscap.handle_note_io.NOTE_FOLDERS', test_folder),\
+         patch('foolscap.handle_note_io.NamedTemporaryFile'),\
          patch('foolscap.handle_note_io.edit_in_vim'),\
+         patch('foolscap.handle_note_io.meta_data'),\
          patch('builtins.open', mock_open()) as mock_file:
-        note = handle_note_io.edit_text('test_note.txt')
+        note = handle_note_io.edit_text('test_note')
         assert note == None
-        mock_file.assert_called_with('test_note.txt', 'r')
+        mock_file.assert_called_with(
+            TEST_NOTE.format(note_name='test_note'),
+            'r'
+        )
 
 
 TEST_NOTE_TEMPLATE = """\

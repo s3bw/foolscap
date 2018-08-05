@@ -84,7 +84,7 @@ def test_get_titles():
 
 def test_get_bookmacro():
     note = EXPECTED_NOTE.split('\n')
-    result = parse_note.get_bookmacro(note)
+    result = parse_note.get_macro('book', note)
     assert result == 'work'
 
 
@@ -100,8 +100,8 @@ Some content.
 {test} {unit}
 ===================="""
     note = expected_note.split('\n')
-    result = parse_note.get_bookmacro(note)
-    assert result == 'general'
+    result = parse_note.get_macro('book', note)
+    assert result == None
 
 
 def test_get_moving_lines():

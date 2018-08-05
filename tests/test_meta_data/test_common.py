@@ -98,7 +98,7 @@ def test_update_component():
          patch('foolscap.meta_data.common.update_note_hooks') as mock_hook,\
          patch('foolscap.meta_data.common.note_description') as mock_desc,\
          patch('foolscap.meta_data.common.note_tags') as mock_tags,\
-         patch('foolscap.meta_data.common.get_bookmacro') as mock_book,\
+         patch('foolscap.meta_data.common.get_macro') as mock_macro,\
          patch('foolscap.meta_data.common.datetime') as time,\
          patch('foolscap.meta_data.common.diff_tags') as mock_diff,\
          patch('foolscap.meta_data.common.save_meta'):
@@ -107,7 +107,7 @@ def test_update_component():
         mock_tags.return_value = new_tags
         mock_hook.return_value = ('note', ['note content'])
         mock_desc.return_value = 'This is a fake note'
-        mock_book.return_value = 'general'
+        mock_macro.return_value = None
         time.now.return_value = 'new_datetime'
 
         # These are different from fake component as not has been changed.
