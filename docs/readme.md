@@ -3,11 +3,13 @@
 ![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
 ![latest](https://img.shields.io/badge/latest-0.3-ff69b4.svg)
 ![last-commit](https://img.shields.io/github/last-commit/GiantsLoveDeathMetal/foolscap.svg)
-![stars](https://img.shields.io/github/stars/GiantsLoveDeathMetal/foolscap.svg?style=social&label=Stars)
+![stars](https://img.shields.io/github/stars/GiantsLoveDeathMetal/foolscap.svg?style=popout&label=Stars)
 ![closed-issues](https://img.shields.io/github/issues-closed/GiantsLoveDeathMetal/foolscap.svg)
 
 The foolscap note manager centralises note **storage**, allows **access** from any directory and
 aims to make notes easy to **maintain**, **find** and **reuse**.
+
+Foolscap uses the `vim` text editor.
 
 ## Install:
 
@@ -42,9 +44,11 @@ The following commands are available in the user interface
 - **Jump to bottom:** `[G]`
 - **Quit:** `[q]`
 
+Most command line features have been implemented in the tui.
+
 ---
 
-## Using Foolscap:
+## Using Foolscap from the command line
 
 Below is a breakdown of the features:
 
@@ -172,11 +176,12 @@ These tags allow for filtering by tag when searching for notes.
 
 ### {macro:tags}
 
-Macro tags are useful feature of foolscap.
+Macro tags are my **favourite** features of foolscap.
 
 The following macro tags have been implemented
 
 - book; stores notes in a different list, by default all notes are assigned to `general`
+see [list notes](docs/readme.md#list-notes) to access these other notes.
 
 ```
 {book:meetings}
@@ -187,5 +192,3 @@ The following macro tags have been implemented
 ```
 {textwidth:40}
 ```
-
----
