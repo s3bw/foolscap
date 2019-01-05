@@ -45,16 +45,16 @@ class KeyListener:
         key = self.screen.getch()
         if key in ENTER_KEY:
             self.command = 'view'
-        if key == ord('e'):
+        if key == ord('i'):
             self.command = 'edit'
         if key == ord('X'):
             self.command = 'export'
         if key == ord('q'):
             exit()
             # self.command = 'quit'
-        elif key == UP_ARROW:
+        elif key == ord('k'):
             self.scroll.move_up()
-        elif key == DOWN_ARROW:
+        elif key == ord('j'):
             self.scroll.move_down()
         elif key == ord('g'):
             # Move to top note
@@ -65,7 +65,7 @@ class KeyListener:
         elif key == ord('H'):
             # rotate the help bar
             self.command = 'help'
-        elif key == RIGHT_ARROW:
+        elif key == ord('e'):
             self.command = 'expand'
         elif key == ord('l'):
             self.command = 'next_tab'
