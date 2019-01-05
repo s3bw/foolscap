@@ -8,11 +8,13 @@ from foolscap.display.render_composite import Frame
 from foolscap.display.render_composite import HelpBar
 from foolscap.display.render_composite import TitleBar
 from foolscap.display.render_composite import StatusBar
+from foolscap.display.render_composite import TabBar
 
 
 class FakeWidget(Widget):
     def __init__(self):
         pass
+
     def draw(self):
         pass
 
@@ -24,7 +26,7 @@ class FailWidget(Widget):
 
 def test_fail_Widget():
     with pytest.raises(TypeError):
-        widget = FailWidget()
+        FailWidget()
 
 
 def test_Widget_init():
@@ -58,6 +60,58 @@ def test_Widget_update():
     assert widget.centre_x == 40
 
 
+BOOKS = ['general', 'work', 'work', 'test']
+
+
+@pytest.mark.parametrize("init_vars, expected", [
+    (('general', BOOKS), (['general', 'test', 'work'], 0)),
+    (('work', BOOKS), (['general', 'test', 'work'], 2)),
+    (('search', BOOKS), (['search'], 0)),
+])
+def test_TabBar_init(init_vars, expected):
+    book, books = init_vars
+    expected_books, expected_index = expected
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    tab_widget = TabBar(mock_screen, book, books)
+    assert tab_widget.tabs == expected_books
+    assert tab_widget.highlight_index == expected_index
+
+
+@pytest.mark.parametrize("init_vars, expected", [
+    (('general', BOOKS), ('test', 1)),
+    (('work', BOOKS), ('general', 0)),
+    (('search', BOOKS), ('search', 0)),
+])
+def test_TabBar_next_tab(init_vars, expected):
+    book, books = init_vars
+    expected_result, expected_index = expected
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    tab_widget = TabBar(mock_screen, book, books)
+
+    result = tab_widget.next_tab()
+    assert tab_widget.highlight_index == expected_index
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("init_vars, expected", [
+    (('general', BOOKS), ('work', 2)),
+    (('work', BOOKS), ('test', 1)),
+    (('search', BOOKS), ('search', 0)),
+])
+def test_TabBar_prev_tab(init_vars, expected):
+    book, books = init_vars
+    expected_result, expected_index = expected
+    mock_screen = MagicMock()
+    mock_screen.getmaxyx.return_value = 50, 50
+    tab_widget = TabBar(mock_screen, book, books)
+
+    result = tab_widget.prev_tab()
+    assert tab_widget.highlight_index == expected_index
+    assert result == expected_result
+
+
 def test_Frame_init():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
@@ -71,7 +125,10 @@ def test_Frame_draw():
     mock_screen.getmaxyx.return_value = 50, 50
     test_frame = Frame(mock_screen)
     test_frame.draw()
-    mock_screen.border.assert_called_with('|', '|', '-', '-', '+', '+', '+', '+')
+    mock_screen.border.assert_called_with(
+        '|', '|', '-', '-',
+        '+', '+', '+', '+'
+    )
 
 
 def test_Frame_update():

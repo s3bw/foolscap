@@ -10,7 +10,7 @@ mock_model = MagicMock()
 FAKE_ITEMS = {
     'titles': ["test_title", "another_title"],
     'model': mock_model,
-    'books': ['general'],
+    'books': ['general', 'work'],
     'tab_title': 'general',
 }
 
@@ -103,7 +103,7 @@ def test_FolioConsole_init(mock_keys, mock_tab, mock_display_menu,
         mock_titlebar.assert_called_with(mock_screen.subwin())
         mock_helpbar.assert_called_with(mock_screen.subwin())
         mock_tab.assert_called_with(
-            mock_screen.subwin(), 'general', ['general'])
+            mock_screen.subwin(), 'general', ['general', 'work'])
         mock_display_menu.assert_called_with(
             mock_screen.subwin(), FAKE_ITEMS['titles'], FAKE_ITEMS['model'])
 
@@ -226,3 +226,49 @@ def test_FolioConsole_show_help(mock_listener, mock_tab, mock_display_menu,
             test_console.show()
             assert test_console.help_bar.next_hint.call_args_list == [call()]
             test_console.help_bar.next_hint.assert_called_once()
+
+
+@patch('foolscap.display.console.Frame')
+@patch('foolscap.display.console.HelpBar')
+@patch('foolscap.display.console.StatusBar')
+@patch('foolscap.display.console.TitleBar')
+@patch('foolscap.display.console.DisplayMenu')
+@patch('foolscap.display.console.TabBar')
+@patch('foolscap.display.console.KeyListener')
+def test_FolioConsole_change_tab(mock_listener, mock_tab, mock_display_menu,
+                                 mock_titlebar, mock_statusbar, mock_helpbar,
+                                 mock_frame):
+    mock_screen = MagicMock()
+    with patch('foolscap.display.console.panel'),\
+            patch('foolscap.display.console.curses'):
+
+        test_console = FolioConsole(mock_screen, FAKE_ITEMS)
+        with patch.object(test_console, 'key_listener') as mocked_listener:
+            mock_position = (0, 1)
+            mocked_listener.get_position.return_value = mock_position
+            mocked_listener.get_action.side_effect = [
+                ('next_tab', 1), ('prev_tab', 1),
+                ('next_tab', 1), ('action', 1),
+            ]
+            mock_display_menu().select_item.return_value = 'selected_note'
+            mock_tab().next_tab.side_effect = ['work', 'not_a_book']
+            mock_tab().prev_tab.return_value = 'general'
+
+            result = test_console.show()
+            assert result == {
+                'book': 'work',
+                'action': 'list',
+                'index': 0,
+                'item': 'selected_note'
+            }
+
+            result = test_console.show()
+            assert result == {
+                'book': 'general',
+                'action': 'list',
+                'index': 0,
+                'item': 'selected_note'
+            }
+
+            result = test_console.show()
+            assert test_console.tabs.next_tab.call_args_list == [call(), call()]

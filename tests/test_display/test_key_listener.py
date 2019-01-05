@@ -33,6 +33,8 @@ def test_KeyListener_setmax():
      (ord('H'), ('help', 5)),
      (ord('g'), (None, 1)),
      (ord('G'), (None, 9)),
+     (ord('l'), ('next_tab', 5)),
+     (ord('h'), ('prev_tab', 5)),
      ('UP_ARROW', (None, 4)),
      ('DOWN_ARROW', (None, 6)),
      ('RIGHT_ARROW', ('expand', 5))])

@@ -186,6 +186,35 @@ def test_all_actions():
     assert set(ACTIONS) == set(TESTED_ACTIONS)
 
 
+def test_change_book():
+    """Test that book can change."""
+    mock_view = MagicMock()
+    mock_ctrl = MagicMock()
+    # Have to return view so that we can exit
+    mock_ctrl.return_value.basic_output.side_effect = [
+        {
+            'action': 'list',
+            'item': 'note',
+            'book': 'mock_book',
+        },
+        {
+            'action': 'view',
+            'item': 'note',
+        }
+    ]
+
+    mock_functions = {
+        'view': mock_view,
+        'list': None,
+    }
+    with patch.dict('foolscap.actor.FUNCTION_MAP', mock_functions),\
+            patch('foolscap.actor.Controller', mock_ctrl):
+
+        actor.action('list', None)
+        mock_ctrl.has_calls(calls=[call('general'), call('mock_book')])
+        mock_ctrl.return_value.basic_output.assert_called()
+
+
 def test_change_list_type():
     mock_view = MagicMock()
     mock_ctrl = MagicMock()
