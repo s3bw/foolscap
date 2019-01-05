@@ -35,11 +35,11 @@ Add the following to your `.bashrc`
 The following commands are available in the user interface
 
 - **Help:** `[H]`
-- **Edit:** `[e]`
+- **Edit:** `[i]` (like vim Insert)
 - **View:** `[Enter]`
 - **Export:** `[X]`
-- **Expand:** `[->]`
-- **Collapse:** `[<-]`
+- **Expand:** `[e]`
+- **Collapse:** `[e]`
 - **Jump to top:** `[g]`
 - **Jump to bottom:** `[G]`
 - **Quit:** `[q]`
