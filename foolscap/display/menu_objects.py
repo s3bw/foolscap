@@ -47,8 +47,8 @@ DEFAULT_SETTINGS = {
     },
     'length': {
         'name': 'length',
-        'size': 3,
-        'align': 'right'
+        'size': 5,
+        'align': 'centre'
     }
 }
 
