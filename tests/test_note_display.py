@@ -58,37 +58,44 @@ def test_controller__init__(note_model_init):
 
 
 @pytest.mark.parametrize("note_model, model_type, expected", [
-    (FAKE_MANY_NOTES, 'tags', [
-        {'title': 'fake_tag'},
-    ]),
-    (FAKE_MANY_NOTES, 'notes', [
-        {'title': 'recently_opened'},
-        {'title': 'most_viewed'},
-        {'title': 'second_most'},
-        {'title': 'third_most'},
-        {'title': 'A'},
-        {'title': 'fake_note_1'},
-        {'title': 'Z'},
-    ]),
-    (FAKE_SINGLE_NOTE_2, 'notes', [
-        {'title': 'most_viewed'}
-    ]),
-    (FAKE_SINGLE_NOTE, 'tags', [
-        {'title': 'fake_tag'}
-    ]),
-    (FAKE_SINGLE_NOTE, 'notes', [
-        {'title': 'most_viewed'},
-    ])],
+    (FAKE_MANY_NOTES, 'tags', {
+        'titles': ['fake_tag'],
+        'books': ['general'] * 7,
+    }),
+    (FAKE_MANY_NOTES, 'notes', {
+        'titles': [
+            'recently_opened',
+            'most_viewed',
+            'second_most',
+            'third_most',
+            'A',
+            'fake_note_1',
+            'Z',
+        ],
+        'books': ['general'] * 7,
+    }),
+    (FAKE_SINGLE_NOTE_2, 'notes', {
+        'titles': ['most_viewed'],
+        'books': ['general'],
+    }),
+    (FAKE_SINGLE_NOTE, 'tags', {
+        'titles': ['fake_tag'],
+        'books': ['general'],
+    }),
+    (FAKE_SINGLE_NOTE, 'notes', {
+        'titles': ['most_viewed'],
+        'books': ['general'],
+    })],
     indirect=['note_model'])
 def test_ctrl_basic_out(note_model, model_type, expected):
+    expected['tab_title'] = 'general'
     with patch('foolscap.note_display.display_list') as _mock:
         ctrl = Controller(model_type)
         ctrl.model = note_model
+        expected['model'] = note_model
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
-
-        for item in expected:
-            item['model'] = ctrl.model
+            expected['model'] = ctrl.model
 
         ctrl.service_rules = ServiceRules(ctrl.model)
         ctrl.basic_output('general')
@@ -96,38 +103,47 @@ def test_ctrl_basic_out(note_model, model_type, expected):
 
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
-    (FAKE_MANY_NOTES, 'tags', 'fake_tag', [
-        {'title': 'fake_tag'},
-    ]),
-    (FAKE_MANY_NOTES, 'notes', 'fake_tag', [
-        {'title': 'recently_opened'},
-        {'title': 'most_viewed'},
-        {'title': 'second_most'},
-        {'title': 'third_most'},
-        {'title': 'A'},
-        {'title': 'fake_note_1'},
-        {'title': 'Z'},
-    ]),
+    (FAKE_MANY_NOTES, 'tags', 'fake_tag', {
+        'titles': ['fake_tag'],
+        'books': ['general'] * 7,
+    },
+    ),
+    (FAKE_MANY_NOTES, 'notes', 'fake_tag', {
+        'titles': [
+            'recently_opened',
+            'most_viewed',
+            'second_most',
+            'third_most',
+            'A',
+            'fake_note_1',
+            'Z',
+        ],
+        'books': ['general'] * 7,
+    }),
     # None passed to query - should not happen. This is controlled by
     # Actor
-    (FAKE_SINGLE_NOTE, 'tags', 'fake_tag', [
-        {'title': 'fake_tag'}
-    ]),
-    (FAKE_SINGLE_NOTE, 'notes', 'fake_tag', [
-        {'title': 'most_viewed'},
-    ])],
+    (FAKE_SINGLE_NOTE, 'tags', 'fake_tag', {
+        'titles': ['fake_tag'],
+        'books': ['general'],
+    }
+    ),
+    (FAKE_SINGLE_NOTE, 'notes', 'fake_tag', {
+        'titles': ['most_viewed'],
+        'books': ['general'],
+    }
+    )],
     indirect=['note_model'])
 def test_ctrl_query_out(note_model, model_type, query, expected):
+    expected['tab_title'] = "tag: '{}'".format(query)
     with patch('foolscap.note_display.display_list') as _mock:
         ctrl = Controller(model_type)
         ctrl.model = note_model
+        expected['model'] = note_model
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
+            expected['model'] = ctrl.model
+
         ctrl.service_rules = ServiceRules(ctrl.model)
-
-        for item in expected:
-            item['model'] = ctrl.model
-
         ctrl.query_output(query)
         _mock.assert_called_with(expected)
 
@@ -149,24 +165,31 @@ def test_ctrl_with_no_tag_matches(note_model, model_type):
 
 
 @pytest.mark.parametrize("note_model, model_type, query, expected", [
-    (FAKE_MANY_NOTES, 'tags', 'fake', [
-        {'title': 'fake_tag'}
-    ]),
-    (FAKE_MANY_NOTES, 'notes', 'most', [
-        {'title': 'most_viewed'},
-        {'title': 'third_most'},
-        {'title': 'second_most'},
-    ])],
-    indirect=['note_model'])
+    (FAKE_MANY_NOTES, 'tags', 'fake', {
+        'titles': ['fake_tag'],
+    }
+    ),
+    (FAKE_MANY_NOTES, 'notes', 'most', {
+        'titles': [
+            'most_viewed',
+            'third_most',
+            'second_most',
+        ],
+    }
+    )
+],
+    indirect=['note_model']
+)
 def test_search_notes(note_model, model_type, query, expected):
+    expected['books'] = ['general'] * 7
+    expected['tab_title'] = 'search'
     with patch('foolscap.note_display.display_list') as _mock:
         ctrl = Controller(model_type)
         ctrl.model = note_model
+        expected['model'] = note_model
         if model_type == 'tags':
             ctrl.model = TagsModel(note_model)
-
-        for item in expected:
-            item['model'] = ctrl.model
+            expected['model'] = ctrl.model
 
         ctrl.service_rules = ServiceRules(ctrl.model)
 
@@ -177,11 +200,11 @@ def test_search_notes(note_model, model_type, query, expected):
 @pytest.mark.parametrize("note_model_init, model_type", [
     (FAKE_SINGLE_NOTE, 'notes'),
     (FAKE_SINGLE_NOTE, 'tags'),
-    ], indirect=['note_model_init'])
+], indirect=['note_model_init'])
 def test_ctrl_search_output_with_no_results(note_model_init, model_type):
     ctrl = Controller(model_type)
     with patch('foolscap.meta_data.models.fuzzy_guess') as _fuzz,\
-         pytest.raises(SystemExit):
+            pytest.raises(SystemExit):
         ctrl.search_output('none')
         assert _fuzz.called_with('none', [])
 
@@ -312,7 +335,7 @@ def test_servicerule_last_viewed(note_model, notes, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("note_model, tags, expected",[
+@pytest.mark.parametrize("note_model, tags, expected", [
     (FOUR_FAKE_NOTES_TAGS, ['two', 'one', 'three'],
      ['one', 'two', 'three']),
 ], indirect=['note_model'])
@@ -325,26 +348,24 @@ def test_servicerule_by_count(note_model, tags, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("note_model, notes, tags",[
+@pytest.mark.parametrize("note_model, notes, tags", [
     (FAKE_SINGLE_NOTE_2, ['most_viewed'], ['fake_tag']),
 ], indirect=['note_model'])
 def test_servicerule_structure(note_model, notes, tags):
     service = ServiceRules(note_model)
     result = service.structure(notes)
-    assert result == [
-      {
-        'title': 'most_viewed',
+    assert result == {
+        'titles': ['most_viewed'],
         'model': note_model,
-      }
-    ]
+        'books': ['general'],
+    }
 
     from foolscap.meta_data import TagsModel
     tag_model = TagsModel(note_model)
     service = ServiceRules(tag_model)
     result = service.structure(tags)
-    assert result == [
-      {
-        'title': 'fake_tag',
-        'model': tag_model
-      }
-    ]
+    assert result == {
+        'titles': ['fake_tag'],
+        'model': tag_model,
+        'books': ['general']
+    }

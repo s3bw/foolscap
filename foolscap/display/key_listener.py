@@ -67,6 +67,10 @@ class KeyListener:
             self.command = 'help'
         elif key == RIGHT_ARROW:
             self.command = 'expand'
+        elif key == ord('l'):
+            self.command = 'next_tab'
+        elif key == ord('h'):
+            self.command = 'prev_tab'
         return self.command, self.scroll.list_pointer
 
     def get_position(self):

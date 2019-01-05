@@ -21,10 +21,15 @@ def _set_colour(line, cursor):
 class MenuAdapter:
     """This object holds all the items in the list."""
 
-    def __init__(self, items):
+    def __init__(self, items, model):
         """Get the data into the correct format.
         This should be handled before this"""
-        self.menu = [MenuItem(**item) for item in items]
+        self.menu = [
+            MenuItem(**{
+                'title': item,
+                'model': model
+            }) for item in items
+        ]
 
     @property
     def length(self):
@@ -56,11 +61,10 @@ class MenuAdapter:
 class DisplayMenu(Widget):
     """This object is responsible for displaying the menu."""
 
-    def __init__(self, screen, items):
-        model_type = items[0]['model'].model_type
-        self.menu = MenuAdapter(items)
+    def __init__(self, screen, items, model):
+        self.menu = MenuAdapter(items, model)
         #: available columns
-        self.columns = Columns(model_type)
+        self.columns = Columns(model)
         self.columns.attach_screen(screen)
         self.attach_screen(screen)
 

@@ -19,14 +19,15 @@ PATCH_COLUMNS = 'foolscap.display.menu_objects.NOTE_CONFIG'
 DEFAULT_CONFIG = ['more', 'title', 'description', 'created']
 
 
-@pytest.mark.parametrize("line,cursor,expected",
-    [(3,4,'NORMAL'),
-     (4,4,'REVERSE'),
-     (6,4,'DIM')])
+@pytest.mark.parametrize("line,cursor,expected", [
+    (3, 4, 'NORMAL'),
+    (4, 4, 'REVERSE'),
+    (6, 4, 'DIM')
+])
 def test_set_colour(line, cursor, expected):
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'):
         result = _set_colour(line, cursor)
         assert result == expected
 
@@ -35,10 +36,10 @@ def test_set_colour(line, cursor, expected):
 Setup Notes Model fixture
 """
 
+
 @pytest.fixture(scope='function')
-def model_items():
+def display_data():
     from foolscap.meta_data import NotesModel
-    from foolscap.note_display import Controller
     from foolscap.note_display import ServiceRules
 
     patch_load = 'foolscap.meta_data.models.load_meta'
@@ -56,15 +57,15 @@ Test MenuAdapter Object:
 """
 
 
-def test_MenuAdapter_init(model_items):
-    adapter = MenuAdapter(model_items)
+def test_MenuAdapter_init(display_data):
+    adapter = MenuAdapter(display_data['titles'], display_data['model'])
     assert hasattr(adapter, 'menu')
     assert hasattr(adapter, 'length')
     assert adapter.length == 4
 
 
-def test_MenuAdapter_iter_viewable(model_items):
-    adapter = MenuAdapter(model_items)
+def test_MenuAdapter_iter_viewable(display_data):
+    adapter = MenuAdapter(display_data['titles'], display_data['model'])
     result = [n.title for n in adapter.iter_viewable()]
     assert result == ['A', 'B', 'C', 'D']
 
@@ -76,8 +77,8 @@ def test_MenuAdapter_iter_viewable(model_items):
     assert result == ['A', 'B', '──First Sub:', 'C', 'D']
 
 
-def test_MenuAdapter_iter_all(model_items):
-    adapter = MenuAdapter(model_items)
+def test_MenuAdapter_iter_all(display_data):
+    adapter = MenuAdapter(display_data['titles'], display_data['model'])
     result = [n.title for n in adapter.iter_all()]
     assert len(result) == 8
 
@@ -87,24 +88,16 @@ Test Display Menu Object:
 """
 
 mock_model = MagicMock()
-FAKE_ITEMS = [
-    {
-        'title': "test_title",
-        'description': "test description",
-        'model': mock_model,
-    },
-    {
-        'title': "another_title",
-        'description': "another description",
-        'model': mock_model,
-    },
-]
+FAKE_ITEMS = {
+    'titles': ["test_title", "another_title"],
+    'model': mock_model,
+}
 
 
 def test_DisplayMenu_init():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS['titles'], mock_model)
 
     assert isinstance(test_dm, DisplayMenu)
     assert hasattr(test_dm, 'menu')
@@ -117,7 +110,11 @@ def test_DisplayMenu_init():
 def test_DisplayMenu_update_position():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+    test_dm = DisplayMenu(
+        mock_screen,
+        FAKE_ITEMS['titles'],
+        mock_model,
+    )
 
     test_dm.update_pointers(1, 3)
     assert hasattr(test_dm, 'cursor')
@@ -126,10 +123,14 @@ def test_DisplayMenu_update_position():
     assert test_dm.reduction == 1
 
 
-def test_DisplayMenu_expand_item(model_items):
+def test_DisplayMenu_expand_item(display_data):
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, model_items)
+    test_dm = DisplayMenu(
+        mock_screen,
+        display_data['titles'],
+        display_data['model'],
+    )
 
     test_dm.expand_item(1)
 
@@ -137,19 +138,27 @@ def test_DisplayMenu_expand_item(model_items):
     assert result == ['A', 'B', '──First Sub:', 'C', 'D']
 
 
-def test_DisplayMenu_select_item(model_items):
+def test_DisplayMenu_select_item(display_data):
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, model_items)
+    test_dm = DisplayMenu(
+        mock_screen,
+        display_data['titles'],
+        display_data['model']
+    )
 
     result = test_dm.select_item(1)
     assert result == 'B'
 
 
-def test_DisplayMenu_select_sub_item(model_items):
+def test_DisplayMenu_select_sub_item(display_data):
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, model_items)
+    test_dm = DisplayMenu(
+        mock_screen,
+        display_data['titles'],
+        display_data['model']
+    )
 
     test_dm.expand_item(1)
     title_result = test_dm.select_item(1)
@@ -158,25 +167,25 @@ def test_DisplayMenu_select_sub_item(model_items):
     assert subtitle_result == 'B@1:1'
 
 
-def test_DisplayMenu_update(model_items):
+def test_DisplayMenu_update(display_data):
     """Test that columns are also updated."""
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    with patch('foolscap.display.menu.Columns') as mock_columns:
-        test_dm = DisplayMenu(mock_screen, model_items)
+    with patch('foolscap.display.menu.Columns'):
+        test_dm = DisplayMenu(mock_screen, display_data['titles'], mock_model)
         test_dm.update()
 
         test_dm.columns.update.assert_called_once()
 
 
-def test_DisplayMenu_draw_item(model_items):
+def test_DisplayMenu_draw_item(display_data):
     """Test items are not drawn when they are off the screen."""
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
-    test_dm = DisplayMenu(mock_screen, model_items)
+    test_dm = DisplayMenu(mock_screen, display_data['titles'], mock_model)
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'):
 
         test_dm.update_pointers(2, 3)
         test_dm.draw()
@@ -197,17 +206,16 @@ def test_DisplayMenu_draw_item(model_items):
         mock_screen.assert_has_calls(calls)
 
 
-
 def test_DisplayMenu_draw():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 100, 100
 
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'),\
-         patch(PATCH_COLUMNS, DEFAULT_CONFIG):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'),\
+            patch(PATCH_COLUMNS, DEFAULT_CONFIG):
 
-        test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+        test_dm = DisplayMenu(mock_screen, FAKE_ITEMS['titles'], mock_model)
         # Display cursor on note 2.
         test_dm.update_pointers(0, 2)
         test_dm.draw()
@@ -246,12 +254,12 @@ def test_DisplayMenu_draw_small_height():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 4, 100
 
-    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS['titles'], mock_model)
     test_dm.update_pointers(0, 1)
 
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'):
         test_dm.draw()
         calls = [
             call.getmaxyx(),
@@ -268,7 +276,6 @@ def test_DisplayMenu_draw_small_height():
         mock_screen.assert_has_calls(calls)
 
 
-
 def test_DisplayMenu_draw_small_width():
     """ Test that note descriptions are not printed
         when the width of the console is too small.
@@ -279,12 +286,12 @@ def test_DisplayMenu_draw_small_width():
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 50, 50
 
-    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS)
+    test_dm = DisplayMenu(mock_screen, FAKE_ITEMS['titles'], mock_model)
     test_dm.update_pointers(0, 2)
 
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'):
         test_dm.draw()
         calls = [
             call.getmaxyx(),
@@ -302,28 +309,22 @@ def test_DisplayMenu_draw_small_width():
 
 def test_DisplayMenu_draw_smaller():
     fake_items = [
-        {'title': "test_title", 'description': "test description",
-        'model': mock_model},
-        {'title': "another_title_1", 'description': "another description",
-        'model': mock_model},
-        {'title': "another_title_2", 'description': "another description",
-        'model': mock_model},
-        {'title': "another_title_3", 'description': "another description",
-        'model': mock_model},
-        {'title': "another_title_4", 'description': "another description",
-        'model': mock_model},
-        {'title': "another_title_5", 'description': "another description",
-        'model': mock_model},
+        "test_title",
+        "another_title_1",
+        "another_title_2",
+        "another_title_3",
+        "another_title_4",
+        "another_title_5",
     ]
     mock_screen = MagicMock()
     mock_screen.getmaxyx.return_value = 7, 50
 
-    test_dm = DisplayMenu(mock_screen, fake_items)
+    test_dm = DisplayMenu(mock_screen, fake_items, mock_model)
     test_dm.update_pointers(0, 2)
 
     with patch(patch_NORMAL, 'NORMAL'),\
-         patch(patch_DIM, 'DIM'),\
-         patch(patch_REVERSE, 'REVERSE'):
+            patch(patch_DIM, 'DIM'),\
+            patch(patch_REVERSE, 'REVERSE'):
         test_dm.draw()
         calls = [
             call.getmaxyx(),
