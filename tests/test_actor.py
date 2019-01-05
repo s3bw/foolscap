@@ -17,13 +17,13 @@ class MockCtrl:
         self.model_type = model_type
 
     def basic_output(self):
-        return  'view', 'note'
+        return 'view', 'note'
 
     def query_output(self, query):
-        return  'view', 'note'
+        return 'view', 'note'
 
     def search_output(self, query):
-        return  'view', 'note'
+        return 'view', 'note'
 
 
 def test_save_note_command():
@@ -73,9 +73,12 @@ def test_search_note(query, expected):
     mock_view = MagicMock()
     mock_ctrl = MagicMock()
     # Have to return view so that we can exit
-    mock_ctrl.return_value.search_output.return_value = ('view', 'mock_note')
+    mock_ctrl.return_value.search_output.return_value = {
+        'action': 'view',
+        'item': 'mock_note',
+    }
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
-         patch('foolscap.actor.Controller', mock_ctrl):
+            patch('foolscap.actor.Controller', mock_ctrl):
 
         # Pass to actor:
         actor.action('search', query)
@@ -88,23 +91,28 @@ def test_list_note_command_no_tags():
     mock_view = MagicMock()
     mock_ctrl = MagicMock()
     # Have to return view so that we can exit
-    mock_ctrl.return_value.basic_output.return_value = ('view', 'mock_note')
+    mock_ctrl.return_value.basic_output.return_value = {
+        'action': 'view',
+        'item': 'mock_note',
+    }
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
-         patch('foolscap.actor.Controller', mock_ctrl):
+            patch('foolscap.actor.Controller', mock_ctrl):
 
         # Pass to actor:
         actor.action('list', None)
         mock_ctrl.return_value.basic_output.assert_called()
 
 
-
 def test_list_note_command_returning_func():
     mock_view = MagicMock()
     mock_ctrl = MagicMock()
     # Have to return view so that we can exit
-    mock_ctrl.return_value.query_output.return_value = ('view', 'mock_note')
+    mock_ctrl.return_value.query_output.return_value = {
+        'action': 'view',
+        'item': 'mock_note',
+    }
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
-         patch('foolscap.actor.Controller', mock_ctrl):
+            patch('foolscap.actor.Controller', mock_ctrl):
 
         expected_view = call('mock_note')
 
@@ -182,9 +190,12 @@ def test_change_list_type():
     mock_view = MagicMock()
     mock_ctrl = MagicMock()
     # Have to return view so that we can exit
-    mock_ctrl.return_value.basic_output.return_value = ('view', 'note')
+    mock_ctrl.return_value.basic_output.return_value = {
+        'action': 'view',
+        'item': 'note',
+    }
     with patch.dict('foolscap.actor.FUNCTION_MAP', {'view': mock_view}),\
-         patch('foolscap.actor.Controller', mock_ctrl):
+            patch('foolscap.actor.Controller', mock_ctrl):
 
         actor.action('list', None, 'tags')
         mock_ctrl.assert_called_with('tags')

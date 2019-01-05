@@ -7,6 +7,7 @@ from foolscap.display.render_composite import Frame
 from foolscap.display.render_composite import HelpBar
 from foolscap.display.render_composite import StatusBar
 from foolscap.display.render_composite import TitleBar
+from foolscap.display.render_composite import TabBar
 
 
 def display_list(display_data):
@@ -44,9 +45,12 @@ class FolioConsole:
         panel.update_panels()
         curses.doupdate()
 
-    def __init__(self, stdscreen, items):
-        self.items = items
-        self.count_notes = len(items)
+    def __init__(self, stdscreen, data):
+        self.items = data['titles']
+        self.model = data['model']
+        self.books = data['books']
+        self.tab_title = data['tab_title']
+        self.count_notes = len(self.items)
         self.screen = stdscreen.subwin(0, 0)
         self.panel = panel.new_panel(self.screen)
 
@@ -59,13 +63,17 @@ class FolioConsole:
         status_bar = StatusBar(self.screen, self.count_notes)
         title_bar = TitleBar(self.screen)
         self.help_bar = HelpBar(self.screen)
-        self.menu = DisplayMenu(self.screen, self.items)
+        self.tabs = TabBar(self.screen, self.tab_title, self.books)
+        if self.model.model_type == 'tags':
+            self.tabs = TabBar(self.screen, self.model.model_type, self.books)
+        self.menu = DisplayMenu(self.screen, self.items, self.model)
 
         self.render_objects = [
             frame,
             status_bar,
             title_bar,
             self.help_bar,
+            self.tabs,
             self.menu
         ]
 
@@ -78,23 +86,45 @@ class FolioConsole:
     def show(self):
         """Displays Menus
         """
-        selected_action = None
-        selected_index = None
-        while not selected_action:
+        selected = {
+            'action': None,
+            'index': None
+        }
+        while not selected['action']:
             list_top, self.position = self.key_listener.get_position()
 
             self.menu.update_pointers(list_top, self.position)
             self.key_listener.set_max(len(self.menu))
 
             self.render_all()
-            (selected_action,
-             selected_index) = self.key_listener.get_action()
+            (
+                selected['action'],
+                selected['index'],
+            ) = self.key_listener.get_action()
 
-            if selected_action == 'help':
+            if selected['action'] == 'help':
                 self.help_bar.next_hint()
-                selected_action = None
-            if selected_action == 'expand':
-                self.menu.expand_item(selected_index)
-                selected_action = None
+                selected['action'] = None
+            if selected['action'] == 'expand':
+                self.menu.expand_item(selected['index'])
+                selected['action'] = None
+            if _scroll_tab(selected['action']):
+                if 'next' in selected['action']:
+                    book = self.tabs.next_tab()
+                else:
+                    book = self.tabs.prev_tab()
+                if book in self.books:
+                    selected = {
+                        'book': book,
+                        'action': 'list',
+                        'index': 0,
+                    }
+                else:
+                    selected['action'] = None
 
-        return selected_action, self.menu.select_item(selected_index)
+        selected['item'] = self.menu.select_item(selected['index'])
+        return selected
+
+
+def _scroll_tab(action):
+    return isinstance(action, str) and 'tab' in action

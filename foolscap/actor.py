@@ -58,7 +58,7 @@ def action(do_action, arg, list_type='notes', book='general'):
 
     func = FUNCTION_MAP[do_action]
 
-    new_action = None
+    new_action = {}
     if do_action in DISPLAY_ACTIONS:
         display_ctrl = Controller(list_type)
 
@@ -72,9 +72,13 @@ def action(do_action, arg, list_type='notes', book='general'):
         else:
             new_action = display_ctrl.basic_output(book)
 
-    if new_action:
-        new_func, note = new_action
-        action(new_func, note)
+    if new_action.get('action', False):
+        new_func = new_action['action']
+        note = new_action['item']
+        if new_func == 'list':
+            action(new_func, None, book=new_action['book'])
+        else:
+            action(new_func, note)
     # arg is note in this case
     elif arg:
         func(arg)

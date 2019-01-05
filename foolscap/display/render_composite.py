@@ -1,7 +1,18 @@
 import os
 from abc import ABC
 from abc import abstractmethod
+from curses import A_REVERSE as REVERSE
+from curses import A_NORMAL as NORMAL
 
+
+# Left Separator Normal
+LSN = ('', NORMAL)
+# Left Separator Reverse
+LSR = ('', REVERSE)
+# Alternative Left Separator Normal
+ALSN = ('', NORMAL)
+# Alternative Left Separator Reverse
+ALSR = ('', REVERSE)
 
 HELP_OPTIONS = [
     '| 0/5    [H]elp   |',
@@ -34,6 +45,76 @@ class Widget(ABC):
     @abstractmethod
     def draw(self):
         raise NotImplementedError
+
+
+class TabBar(Widget):
+    """Draws the books as tabs in the display."""
+
+    def __init__(self, screen, book, books):
+        self.attach_screen(screen)
+        self.tabs = [book]
+        if book in books:
+            self.tabs = ['general']
+            books = set(books)
+            books.remove('general')
+            self.tabs.extend(sorted(books))
+            self.highlight_index = self.tabs.index(book)
+        else:
+            self.highlight_index = 0
+
+        self.start_x = 5
+
+    def next_tab(self):
+        """Go to next tab."""
+        self.highlight_index += 1
+        if self.highlight_index == len(self.tabs):
+            self.highlight_index = 0
+        return self.tabs[self.highlight_index]
+
+    def prev_tab(self):
+        """Go to previous tab."""
+        self.highlight_index -= 1
+        if self.highlight_index < 0:
+            self.highlight_index = len(self.tabs) - 1
+        return self.tabs[self.highlight_index]
+
+    def _draw_sep(self, x, sep):
+        character, colour = sep
+        self.screen.addstr(self.top_line, x, character, colour)
+
+    def draw_first_sep(self):
+        if self.highlight_index == 0:
+            self._draw_sep(self.start_x, LSR)
+        else:
+            self._draw_sep(self.start_x, ALSN)
+
+    def draw_last_sep(self, x_pos):
+        if len(self.tabs) == self.highlight_index + 1:
+            self._draw_sep(x_pos, LSN)
+        else:
+            self._draw_sep(x_pos, ALSN)
+
+    def draw_sep(self, index, x_pos):
+        if index == 0:
+            self.draw_first_sep()
+        elif index - 1 == self.highlight_index:
+            self._draw_sep(x_pos, LSN)
+        elif index == self.highlight_index:
+            self._draw_sep(x_pos, LSR)
+        else:
+            self._draw_sep(x_pos, ALSN)
+
+    def draw(self):
+        draw_x = self.start_x
+        for index, tab_name in enumerate(self.tabs):
+            self.draw_sep(index, draw_x)
+            write = ' {} '.format(tab_name)
+            line_colour = NORMAL
+            if index == self.highlight_index:
+                line_colour = REVERSE
+            self.screen.addstr(self.top_line, draw_x + 1, write, line_colour)
+            draw_x += len(write) + 1
+        self.draw_last_sep(draw_x)
 
 
 class Frame(Widget):

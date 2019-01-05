@@ -12,21 +12,22 @@ class Controller:
             self.model = TagsModel(self.model)
         self.service_rules = ServiceRules(self.model)
 
-    def __service_rules(self, items):
+    def __service_rules(self, items, tab_title):
         items = self.service_rules.order(items)
         structure = self.service_rules.structure(items)
+        structure['tab_title'] = tab_title
         return display_list(structure)
 
     def basic_output(self, book):
         items = list(self.model)
         self.items = self.service_rules.filter_items(items, book)
-        return self.__service_rules(self.items)
+        return self.__service_rules(self.items, book)
 
     def query_output(self, query):
         items = self.model.query_tags(query)
         if not items:
             exit()
-        return self.__service_rules(items)
+        return self.__service_rules(items, "tag: '{}'".format(query))
 
     def search_output(self, query):
         if not query:
@@ -36,6 +37,7 @@ class Controller:
         if not items:
             exit()
         structure = self.service_rules.structure(items)
+        structure['tab_title'] = 'search'
         return display_list(structure)
 
 
@@ -114,10 +116,8 @@ class ServiceRules:
                       reverse=True)
 
     def structure(self, iterable):
-        return [
-            {
-                'title': item,
-                'model': self.model,
-            }
-            for item in iterable
-        ]
+        return {
+            'titles': [item for item in iterable],
+            'model': self.model,
+            'books': self.model.books,
+        }

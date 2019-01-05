@@ -16,10 +16,10 @@ from tests.data.mock_meta_data import FAKE_FOUR_NOTES_W_SUB
 Setup Test Fixtures:
 """
 
+
 @pytest.fixture(scope='function')
-def model_items():
+def display_data():
     from foolscap.meta_data import NotesModel
-    from foolscap.note_display import Controller
     from foolscap.note_display import ServiceRules
 
     patch_load = 'foolscap.meta_data.models.load_meta'
@@ -33,10 +33,9 @@ def model_items():
 
 
 @pytest.fixture(scope='function')
-def tag_items():
+def tag_data():
     from foolscap.meta_data import NotesModel
     from foolscap.meta_data import TagsModel
-    from foolscap.note_display import Controller
     from foolscap.note_display import ServiceRules
 
     patch_load = 'foolscap.meta_data.models.load_meta'
@@ -177,13 +176,19 @@ def test_MenuItem_init():
     assert not hasattr(item, 'expand')
 
 
-def test_MenuItem_NotesModel_init(model_items):
-    item = MenuItem(**model_items[0])
+def test_MenuItem_NotesModel_init(display_data):
+    item = MenuItem(**{
+        'title': display_data['titles'][0],
+        'model': display_data['model'],
+    })
     assert item.title == 'A'
 
 
-def test_MenuItem_TagModel_init(tag_items):
-    item = MenuItem(**tag_items[0])
+def test_MenuItem_TagModel_init(tag_data):
+    item = MenuItem(**{
+        'title': tag_data['titles'][0],
+        'model': tag_data['model'],
+    })
     assert item.title == 'fake_tag'
     assert item.raw_title == 'fake_tag'
 
@@ -211,8 +216,8 @@ def test_MenuItem_toggle():
     mock_model = {'description': 'that', 'sub_headings': mock_sub}
     mock_item = {'title': 'This', 'model': mock_model}
     item = MenuItem(**mock_item)
-    assert item.expand == False
+    assert item.expand is False
     item.toggle_drop_down()
-    assert item.expand == True
+    assert item.expand is True
     item.toggle_drop_down()
-    assert item.expand == False
+    assert item.expand is False
