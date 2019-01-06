@@ -133,14 +133,15 @@ class StatusBar(Widget):
     def __init__(self, screen, items, model):
         self.attach_screen(screen)
         note_count = len(items)
-        self.display_text += "Notes: {}".format(note_count)
+        self.display_text += "Count: {}".format(note_count)
 
-        tag_count = sum([
-            len(model.get_value(item, 'tags'))
-            for item in items
-        ])
-        ave_tags = tag_count / note_count
-        self.display_text += " | Ave tags: {0:.2f}".format(ave_tags)
+        if model.model_type == 'notes':
+            tag_count = sum([
+                len(model.get_value(item, 'tags'))
+                for item in items
+            ])
+            ave_tags = tag_count / note_count
+            self.display_text += " | Ave tags: {0:.2f}".format(ave_tags)
 
     def draw(self):
         self.screen.addstr(self.bottom_line - 1, 2, self.display_text)
