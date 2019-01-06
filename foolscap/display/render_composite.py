@@ -127,10 +127,20 @@ class Frame(Widget):
 
 
 class StatusBar(Widget):
-    def __init__(self, screen, n_notes):
+    """Aggregating should happen in this widget."""
+    display_text = ''
+
+    def __init__(self, screen, items, model):
         self.attach_screen(screen)
-        display_text = "Notes: {}".format(n_notes)
-        self.display_text = display_text
+        note_count = len(items)
+        self.display_text += "Notes: {}".format(note_count)
+
+        tag_count = sum([
+            len(model.get_value(item, 'tags'))
+            for item in items
+        ])
+        ave_tags = tag_count / note_count
+        self.display_text += " | Ave tags: {0:.2f}".format(ave_tags)
 
     def draw(self):
         self.screen.addstr(self.bottom_line - 1, 2, self.display_text)

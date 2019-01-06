@@ -268,32 +268,3 @@ def test_TitleBar_update():
     test_title_bar.update()
     assert test_title_bar.centre_header == 22
 
-
-def test_StatusBar_init():
-    mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 50, 50
-    test_status = StatusBar(mock_screen, 10)
-    assert isinstance(test_status, StatusBar)
-    assert mock_screen.getmaxyx.called_once()
-    assert hasattr(test_status, 'display_text')
-    assert test_status.display_text == "Notes: 10"
-
-
-def test_StatusBar_draw():
-    mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 50, 50
-
-    mock_display = "Notes: 10"
-    test_status = StatusBar(mock_screen, 10)
-    test_status.display_text = mock_display
-    test_status.draw()
-    mock_screen.addstr.assert_called_with(48, 2, mock_display)
-
-
-def test_StatusBar_update():
-    mock_screen = MagicMock()
-    mock_screen.getmaxyx.return_value = 50, 50
-    test_status = StatusBar(mock_screen, 10)
-    assert mock_screen.getmaxyx.called_once()
-    test_status.update()
-
