@@ -50,17 +50,16 @@ class FolioConsole:
         self.model = data['model']
         self.books = data['books']
         self.tab_title = data['tab_title']
-        self.count_notes = len(self.items)
         self.screen = stdscreen.subwin(0, 0)
         self.panel = panel.new_panel(self.screen)
 
         self.ui_collection()
 
-        self.key_listener = KeyListener(self.screen, self.count_notes)
+        self.key_listener = KeyListener(self.screen, len(self.items))
 
     def ui_collection(self):
         frame = Frame(self.screen)
-        status_bar = StatusBar(self.screen, self.count_notes)
+        status_bar = StatusBar(self.screen, self.items, self.model)
         title_bar = TitleBar(self.screen)
         self.help_bar = HelpBar(self.screen)
         self.tabs = TabBar(self.screen, self.tab_title, self.books)

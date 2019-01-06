@@ -86,20 +86,20 @@ def test_FolioConsole_init(mock_keys, mock_tab, mock_display_menu,
         assert hasattr(test_console, 'items')
         assert hasattr(test_console, 'screen')
         assert hasattr(test_console, 'panel')
-        assert hasattr(test_console, 'count_notes')
 
         assert hasattr(test_console, 'help_bar')
         assert hasattr(test_console, 'menu')
         assert hasattr(test_console, 'key_listener')
 
         assert test_console.items == FAKE_ITEMS['titles']
-        assert test_console.count_notes == 2
         assert test_console.render_objects == mocked_render_objects
         assert len(test_console.render_objects) == 6
         assert test_console.key_listener == mock_keys()
 
         mock_frame.assert_called_with(mock_screen.subwin())
-        mock_statusbar.assert_called_with(mock_screen.subwin(), 2)
+        mock_statusbar.assert_called_with(
+            mock_screen.subwin(),
+            FAKE_ITEMS['titles'], FAKE_ITEMS['model'])
         mock_titlebar.assert_called_with(mock_screen.subwin())
         mock_helpbar.assert_called_with(mock_screen.subwin())
         mock_tab.assert_called_with(
