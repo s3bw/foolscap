@@ -1,4 +1,6 @@
-# Foolscap Note Manager
+<h1 align='center'>
+    Foolscap Note Manager
+</h1>
 
 ![build](https://travis-ci.org/foxyblue/foolscap.svg?branch=master)
 ![latest](https://img.shields.io/badge/latest-0.3-ff69b4.svg)
