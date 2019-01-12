@@ -1,10 +1,10 @@
 # Foolscap Note Manager
 
-![build](https://travis-ci.org/GiantsLoveDeathMetal/foolscap.svg?branch=master)
+![build](https://travis-ci.org/foxyblue/foolscap.svg?branch=master)
 ![latest](https://img.shields.io/badge/latest-0.3-ff69b4.svg)
-![last-commit](https://img.shields.io/github/last-commit/GiantsLoveDeathMetal/foolscap.svg)
-![stars](https://img.shields.io/github/stars/GiantsLoveDeathMetal/foolscap.svg?style=popout&label=Stars)
-![closed-issues](https://img.shields.io/github/issues-closed/GiantsLoveDeathMetal/foolscap.svg)
+![last-commit](https://img.shields.io/github/last-commit/foxyblue/foolscap.svg)
+![stars](https://img.shields.io/github/stars/foxyblue/foolscap.svg?style=popout&label=Stars)
+![closed-issues](https://img.shields.io/github/issues-closed/foxyblue/foolscap.svg)
 
 The foolscap note manager centralises note **storage**, allows **access** from any directory and
 aims to make notes easy to **maintain**, **find** and **reuse**.
