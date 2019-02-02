@@ -64,6 +64,16 @@ class API:
             allowed_param=[],
         )
 
+    @property
+    def delete_note(self):
+        return bind_method(
+            api=self,
+            path='/notes/{note_id}',
+            method='DELETE',
+            payload_type='note',
+            allowed_param=['note_id'],
+        )
+
 
 log = logging.getLogger('foolscap.api')
 re_path_template = re.compile('{\w+}')
