@@ -10,6 +10,46 @@ from foolscap.display.render_composite import TitleBar
 from foolscap.display.render_composite import TabBar
 
 
+def display_list_v2(display_data):
+    """Transform foolscap to fool."""
+    from fool import console
+    # from foolscap.displays import tag_view
+    from foolscap.displays import view_notes
+
+    model = display_data['model']
+    data = {
+        'items': [model.get(item) for item in display_data['titles']],
+        'books': display_data['books'],
+        'book': display_data['tab_title'],
+    }
+    for item, noteTitle in zip(data['items'], display_data['titles']):
+        print(item)
+        item['more'] = 'anything'
+        item['title'] = noteTitle
+        if 'sub_headings' not in item.keys():
+            item['sub_headings'] = {}
+        else:
+            subHeading = []
+            for h in item['sub_headings']:
+                title = h[0]
+                description = h[1]
+                subHeading.append({
+                    'title': title,
+                    'description': description,
+                })
+            item['sub_headings'] = subHeading
+    # if model type tags, use tags view.
+    # if model type notes use notes view.
+
+    # NOTE(foxyblue): We can use the 'fool' example as is
+    # we just need to create the TableItems or build enough
+    # information for them.
+
+    # NOTE(foxyblue): We need our actor to be able to expect
+    # the ConsoleReturns from 'fool'
+    return console.display(view_notes, data, close='q')
+
+
 def display_list(display_data):
     """ Terminal Handler for curses programs.
         Setup curses context and tear down to terminal.
@@ -68,12 +108,7 @@ class FolioConsole:
         self.menu = DisplayMenu(self.screen, self.items, self.model)
 
         self.render_objects = [
-            frame,
-            status_bar,
-            title_bar,
-            self.help_bar,
-            self.tabs,
-            self.menu
+            frame, status_bar, title_bar, self.help_bar, self.tabs, self.menu
         ]
 
     def render_all(self):
@@ -85,10 +120,7 @@ class FolioConsole:
     def show(self):
         """Displays Menus
         """
-        selected = {
-            'action': None,
-            'index': None
-        }
+        selected = {'action': None, 'index': None}
         while not selected['action']:
             list_top, self.position = self.key_listener.get_position()
 

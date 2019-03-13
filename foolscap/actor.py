@@ -15,7 +15,6 @@ from foolscap.note_content import (
     update_notes,
 )
 
-
 # map <> {'-s': 'save'}
 FUNCTION_MAP = {
     'save': save_note,
@@ -26,11 +25,9 @@ FUNCTION_MAP = {
     'export': export_note,
     'move_lines': move_lines,
     'migrate': update_notes,
-
     'list': None,
     'search': None,
 }
-
 
 DISPLAY_ACTIONS = [
     'list',
@@ -72,16 +69,16 @@ def action(do_action, arg, list_type='notes', book='general'):
         else:
             new_action = display_ctrl.basic_output(book)
 
-    if new_action.get('action', False):
-        new_func = new_action['action']
-        note = new_action['item']
-        if new_func == 'list':
-            action(new_func, None, book=new_action['book'])
-        else:
+    if new_action and (new_action.action not in ['close', 'exit']):
+        if new_action.action in ['next', 'prev']:
+            new_func = 'list'
+            action(new_func, None, book=new_action.key)
+        elif new_action.action == 'select':
+            new_func = 'edit'
+            note = new_action.key
             action(new_func, note)
     # arg is note in this case
     elif arg:
         func(arg)
     else:
         func()
-

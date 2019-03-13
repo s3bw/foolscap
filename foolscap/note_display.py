@@ -1,11 +1,10 @@
 from foolscap.meta_data import TagsModel
 from foolscap.meta_data import NotesModel
 from foolscap.meta_data.utils import fuzzy_guess
-from foolscap.display.console import display_list
+from foolscap.display.console import display_list_v2 as display_list
 
 
 class Controller:
-
     def __init__(self, model_type):
         self.model = NotesModel()
         if model_type == 'tags':
@@ -96,24 +95,23 @@ class ServiceRules:
     def last_viewed(self, iterable):
         def sort_key(x):
             return self.model.get_value(x, 'modified')
-        return sorted(iterable,
-                      key=sort_key,
-                      reverse=True)
+
+        return sorted(iterable, key=sort_key, reverse=True)
 
     def by_views(self, iterable):
         """ Sorts by views then sorts alphabetically.
         """
+
         def sort_key(x):
             return (-self.model.get_value(x, 'views'), x.lower())
-        return sorted(iterable,
-                      key=sort_key)
+
+        return sorted(iterable, key=sort_key)
 
     def by_count(self, iterable):
         def sort_key(x):
             return int(self.model.get_value(x, 'description'))
-        return sorted(iterable,
-                      key=sort_key,
-                      reverse=True)
+
+        return sorted(iterable, key=sort_key, reverse=True)
 
     def structure(self, iterable):
         return {
