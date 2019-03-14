@@ -23,7 +23,7 @@ def display_list_v2(display_data):
         'book': display_data['tab_title'],
     }
     for item, noteTitle in zip(data['items'], display_data['titles']):
-        print(item)
+        # print(item)
         item['more'] = 'anything'
         item['title'] = noteTitle
         if 'sub_headings' not in item.keys():

@@ -77,6 +77,8 @@ def action(do_action, arg, list_type='notes', book='general'):
             new_func = 'edit'
             note = new_action.key
             action(new_func, note)
+    elif new_action and (new_action.action in ['close', 'exit']):
+        exit()
     # arg is note in this case
     elif arg:
         func(arg)
