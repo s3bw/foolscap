@@ -12,9 +12,9 @@ def edit_in_vim(open_file, add_cmds=None):
     :param str add_cmds: additional vim commands:
     """
     open_file.flush()
-    cmd = [EDITOR, open_file.name]
+    cmd = [EDITOR, "+set backupcopy=yes", open_file.name]
     if add_cmds:
-        cmd = [EDITOR, '-c', add_cmds, open_file.name]
+        cmd = [EDITOR, '-c', add_cmds, "+set backupcopy=yes", open_file.name]
 
     call(cmd)
 
