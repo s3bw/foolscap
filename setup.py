@@ -1,5 +1,3 @@
-import os
-
 from setuptools import setup
 from setuptools import find_packages
 
@@ -18,6 +16,7 @@ setup(
             'fscap=foolscap.cli:main',
         ]
     },
+    install_requires=["vim-edit"],
     classifiers=[
         "Environment :: Console",
         "Operation System :: OS Independent",

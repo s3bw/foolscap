@@ -1,6 +1,5 @@
 import pkg_resources
 
-from mock import MagicMock
 from mock import patch
 from mock import mock_open
 
@@ -65,18 +64,18 @@ def test_edit_text():
     test_folder = {'GET_NOTE': TEST_NOTE}
     with patch.dict('foolscap.handle_note_io.NOTE_FOLDERS', test_folder),\
          patch('foolscap.handle_note_io.NamedTemporaryFile'),\
-         patch('foolscap.handle_note_io.edit_in_vim') as edit_mock,\
+         patch('foolscap.handle_note_io.editor') as editor_mock,\
          patch(mock_get_cmd, return_value=None),\
          patch('builtins.open', mock_open()) as mock_file:
         note = handle_note_io.edit_text('test_note')
 
         file_name = TEST_NOTE.format(note_name='test_note')
-        assert note == None
+        assert note is None
         mock_file.assert_called_with(
             file_name,
             'r'
         )
-        edit_mock.assert_called_with(mock_file())
+        editor_mock.open.assert_called_with(mock_file())
 
 
 def test_edit_text_with_commands():
@@ -87,18 +86,18 @@ def test_edit_text_with_commands():
     test_folder = {'GET_NOTE': TEST_NOTE}
     with patch.dict('foolscap.handle_note_io.NOTE_FOLDERS', test_folder),\
          patch('foolscap.handle_note_io.NamedTemporaryFile'),\
-         patch('foolscap.handle_note_io.edit_in_vim') as edit_mock,\
+         patch('foolscap.handle_note_io.editor') as edit_mock,\
          patch(mock_get_cmd, return_value=['cmds']),\
          patch('builtins.open', mock_open()) as mock_file:
         note = handle_note_io.edit_text('test_note')
 
         file_name = TEST_NOTE.format(note_name='test_note')
-        assert note == None
+        assert note is None
         mock_file.assert_called_with(
             file_name,
             'r'
         )
-        edit_mock.assert_called_with(mock_file(), ['cmds'])
+        edit_mock.open.assert_called_with(mock_file(), vim_args=['cmds'])
 
 
 TEST_NOTE_TEMPLATE = """\
@@ -115,7 +114,7 @@ Make sure you change the title!
 def test_edit_temp_text():
     temp_note = handle_note_io.NEW_NOTE_TEMPLATE
     with patch('foolscap.handle_note_io.NamedTemporaryFile', mock_open(read_data=temp_note)),\
-         patch('foolscap.handle_note_io.edit_in_vim'),\
+         patch('foolscap.handle_note_io.editor'),\
          patch('builtins.open', mock_open()) as mock_file:
         note = handle_note_io.edit_text()
         assert note == TEST_NOTE_TEMPLATE.split('\n')

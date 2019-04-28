@@ -3,7 +3,8 @@ from tempfile import NamedTemporaryFile
 
 from foolscap import meta_data
 from foolscap.file_paths import NOTE_FOLDERS
-from foolscap.subprocess_utils import edit_in_vim
+
+from vim_edit import editor
 
 
 NEW_NOTE_TEMPLATE = """\
@@ -36,20 +37,19 @@ def edit_text(editing=None):
     """
     # Maybe this can be split into two functions in subprocess_utils
     if not editing:
-        with NamedTemporaryFile(mode='r+', suffix='.tmp') as editing_text:
-            editing_text.write(NEW_NOTE_TEMPLATE)
-            edit_in_vim(editing_text)
-            editing_text.seek(0)
-            return editing_text.read().split('\n')
+        with NamedTemporaryFile(mode='r+', suffix='.tmp') as edit_file:
+            edit_file.write(NEW_NOTE_TEMPLATE)
+            editor.open(edit_file)
+            return edit_file.read().split('\n')
 
     edited_note = NOTE_FOLDERS['GET_NOTE'].format(note_name=editing)
 
     cmds = meta_data.get_cmds(editing)
-    with open(edited_note, 'r') as editing_text:
+    with open(edited_note, 'r') as edit_file:
         if cmds:
-            edit_in_vim(editing_text, cmds)
+            editor.open(edit_file, vim_args=cmds)
         else:
-            edit_in_vim(editing_text)
+            editor.open(edit_file)
 
 
 def replace_text(note, new_name, content):
@@ -91,4 +91,3 @@ def unique_text(heading, folder='ALL_NOTES'):
         heading = new_name
 
     return heading
-
