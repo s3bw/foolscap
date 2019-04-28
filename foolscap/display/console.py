@@ -41,12 +41,6 @@ def display_list_v2(display_data):
     # if model type tags, use tags view.
     # if model type notes use notes view.
 
-    # NOTE(foxyblue): We can use the 'fool' example as is
-    # we just need to create the TableItems or build enough
-    # information for them.
-
-    # NOTE(foxyblue): We need our actor to be able to expect
-    # the ConsoleReturns from 'fool'
     return console.display(view_notes, data, close='q')
 
 
