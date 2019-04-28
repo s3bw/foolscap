@@ -4,8 +4,8 @@ from setuptools import find_packages
 
 setup(
     name='foolscap',
-    version='0.3',
-    author='GiantsLoveDeathMetal',
+    version='0.3.1',
+    author='S. Williams-Wynn',
     author_email='s.williamswynn.mail@gmail.com',
     packages=find_packages(
         include=['foolscap', 'foolscap.*'],
