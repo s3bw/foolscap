@@ -10,21 +10,15 @@ column_registry.setColumn('description', size=40, align='left')
 column_registry.setDatetime('created', size=10, align='centre')
 column_registry.setColumn('length', size=5, align='centre')
 
-import logging
-logging.basicConfig(filename="loggingMe", level=logging.INFO)
-
 
 def view_notes(model):
     """This constructs how the notes will be viewed."""
+    tabs = TabBar(model['book'], model['books'], next='l', prev='h')
+
     items = [
         TableItem(expansion=('more', 'sub_headings'), **kwargs)
         for kwargs in model['items']
     ]
-    first = items[0]
-    logging.error(first.title)
-    logging.error(first.description)
-    logging.error(first.created)
-    logging.error(first.length)
 
     main = TableWindow(
         registry=column_registry,
@@ -35,6 +29,4 @@ def view_notes(model):
         select='i',
         expand='e')
 
-    tab = TabBar(model['book'], model['books'], next='l', prev='h')
-
-    return [main, tab]
+    return [main, tabs]
